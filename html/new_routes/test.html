@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acuity Scheduling Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Bio revive by SkinEnvy - Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
     <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
     <script>
@@ -25,46 +26,97 @@
                             700: '#0067d9',
                             800: '#0055b0',
                             900: '#064b8d',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        warning: {
+                            50: '#fffbeb',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            500: '#ef4444',
+                            600: '#dc2626',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                     },
                     boxShadow: {
-                        card: '0 2px 12px -2px rgba(0, 0, 0, 0.06)',
-                        'card-hover': '0 4px 16px -2px rgba(0, 0, 0, 0.1)',
+                        card: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                     }
                 }
             }
         }
     </script>
     <style>
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.8; }
-            50% { transform: scale(1); opacity: 0.4; }
-            100% { transform: scale(0.8); opacity: 0.8; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .animate-pulse-ring {
-            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .service-color-indicator {
-            width: 4px;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            border-radius: 0 4px 4px 0;
+        .gradient-border {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1px;
+            border-radius: 12px;
+        }
+        .gradient-border-content {
+            background: white;
+            border-radius: 11px;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .service-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            border: 1px solid transparent;
         }
     </style>
     <script>
-        // Global variables for data
+        // Enhanced Global Data Structure
         let dashboardData = {
             appointmentTypes: [],
             upcomingAppointments: [],
             pastAppointments: [],
-            userData: {}
+            userData: {},
+            services: [],
+            analytics: {}
+        };
+
+        // Analytics Configuration
+        const analyticsConfig = {
+            charts: {},
+            colors: {
+                primary: '#0080f5',
+                success: '#22c55e',
+                warning: '#f59e0b',
+                danger: '#ef4444',
+                purple: '#8b5cf6',
+                teal: '#14b8a6',
+                orange: '#f97316',
+                pink: '#ec4899'
+            }
         };
 
         // Initialize Dashboard
@@ -72,7 +124,7 @@
             ZOHO.embeddedApp.init()
                 .then(function() {
                     console.log("ZOHO SDK initialized successfully");
-                    loadDashboardData();
+                    initializeDashboard();
                 })
                 .catch(function(error) {
                     console.error("Error initializing dashboard:", error);
@@ -80,52 +132,293 @@
                 });
         });
 
-        // Load all dashboard data
-        async function loadDashboardData() {
+        // Enhanced Dashboard Initialization
+        async function initializeDashboard() {
             try {
                 showLoadingState();
-                
-                // Check if data exists in localStorage
-                const storedAppointmentTypes = localStorage.getItem('appointmentTypes');
-                const storedUpcomingAppointments = localStorage.getItem('upcomingAppointments');
-                const storedPastAppointments = localStorage.getItem('pastAppointments');
-                const storedUserData = localStorage.getItem('userData');
-
-                // If no data in localStorage, fetch from API
-                if (!storedAppointmentTypes || !storedUpcomingAppointments || !storedPastAppointments || !storedUserData) {
-                    console.log("No data in localStorage, fetching from API...");
-                    await fetchAllData();
-                }
-
-                // Parse data from localStorage (now it should exist)
-                dashboardData.appointmentTypes = JSON.parse(localStorage.getItem('appointmentTypes') || '[]');
-                dashboardData.upcomingAppointments = JSON.parse(localStorage.getItem('upcomingAppointments') || '[]');
-                dashboardData.pastAppointments = JSON.parse(localStorage.getItem('pastAppointments') || '[]');
-                dashboardData.userData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-                // Restore the main dashboard HTML structure
-                restoreDashboardStructure();
-                
-                // Display all sections
-                displayUserProfile(dashboardData.userData);
-                updateDashboardStats();
-                displayAppointmentTypes(dashboardData.appointmentTypes);
-                displayUpcomingAppointments(dashboardData.upcomingAppointments);
-                displayPastAppointments(dashboardData.pastAppointments);
-                displayRecentActivity();
-                
+                await loadAndProcessData();
+                renderDashboard();
+                initializeCharts();
             } catch (error) {
-                console.error("Error loading dashboard data:", error);
+                console.error("Error initializing dashboard:", error);
                 showErrorState();
             }
         }
 
-        // Fetch all data from API
+        // Load and Process All Data
+        async function loadAndProcessData() {
+            try {
+                // Check if data exists in localStorage
+                const storedData = {
+                    appointmentTypes: localStorage.getItem('appointmentTypes'),
+                    upcomingAppointments: localStorage.getItem('upcomingAppointments'),
+                    pastAppointments: localStorage.getItem('pastAppointments'),
+                    userData: localStorage.getItem('userData'),
+                    services: localStorage.getItem('services')
+                };
+
+                // If no data in localStorage, fetch from API
+                if (!storedData.appointmentTypes || !storedData.upcomingAppointments || !storedData.pastAppointments || !storedData.userData) {
+                    console.log("Fetching data from API...");
+                    await fetchAllData();
+                }
+
+                // Load data into global object
+                dashboardData.appointmentTypes = JSON.parse(localStorage.getItem('appointmentTypes') || '[]');
+                dashboardData.upcomingAppointments = JSON.parse(localStorage.getItem('upcomingAppointments') || '[]');
+                dashboardData.pastAppointments = JSON.parse(localStorage.getItem('pastAppointments') || '[]');
+                dashboardData.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                dashboardData.services = JSON.parse(localStorage.getItem('services') || '[]');
+
+                // Process and store services separately
+                processAndStoreServices();
+                
+                // Generate analytics
+                generateAnalytics();
+
+                console.log("Dashboard data loaded successfully:", dashboardData);
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+                throw error;
+            }
+        }
+
+        // Process and Store Services Separately
+        function processAndStoreServices() {
+            const services = dashboardData.appointmentTypes.map(type => ({
+                id: type.id,
+                name: type.name,
+                category: type.category || 'General',
+                duration: type.duration,
+                price: parseFloat(type.price),
+                color: type.color,
+                active: type.active,
+                bookingCount: 0,
+                revenue: 0,
+                lastBooked: null
+            }));
+
+            // Calculate booking statistics
+            const allAppointments = [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments];
+            
+            allAppointments.forEach(appointment => {
+                const service = services.find(s => s.id === appointment.appointmentTypeID);
+                if (service && !appointment.canceled) {
+                    service.bookingCount++;
+                    service.revenue += parseFloat(appointment.priceSold || appointment.price || 0);
+                    if (!service.lastBooked || new Date(appointment.datetime) > new Date(service.lastBooked)) {
+                        service.lastBooked = appointment.datetime;
+                    }
+                }
+            });
+
+            dashboardData.services = services;
+            localStorage.setItem('services', JSON.stringify(services));
+        }
+
+        // Generate Comprehensive Analytics
+        function generateAnalytics() {
+            const analytics = {
+                overview: calculateOverviewMetrics(),
+                revenue: calculateRevenueAnalytics(),
+                services: calculateServiceAnalytics(),
+                appointments: calculateAppointmentAnalytics(),
+                clients: calculateClientAnalytics(),
+                trends: calculateTrendAnalytics()
+            };
+
+            dashboardData.analytics = analytics;
+            console.log("Analytics generated:", analytics);
+        }
+
+        // Calculate Overview Metrics
+        function calculateOverviewMetrics() {
+            const now = new Date();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+            return {
+                totalAppointments: dashboardData.pastAppointments.length + dashboardData.upcomingAppointments.length,
+                completedAppointments: dashboardData.pastAppointments.filter(apt => !apt.canceled).length,
+                canceledAppointments: dashboardData.pastAppointments.filter(apt => apt.canceled).length,
+                upcomingAppointments: dashboardData.upcomingAppointments.length,
+                todayAppointments: dashboardData.upcomingAppointments.filter(apt => 
+                    new Date(apt.datetime).toDateString() === today.toDateString()
+                ).length,
+                thisWeekAppointments: dashboardData.pastAppointments.filter(apt => 
+                    new Date(apt.datetime) >= thisWeek && !apt.canceled
+                ).length,
+                activeServices: dashboardData.services.filter(service => service.active).length,
+                totalServices: dashboardData.services.length,
+                totalRevenue: dashboardData.pastAppointments
+                    .filter(apt => !apt.canceled)
+                    .reduce((total, apt) => total + parseFloat(apt.priceSold || apt.price || 0), 0),
+                monthlyRevenue: dashboardData.pastAppointments
+                    .filter(apt => new Date(apt.datetime) >= thisMonth && !apt.canceled)
+                    .reduce((total, apt) => total + parseFloat(apt.priceSold || apt.price || 0), 0),
+                cancellationRate: dashboardData.pastAppointments.length > 0 
+                    ? (dashboardData.pastAppointments.filter(apt => apt.canceled).length / dashboardData.pastAppointments.length * 100)
+                    : 0
+            };
+        }
+
+        // Calculate Revenue Analytics
+        function calculateRevenueAnalytics() {
+            const revenueByMonth = {};
+            const revenueByService = {};
+
+            dashboardData.pastAppointments
+                .filter(apt => !apt.canceled)
+                .forEach(apt => {
+                    const date = new Date(apt.datetime);
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    const revenue = parseFloat(apt.priceSold || apt.price || 0);
+
+                    revenueByMonth[monthKey] = (revenueByMonth[monthKey] || 0) + revenue;
+                    revenueByService[apt.type] = (revenueByService[apt.type] || 0) + revenue;
+                });
+
+            return {
+                byMonth: revenueByMonth,
+                byService: revenueByService,
+                topServices: Object.entries(revenueByService)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 5)
+            };
+        }
+
+        // Calculate Service Analytics
+        function calculateServiceAnalytics() {
+            const serviceStats = dashboardData.services.map(service => {
+                const appointments = [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments]
+                    .filter(apt => apt.appointmentTypeID === service.id && !apt.canceled);
+
+                return {
+                    ...service,
+                    totalBookings: appointments.length,
+                    completedBookings: dashboardData.pastAppointments
+                        .filter(apt => apt.appointmentTypeID === service.id && !apt.canceled).length,
+                    upcomingBookings: dashboardData.upcomingAppointments
+                        .filter(apt => apt.appointmentTypeID === service.id && !apt.canceled).length,
+                    averageRevenue: appointments.length > 0 
+                        ? service.revenue / appointments.length 
+                        : 0
+                };
+            });
+
+            return {
+                all: serviceStats,
+                popular: serviceStats.sort((a, b) => b.totalBookings - a.totalBookings).slice(0, 5),
+                profitable: serviceStats.sort((a, b) => b.revenue - a.revenue).slice(0, 5)
+            };
+        }
+
+        // Calculate Appointment Analytics
+        function calculateAppointmentAnalytics() {
+            const hourlyDistribution = Array(24).fill(0);
+            const dayDistribution = Array(7).fill(0);
+            const statusDistribution = { completed: 0, canceled: 0, upcoming: 0 };
+
+            [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments].forEach(apt => {
+                const date = new Date(apt.datetime);
+                hourlyDistribution[date.getHours()]++;
+                dayDistribution[date.getDay()]++;
+
+                if (apt.canceled) {
+                    statusDistribution.canceled++;
+                } else if (dashboardData.pastAppointments.includes(apt)) {
+                    statusDistribution.completed++;
+                } else {
+                    statusDistribution.upcoming++;
+                }
+            });
+
+            return {
+                hourlyDistribution,
+                dayDistribution,
+                statusDistribution,
+                peakHour: hourlyDistribution.indexOf(Math.max(...hourlyDistribution)),
+                peakDay: dayDistribution.indexOf(Math.max(...dayDistribution))
+            };
+        }
+
+        // Calculate Client Analytics
+        function calculateClientAnalytics() {
+            const clients = new Map();
+
+            [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments].forEach(apt => {
+                const clientKey = `${apt.firstName} ${apt.lastName}`.trim();
+                if (!clients.has(clientKey)) {
+                    clients.set(clientKey, {
+                        name: clientKey,
+                        phone: apt.phone,
+                        email: apt.email,
+                        appointments: [],
+                        totalSpent: 0,
+                        lastVisit: null
+                    });
+                }
+
+                const client = clients.get(clientKey);
+                client.appointments.push(apt);
+                if (!apt.canceled) {
+                    client.totalSpent += parseFloat(apt.priceSold || apt.price || 0);
+                }
+                if (!client.lastVisit || new Date(apt.datetime) > new Date(client.lastVisit)) {
+                    client.lastVisit = apt.datetime;
+                }
+            });
+
+            const clientArray = Array.from(clients.values());
+
+            return {
+                totalClients: clientArray.length,
+                topClients: clientArray.sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 10),
+                repeatClients: clientArray.filter(client => client.appointments.length > 1).length,
+                averageSpentPerClient: clientArray.reduce((sum, client) => sum + client.totalSpent, 0) / clientArray.length || 0
+            };
+        }
+
+        // Calculate Trend Analytics
+        function calculateTrendAnalytics() {
+            const monthlyTrends = {};
+            const serviceTrends = {};
+
+            [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments]
+                .filter(apt => !apt.canceled)
+                .forEach(apt => {
+                    const date = new Date(apt.datetime);
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (!monthlyTrends[monthKey]) {
+                        monthlyTrends[monthKey] = { appointments: 0, revenue: 0 };
+                    }
+                    if (!serviceTrends[apt.type]) {
+                        serviceTrends[apt.type] = {};
+                    }
+                    if (!serviceTrends[apt.type][monthKey]) {
+                        serviceTrends[apt.type][monthKey] = 0;
+                    }
+
+                    monthlyTrends[monthKey].appointments++;
+                    monthlyTrends[monthKey].revenue += parseFloat(apt.priceSold || apt.price || 0);
+                    serviceTrends[apt.type][monthKey]++;
+                });
+
+            return {
+                monthly: monthlyTrends,
+                services: serviceTrends
+            };
+        }
+
+        // Fetch All Data from API
         async function fetchAllData() {
             try {
                 console.log("Fetching all data from API...");
                 
-                // Fetch all data in parallel
                 const [appointmentTypesResult, appointmentsResult, userDataResult] = await Promise.all([
                     fetchAndStoreAppointmentTypes().catch(e => {
                         console.error("Failed to fetch appointment types:", e);
@@ -149,361 +442,297 @@
             }
         }
 
-        // Restore the main dashboard HTML structure
-        function restoreDashboardStructure() {
+        // Render Complete Dashboard
+        function renderDashboard() {
             const mainContent = document.querySelector('main');
             if (mainContent) {
                 mainContent.innerHTML = `
-                    <div class="max-w-7xl mx-auto">
-                        <!-- Header -->
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+                    <div class="max-w-7xl mx-auto space-y-8 animate-fade-in">
+                        <!-- Header Section -->
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                             <div>
-                                <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-                                <p class="mt-1 text-gray-600">Welcome back! Here's what's happening with your business today.</p>
+                                <h1 class="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+                                <p class="text-gray-600">Comprehensive insights for ${dashboardData.userData.name || 'your business'}</p>
                             </div>
-                            <div class="mt-4 md:mt-0 flex space-x-3">
-                                <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
-                                    <span class="material-icons text-sm mr-2">add</span>
-                                    New Appointment
+                            <div class="mt-4 lg:mt-0 flex items-center space-x-3">
+                                <button onclick="refreshDashboard()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                                    <span class="material-icons text-sm mr-2">refresh</span>
+                                    Refresh Data
                                 </button>
-                                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
-                                    <span class="material-icons text-sm mr-2">calendar_today</span>
-                                    View Calendar
+                                <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200">
+                                    <span class="material-icons text-sm mr-2">download</span>
+                                    Export Report
                                 </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Stats Overview -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsContainer">
-                            <!-- Stats will be dynamically inserted here -->
-                        </div>
-                        
-                        <!-- Main Content Grid -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                            <!-- Upcoming Appointments -->
-                            <div class="lg:col-span-2">
-                                <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                        <div class="flex items-center space-x-2">
-                                            <h3 class="text-lg font-semibold text-gray-800">Upcoming Appointments</h3>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                Next 5
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
-                                                <span class="material-icons">refresh</span>
-                                            </button>
-                                            <button onclick="viewAllUpcoming()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                                                View All
-                                                <span class="material-icons text-base ml-1">arrow_forward</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="upcomingAppointmentsList">
-                                        <!-- Upcoming appointments will be loaded here -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Recent Activity -->
-                            <div class="lg:col-span-1">
-                                <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                        <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
-                                    </div>
-                                    
-                                    <div id="recentActivityList" class="divide-y divide-gray-100">
-                                        <!-- Recent activity will be loaded here -->
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
-                        <!-- Services and Past Appointments -->
+                        <!-- Key Metrics Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="keyMetrics">
+                            <!-- Metrics will be inserted here -->
+                        </div>
+
+                        <!-- Charts Section -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Appointment Types/Services -->
-                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                    <div id="appointmentTypesHeader">
-                                        <div class="flex items-center space-x-2">
-                                            <h3 class="text-lg font-semibold text-gray-800">Services</h3>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="refreshAppointmentTypes()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
-                                            <span class="material-icons">refresh</span>
-                                        </button>
-                                        <button onclick="viewAllAppointmentTypes()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                                            View All
-                                            <span class="material-icons text-base ml-1">arrow_forward</span>
-                                        </button>
-                                    </div>
+                            <!-- Revenue Chart -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-800">Revenue Overview</h3>
+                                    <select id="revenueChartPeriod" class="text-sm border border-gray-300 rounded-lg px-3 py-1">
+                                        <option value="6months">Last 6 Months</option>
+                                        <option value="12months">Last 12 Months</option>
+                                        <option value="all">All Time</option>
+                                    </select>
                                 </div>
-                                
-                                <div id="appointmentTypesList">
-                                    <!-- Appointment types will be loaded here -->
+                                <div class="chart-container">
+                                    <canvas id="revenueChart"></canvas>
                                 </div>
                             </div>
 
-                            <!-- Past Appointments -->
-                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                    <div class="flex items-center space-x-2">
-                                        <h3 class="text-lg font-semibold text-gray-800">Recent History</h3>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            Recent 5
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
-                                            <span class="material-icons">refresh</span>
-                                        </button>
-                                        <button onclick="viewAllPast()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                                            View All
-                                            <span class="material-icons text-base ml-1">arrow_forward</span>
-                                        </button>
-                                    </div>
+                            <!-- Service Performance Chart -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-800">Service Performance</h3>
+                                    <div class="text-sm text-gray-500">Top 5 Services</div>
                                 </div>
-                                
-                                <div id="pastAppointmentsList">
-                                    <!-- Past appointments will be loaded here -->
+                                <div class="chart-container">
+                                    <canvas id="serviceChart"></canvas>
                                 </div>
+                            </div>
+
+                            <!-- Appointment Status Distribution -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-800">Appointment Status</h3>
+                                    <div class="text-sm text-gray-500">Overall Distribution</div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="statusChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Peak Hours Chart -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-800">Peak Booking Hours</h3>
+                                    <div class="text-sm text-gray-500">24-Hour Distribution</div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="hoursChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Sections -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Top Services -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-gray-100">
+                                    <h3 class="text-lg font-semibold text-gray-800">Top Services</h3>
+                                </div>
+                                <div id="topServices" class="divide-y divide-gray-100">
+                                    <!-- Top services will be inserted here -->
+                                </div>
+                            </div>
+
+                            <!-- Recent Appointments -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-gray-100">
+                                    <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
+                                </div>
+                                <div id="recentActivity" class="divide-y divide-gray-100">
+                                    <!-- Recent activity will be inserted here -->
+                                </div>
+                            </div>
+
+                            <!-- Top Clients -->
+                            <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-gray-100">
+                                    <h3 class="text-lg font-semibold text-gray-800">Top Clients</h3>
+                                </div>
+                                <div id="topClients" class="divide-y divide-gray-100">
+                                    <!-- Top clients will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Appointments -->
+                        <div class="bg-white rounded-xl shadow-card border border-gray-100">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-gray-800">Upcoming Appointments</h3>
+                                    <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                        ${dashboardData.upcomingAppointments.length} appointments
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="upcomingAppointments" class="divide-y divide-gray-100">
+                                <!-- Upcoming appointments will be inserted here -->
                             </div>
                         </div>
                     </div>
                 `;
             }
+
+            // Render individual sections
+            renderKeyMetrics();
+            renderTopServices();
+            renderRecentActivity();
+            renderTopClients();
+            renderUpcomingAppointments();
         }
 
-        // Calculate dashboard statistics
-        function calculateDashboardStats() {
-            const now = new Date();
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        // Render Key Metrics
+        function renderKeyMetrics() {
+            const container = document.getElementById('keyMetrics');
+            const metrics = dashboardData.analytics.overview;
 
-            // Total appointments
-            const totalAppointments = dashboardData.upcomingAppointments.length + dashboardData.pastAppointments.length;
-            
-            // Active services
-            const activeServices = dashboardData.appointmentTypes.filter(type => type.active).length;
-            
-            // Upcoming today
-            const upcomingToday = dashboardData.upcomingAppointments.filter(apt => {
-                const aptDate = new Date(apt.datetime);
-                return aptDate.toDateString() === today.toDateString();
-            }).length;
-
-            // Completed this week
-            const completedThisWeek = dashboardData.pastAppointments.filter(apt => {
-                const aptDate = new Date(apt.datetime);
-                return aptDate >= oneWeekAgo && !apt.canceled;
-            }).length;
-
-            // Revenue this month
-            const revenueThisMonth = dashboardData.pastAppointments
-                .filter(apt => {
-                    const aptDate = new Date(apt.datetime);
-                    return aptDate >= thisMonth && !apt.canceled;
-                })
-                .reduce((total, apt) => total + parseFloat(apt.priceSold || apt.price || 0), 0);
-
-            // Cancellation rate
-            const totalPastAppointments = dashboardData.pastAppointments.length;
-            const canceledAppointments = dashboardData.pastAppointments.filter(apt => apt.canceled).length;
-            const cancellationRate = totalPastAppointments > 0 ? (canceledAppointments / totalPastAppointments * 100).toFixed(1) : 0;
-
-            // Next appointment
-            const nextAppointment = dashboardData.upcomingAppointments
-                .filter(apt => !apt.canceled && new Date(apt.datetime) > now)
-                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))[0];
-
-            // Most popular service
-            const serviceCount = {};
-            [...dashboardData.upcomingAppointments, ...dashboardData.pastAppointments].forEach(apt => {
-                if (!apt.canceled) {
-                    serviceCount[apt.type] = (serviceCount[apt.type] || 0) + 1;
+            const metricCards = [
+                {
+                    title: 'Total Revenue',
+                    value: `$${metrics.totalRevenue.toFixed(2)}`,
+                    icon: 'attach_money',
+                    color: 'bg-gradient-to-r from-green-500 to-green-600',
+                    subtitle: `$${metrics.monthlyRevenue.toFixed(2)} this month`
+                },
+                {
+                    title: 'Total Appointments',
+                    value: metrics.totalAppointments.toString(),
+                    icon: 'event',
+                    color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                    subtitle: `${metrics.todayAppointments} today`
+                },
+                {
+                    title: 'Active Services',
+                    value: `${metrics.activeServices}/${metrics.totalServices}`,
+                    icon: 'spa',
+                    color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+                    subtitle: 'services available'
+                },
+                {
+                    title: 'Cancellation Rate',
+                    value: `${metrics.cancellationRate.toFixed(1)}%`,
+                    icon: 'cancel',
+                    color: metrics.cancellationRate > 15 ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-orange-500 to-orange-600',
+                    subtitle: `${metrics.canceledAppointments} canceled`
                 }
-            });
-            const mostPopularService = Object.keys(serviceCount).reduce((a, b) => 
-                serviceCount[a] > serviceCount[b] ? a : b, '');
+            ];
 
-            return {
-                totalAppointments,
-                activeServices,
-                upcomingToday,
-                completedThisWeek,
-                revenueThisMonth,
-                cancellationRate,
-                nextAppointment,
-                mostPopularService
-            };
+            container.innerHTML = metricCards.map(metric => `
+                <div class="relative overflow-hidden rounded-xl ${metric.color} text-white">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm font-medium">${metric.title}</p>
+                                <p class="text-3xl font-bold mt-2">${metric.value}</p>
+                                <p class="text-white/70 text-xs mt-1">${metric.subtitle}</p>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-lg">
+                                <span class="material-icons text-2xl">${metric.icon}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/30"></div>
+                </div>
+            `).join('');
         }
 
-        // Update dashboard statistics
-        function updateDashboardStats() {
-            const stats = calculateDashboardStats();
-            const statsContainer = document.getElementById('statsContainer');
-            if (!statsContainer) return;
+        // Render Top Services
+        function renderTopServices() {
+            const container = document.getElementById('topServices');
+            const services = dashboardData.analytics.services.popular.slice(0, 5);
 
-            statsContainer.innerHTML = `
-                <!-- Total Appointments -->
-                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-medium text-gray-500">Total Appointments</h3>
-                            <div class="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
-                                <span class="material-icons text-xl">event_note</span>
-                            </div>
-                        </div>
-                        <div class="flex items-baseline space-x-2">
-                            <p class="text-3xl font-bold text-gray-900">${stats.totalAppointments}</p>
-                        </div>
-                        <div class="mt-3 flex items-center text-sm text-gray-500">
-                            <span class="material-icons text-gray-400 mr-1.5 text-base">trending_up</span>
-                            <span>All time appointments</span>
-                        </div>
-                    </div>
-                    <div class="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-600"></div>
-                </div>
-
-                <!-- Active Services -->
-                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-medium text-gray-500">Active Services</h3>
-                            <div class="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 transition-colors">
-                                <span class="material-icons text-xl">verified</span>
-                            </div>
-                        </div>
-                        <div class="flex items-baseline space-x-2">
-                            <p class="text-3xl font-bold text-gray-900">${stats.activeServices}</p>
-                            <span class="text-sm text-gray-500">/ ${dashboardData.appointmentTypes.length}</span>
-                        </div>
-                        <div class="mt-3 flex items-center text-sm text-gray-500">
-                            <span class="material-icons text-gray-400 mr-1.5 text-base">spa</span>
-                            <span>Available services</span>
-                        </div>
-                    </div>
-                    <div class="h-1 w-full bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
-                </div>
-
-                <!-- Today's Appointments -->
-                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-medium text-gray-500">Today's Schedule</h3>
-                            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 transition-colors">
-                                <span class="material-icons text-xl">today</span>
-                            </div>
-                        </div>
-                        <div class="flex items-baseline space-x-2">
-                            <p class="text-3xl font-bold text-gray-900">${stats.upcomingToday}</p>
-                        </div>
-                        <div class="mt-3 flex items-center text-sm text-gray-500">
-                            <span class="material-icons text-gray-400 mr-1.5 text-base">schedule</span>
-                            <span>${stats.nextAppointment ? `Next: ${formatTime(stats.nextAppointment.datetime)}` : 'No appointments today'}</span>
-                        </div>
-                    </div>
-                    <div class="h-1 w-full bg-gradient-to-r from-indigo-400 to-indigo-600"></div>
-                </div>
-
-                <!-- Monthly Revenue -->
-                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-medium text-gray-500">This Month Revenue</h3>
-                            <div class="p-2 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-100 transition-colors">
-                                <span class="material-icons text-xl">attach_money</span>
-                            </div>
-                        </div>
-                        <div class="flex items-baseline space-x-2">
-                            <p class="text-3xl font-bold text-gray-900">$${stats.revenueThisMonth.toFixed(2)}</p>
-                        </div>
-                        <div class="mt-3 flex items-center text-sm text-gray-500">
-                            <span class="material-icons text-gray-400 mr-1.5 text-base">payments</span>
-                            <span>Completed appointments</span>
-                        </div>
-                    </div>
-                    <div class="h-1 w-full bg-gradient-to-r from-purple-400 to-purple-600"></div>
-                </div>
-            `;
-        }
-
-        // Display appointment types
-        function displayAppointmentTypes(appointmentTypes) {
-            const container = document.getElementById('appointmentTypesList');
-            if (!container || !appointmentTypes.length) {
-                if (container) {
-                    container.innerHTML = '<div class="p-6 text-center text-gray-500">No appointment types found</div>';
-                }
-                return;
-            }
-
-            const activeTypes = appointmentTypes.filter(type => type.active);
-            const displayTypes = activeTypes.slice(0, 6); // Show first 6 active types
-
-            const html = displayTypes.map(type => `
-                <div class="relative p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
-                    <div class="service-color-indicator" style="background-color: ${type.color}"></div>
+            container.innerHTML = services.map((service, index) => `
+                <div class="p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3 flex-1">
+                        <div class="flex items-center space-x-3">
                             <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: ${type.color}20">
-                                    <span class="material-icons text-xl" style="color: ${type.color}">spa</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: ${service.color}20">
+                                    <span class="material-icons text-sm" style="color: ${service.color}">spa</span>
                                 </div>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="text-sm font-semibold text-gray-900 truncate">${type.name}</h4>
-                                <div class="flex items-center space-x-4 mt-1">
-                                    <span class="text-xs text-gray-500 flex items-center">
-                                        <span class="material-icons text-xs mr-1">schedule</span>
-                                        ${type.duration} min
-                                    </span>
-                                    <span class="text-xs text-gray-500 flex items-center">
-                                        <span class="material-icons text-xs mr-1">attach_money</span>
-                                        ${type.price > 0 ? `$${type.price}` : 'Free'}
-                                    </span>
-                                </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${service.name}</p>
+                                <p class="text-xs text-gray-500">${service.totalBookings} bookings</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${type.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                ${type.active ? 'Active' : 'Inactive'}
-                            </span>
-                            <a href="${type.schedulingUrl}" target="_blank" class="p-1 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded transition-colors" title="Open booking page">
-                                <span class="material-icons text-sm">open_in_new</span>
-                            </a>
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-gray-900">$${service.revenue.toFixed(2)}</p>
+                            <p class="text-xs text-gray-500">${service.duration} min</p>
                         </div>
                     </div>
                 </div>
             `).join('');
-
-            container.innerHTML = html;
-
-            // Update the header with counts
-            const headerElement = document.querySelector('#appointmentTypesHeader');
-            if (headerElement) {
-                headerElement.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <h3 class="text-lg font-semibold text-gray-800">Services</h3>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                            ${activeTypes.length} Active
-                        </span>
-                    </div>
-                `;
-            }
         }
 
-        // Display upcoming appointments
-        function displayUpcomingAppointments(appointments) {
-            const container = document.getElementById('upcomingAppointmentsList');
-            if (!container) return;
+        // Render Recent Activity
+        function renderRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            const recentAppointments = [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments]
+                .sort((a, b) => new Date(b.datetimeCreated) - new Date(a.datetimeCreated))
+                .slice(0, 5);
 
-            if (!appointments.length) {
+            container.innerHTML = recentAppointments.map(apt => {
+                const isPast = new Date(apt.datetime) < new Date();
+                const actionText = isPast ? (apt.canceled ? 'cancelled' : 'completed') : 'scheduled';
+                const iconName = isPast ? (apt.canceled ? 'cancel' : 'check_circle') : 'event';
+                const iconColor = isPast ? (apt.canceled ? 'text-red-500' : 'text-green-500') : 'text-blue-500';
+
+                return `
+                    <div class="p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <span class="material-icons ${iconColor} text-lg">${iconName}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-900">
+                                    <span class="font-medium">${apt.firstName} ${apt.lastName}</span> 
+                                    ${actionText} <span class="font-medium">${apt.type}</span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">${formatRelativeTime(new Date(apt.datetimeCreated))}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Top Clients
+        function renderTopClients() {
+            const container = document.getElementById('topClients');
+            const clients = dashboardData.analytics.clients.topClients.slice(0, 5);
+
+            container.innerHTML = clients.map(client => `
+                <div class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
+                                    ${client.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${client.name}</p>
+                                <p class="text-xs text-gray-500">${client.appointments.length} appointments</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-gray-900">$${client.totalSpent.toFixed(2)}</p>
+                            <p class="text-xs text-gray-500">total spent</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Upcoming Appointments
+        function renderUpcomingAppointments() {
+            const container = document.getElementById('upcomingAppointments');
+            const upcoming = dashboardData.upcomingAppointments
+                .filter(apt => !apt.canceled)
+                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
+                .slice(0, 10);
+
+            if (!upcoming.length) {
                 container.innerHTML = `
                     <div class="p-8 text-center">
                         <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -516,197 +745,216 @@
                 return;
             }
 
-            // Sort appointments by date and time
-            const sortedAppointments = appointments
-                .filter(apt => !apt.canceled)
-                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
-                .slice(0, 5); // Show first 5 upcoming
-
-            const html = sortedAppointments.map(appt => {
-                const appointmentDate = new Date(appt.datetime);
+            container.innerHTML = upcoming.map(apt => {
+                const appointmentDate = new Date(apt.datetime);
                 const isToday = appointmentDate.toDateString() === new Date().toDateString();
                 const isTomorrow = appointmentDate.toDateString() === new Date(Date.now() + 86400000).toDateString();
                 
-                let dateLabel = formatDate(appt.datetime);
+                let dateLabel = formatDate(apt.datetime);
                 if (isToday) dateLabel = 'Today';
                 else if (isTomorrow) dateLabel = 'Tomorrow';
 
+                const service = dashboardData.services.find(s => s.id === apt.appointmentTypeID);
+
                 return `
-                    <div class="p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
+                    <div class="p-4 hover:bg-gray-50 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3 flex-1">
                                 <div class="flex-shrink-0">
-                                    <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
-                                        ${appt.firstName[0]}${appt.lastName[0]}
+                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: ${service?.color || '#6b7280'}20">
+                                        <span class="material-icons text-lg" style="color: ${service?.color || '#6b7280'}">person</span>
                                     </div>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h5 class="text-sm font-semibold text-gray-900">${appt.firstName} ${appt.lastName}</h5>
+                                    <h5 class="text-sm font-semibold text-gray-900">${apt.firstName} ${apt.lastName}</h5>
                                     <div class="flex items-center space-x-2 mt-1">
-                                        <span class="text-xs text-gray-500">${appt.type}</span>
-                                        ${appt.phone ? `<span class="text-xs text-gray-400">•</span><span class="text-xs text-gray-500">${appt.phone}</span>` : ''}
+                                        <span class="service-badge bg-gray-100 text-gray-800">${apt.type}</span>
+                                        ${apt.phone ? `<span class="text-xs text-gray-500">${apt.phone}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="flex items-center space-x-2">
-                                    <div class="text-right">
-                                        <p class="text-sm font-medium text-gray-900">${dateLabel}</p>
-                                        <p class="text-xs text-gray-500">${appt.time} - ${appt.endTime}</p>
-                                    </div>
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Confirmed
-                                    </span>
-                                </div>
+                                <p class="text-sm font-medium text-gray-900">${dateLabel}</p>
+                                <p class="text-xs text-gray-500">${apt.time} - ${apt.endTime}</p>
+                                ${service?.duration ? `<p class="text-xs text-gray-400">${service.duration} min</p>` : ''}
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            container.innerHTML = html;
         }
 
-        // Display past appointments
-        function displayPastAppointments(appointments) {
-            const container = document.getElementById('pastAppointmentsList');
-            if (!container) return;
-
-            if (!appointments.length) {
-                container.innerHTML = `
-                    <div class="p-8 text-center">
-                        <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-gray-400 text-2xl">history</span>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-900 mb-1">No appointment history</h3>
-                        <p class="text-sm text-gray-500">Completed appointments will appear here</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Sort by most recent first
-            const sortedAppointments = appointments
-                .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
-                .slice(0, 5); // Show first 5 recent
-
-            const html = sortedAppointments.map(appt => `
-                <div class="p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3 flex-1">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-semibold text-sm">
-                                    ${appt.firstName[0]}${appt.lastName[0]}
-                                </div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h5 class="text-sm font-semibold text-gray-900">${appt.firstName} ${appt.lastName}</h5>
-                                <div class="flex items-center space-x-2 mt-1">
-                                    <span class="text-xs text-gray-500">${appt.type}</span>
-                                    ${appt.priceSold && parseFloat(appt.priceSold) > 0 ? `<span class="text-xs text-gray-400">•</span><span class="text-xs text-gray-500">$${appt.priceSold}</span>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="flex items-center space-x-2">
-                                <div class="text-right">
-                                    <p class="text-sm font-medium text-gray-900">${appt.date}</p>
-                                    <p class="text-xs text-gray-500">${appt.time} - ${appt.endTime}</p>
-                                </div>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${appt.canceled ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">
-                                    ${appt.canceled ? 'Cancelled' : 'Completed'}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            container.innerHTML = html;
+        // Initialize Charts
+        function initializeCharts() {
+            initializeRevenueChart();
+            initializeServiceChart();
+            initializeStatusChart();
+            initializeHoursChart();
         }
 
-        // Display user profile
-        function displayUserProfile(userData) {
-            const userProfileContainer = document.querySelector('.user-profile');
-            if (!userProfileContainer || !userData.firstName) return;
+        // Initialize Revenue Chart
+        function initializeRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const revenueData = dashboardData.analytics.revenue.byMonth;
+            
+            const labels = Object.keys(revenueData).sort();
+            const data = labels.map(label => revenueData[label]);
 
-            const userInitials = userData.firstName && userData.lastName ? 
-                `${userData.firstName[0]}${userData.lastName[0]}` : 'NA';
-
-            userProfileContainer.innerHTML = `
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        ${userData.avatarUrl ? 
-                            `<img class="h-10 w-10 rounded-full ring-2 ring-primary-300/30" src="${userData.avatarUrl}" alt="${userData.displayName}">` :
-                            `<div class="h-10 w-10 rounded-full ring-2 ring-primary-300/30 bg-primary-100 flex items-center justify-center text-primary-600 font-medium">
-                                ${userInitials}
-                            </div>`
+            analyticsConfig.charts.revenue = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.map(label => {
+                        const [year, month] = label.split('-');
+                        return new Date(year, month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: data,
+                        borderColor: analyticsConfig.colors.primary,
+                        backgroundColor: analyticsConfig.colors.primary + '20',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
                         }
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-white">${userData.displayName || userData.name}</p>
-                        <div class="flex items-center mt-1">
-                            <div class="h-2 w-2 rounded-full bg-green-400 mr-1.5"></div>
-                            <p class="text-xs text-primary-200">Online</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Update business name in header
-            const businessNameElement = document.querySelector('.business-name');
-            if (businessNameElement && userData.name) {
-                businessNameElement.textContent = userData.name;
-            }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
-        // Display recent activity
-        function displayRecentActivity() {
-            const container = document.getElementById('recentActivityList');
-            if (!container) return;
-
-            // Combine recent appointments for activity feed
-            const allAppointments = [...dashboardData.upcomingAppointments, ...dashboardData.pastAppointments]
-                .sort((a, b) => new Date(b.datetimeCreated) - new Date(a.datetimeCreated))
-                .slice(0, 5);
-
-            if (!allAppointments.length) {
-                container.innerHTML = `
-                    <div class="p-6 text-center text-gray-500">
-                        <span class="material-icons text-gray-300 text-3xl mb-2">notifications_none</span>
-                        <p>No recent activity</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const html = allAppointments.map(appt => {
-                const createdDate = new Date(appt.datetimeCreated);
-                const isPast = new Date(appt.datetime) < new Date();
-                const actionText = isPast ? 'completed' : 'scheduled';
-                const iconName = isPast ? 'check_circle' : 'event';
-                const iconColor = isPast ? 'text-green-500' : 'text-blue-500';
-
-                return `
-                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div class="flex-shrink-0">
-                            <span class="material-icons ${iconColor} text-lg">${iconName}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm text-gray-900">
-                                <span class="font-medium">${appt.firstName} ${appt.lastName}</span> 
-                                ${actionText} <span class="font-medium">${appt.type}</span>
-                            </p>
-                            <p class="text-xs text-gray-500 mt-1">${formatRelativeTime(createdDate)}</p>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            container.innerHTML = html;
+        // Initialize Service Chart
+        function initializeServiceChart() {
+            const ctx = document.getElementById('serviceChart').getContext('2d');
+            const serviceData = dashboardData.analytics.services.popular.slice(0, 5);
+            
+            analyticsConfig.charts.service = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: serviceData.map(s => s.name),
+                    datasets: [{
+                        data: serviceData.map(s => s.totalBookings),
+                        backgroundColor: [
+                            analyticsConfig.colors.primary,
+                            analyticsConfig.colors.success,
+                            analyticsConfig.colors.warning,
+                            analyticsConfig.colors.purple,
+                            analyticsConfig.colors.teal
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
         }
 
-        // Utility functions
+        // Initialize Status Chart
+        function initializeStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const statusData = dashboardData.analytics.appointments.statusDistribution;
+            
+            analyticsConfig.charts.status = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Completed', 'Upcoming', 'Canceled'],
+                    datasets: [{
+                        data: [statusData.completed, statusData.upcoming, statusData.canceled],
+                        backgroundColor: [
+                            analyticsConfig.colors.success,
+                            analyticsConfig.colors.primary,
+                            analyticsConfig.colors.danger
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize Hours Chart
+        function initializeHoursChart() {
+            const ctx = document.getElementById('hoursChart').getContext('2d');
+            const hourlyData = dashboardData.analytics.appointments.hourlyDistribution;
+            
+            analyticsConfig.charts.hours = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => {
+                        const hour = i === 0 ? 12 : i > 12 ? i - 12 : i;
+                        const ampm = i < 12 ? 'AM' : 'PM';
+                        return `${hour}${ampm}`;
+                    }),
+                    datasets: [{
+                        label: 'Appointments',
+                        data: hourlyData,
+                        backgroundColor: analyticsConfig.colors.primary + '80',
+                        borderColor: analyticsConfig.colors.primary,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Utility Functions
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', {
@@ -735,7 +983,7 @@
             return `${Math.floor(diffInSeconds / 86400)}d ago`;
         }
 
-        // Loading and error states
+        // Loading and Error States
         function showLoadingState() {
             const mainContent = document.querySelector('main');
             if (mainContent) {
@@ -743,15 +991,11 @@
                     <div class="flex items-center justify-center h-64">
                         <div class="text-center">
                             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-                            <span class="text-gray-600">Loading dashboard...</span>
+                            <span class="text-gray-600">Loading analytics dashboard...</span>
                         </div>
                     </div>
                 `;
             }
-        }
-
-        function hideLoadingState() {
-            // Loading state will be replaced by actual content
         }
 
         function showErrorState() {
@@ -761,7 +1005,7 @@
                     <div class="text-center py-12">
                         <span class="material-icons text-gray-300 text-6xl mb-4">error_outline</span>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">Unable to load dashboard</h3>
-                        <p class="text-gray-500 mb-4">There was an error loading your appointment data.</p>
+                        <p class="text-gray-500 mb-4">There was an error loading your analytics data.</p>
                         <button onclick="location.reload()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
                             Try Again
                         </button>
@@ -770,56 +1014,30 @@
             }
         }
 
-        // Refresh functions - updated to be async
+        // Refresh Dashboard
         async function refreshDashboard() {
             try {
                 showLoadingState();
                 await fetchAllData();
-                await loadDashboardData();
+                await loadAndProcessData();
+                renderDashboard();
+                
+                // Destroy existing charts before recreating
+                Object.values(analyticsConfig.charts).forEach(chart => {
+                    if (chart && typeof chart.destroy === 'function') {
+                        chart.destroy();
+                    }
+                });
+                analyticsConfig.charts = {};
+                
+                initializeCharts();
             } catch (error) {
                 console.error("Error refreshing dashboard:", error);
                 showErrorState();
             }
         }
 
-        async function refreshAppointmentTypes() {
-            try {
-                await fetchAndStoreAppointmentTypes();
-                dashboardData.appointmentTypes = JSON.parse(localStorage.getItem('appointmentTypes') || '[]');
-                displayAppointmentTypes(dashboardData.appointmentTypes);
-                updateDashboardStats();
-            } catch (error) {
-                console.error("Error refreshing appointment types:", error);
-            }
-        }
-
-        async function refreshAppointments() {
-            try {
-                await fetchAndStoreAppointments();
-                dashboardData.upcomingAppointments = JSON.parse(localStorage.getItem('upcomingAppointments') || '[]');
-                dashboardData.pastAppointments = JSON.parse(localStorage.getItem('pastAppointments') || '[]');
-                displayUpcomingAppointments(dashboardData.upcomingAppointments);
-                displayPastAppointments(dashboardData.pastAppointments);
-                updateDashboardStats();
-            } catch (error) {
-                console.error("Error refreshing appointments:", error);
-            }
-        }
-
-        // View all functions
-        function viewAllAppointmentTypes() {
-            window.location.href = 'appointment_types.html';
-        }
-
-        function viewAllUpcoming() {
-            window.location.href = 'appointments.html?type=upcoming';
-        }
-
-        function viewAllPast() {
-            window.location.href = 'appointments.html?type=past';
-        }
-
-        // Additional fetch functions for API calls
+        // API Fetch Functions
         function fetchAndStoreAppointmentTypes() {
             const requestData = {
                 crmAPIRequest: { 
@@ -975,96 +1193,157 @@
                 });
         }
 
+        // Export Functions
+        function exportDashboardReport() {
+            const reportData = {
+                generatedOn: new Date().toISOString(),
+                businessName: dashboardData.userData.name,
+                period: 'All Time',
+                overview: dashboardData.analytics.overview,
+                topServices: dashboardData.analytics.services.popular.slice(0, 10),
+                topClients: dashboardData.analytics.clients.topClients.slice(0, 10),
+                revenueAnalytics: dashboardData.analytics.revenue
+            };
+
+            const dataStr = JSON.stringify(reportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `dashboard-report-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Quick Action Functions
+        function viewAllAppointmentTypes() {
+            window.location.href = 'appointment_types.html';
+        }
+
+        function viewAllUpcoming() {
+            window.location.href = 'appointments.html?type=upcoming';
+        }
+
+        function viewAllPast() {
+            window.location.href = 'appointments.html?type=past';
+        }
+
         // Mobile responsive enhancements
         function adjustMobileLayout() {
             const isMobile = window.innerWidth < 1024;
             
             if (isMobile) {
+                // Adjust chart containers for mobile
+                document.querySelectorAll('.chart-container').forEach(container => {
+                    container.style.height = '250px';
+                });
+                
                 // Adjust grid layouts for mobile
-                const statsGrid = document.getElementById('statsContainer');
-                if (statsGrid) {
-                    statsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6';
-                }
-                
-                const mainGrid = document.querySelector('.grid.lg\\:grid-cols-3');
-                if (mainGrid) {
-                    mainGrid.className = 'grid grid-cols-1 gap-4 mb-6';
-                }
-                
-                const servicesGrid = document.querySelector('.grid.lg\\:grid-cols-2:last-child');
-                if (servicesGrid) {
-                    servicesGrid.className = 'grid grid-cols-1 gap-4';
+                const keyMetrics = document.getElementById('keyMetrics');
+                if (keyMetrics) {
+                    keyMetrics.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
                 }
             }
         }
 
-        // Call on window resize
+        // Event Listeners
         window.addEventListener('resize', adjustMobileLayout);
         window.addEventListener('load', adjustMobileLayout);
+
+        // Chart period change handler
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'revenueChartPeriod') {
+                updateRevenueChart(e.target.value);
+            }
+        });
+
+        function updateRevenueChart(period) {
+            if (analyticsConfig.charts.revenue) {
+                analyticsConfig.charts.revenue.destroy();
+            }
+            initializeRevenueChart();
+        }
     </script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+<body class="bg-gray-50 font-sans text-gray-800 antialiased min-h-screen">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
+        <!-- Enhanced Sidebar -->
         <div class="hidden lg:flex lg:flex-shrink-0">
-            <div class="flex flex-col w-64 bg-gradient-to-br from-primary-800 via-primary-900 to-primary-900 shadow-xl">
-                <div class="flex items-center justify-center h-16 px-6 bg-primary-900/80 backdrop-blur-sm border-b border-primary-700/50">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center">
-                            <span class="material-icons text-white text-lg">spa</span>
+            <div class="flex flex-col w-64 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-2xl">
+                <div class="flex items-center justify-center h-16 px-6 bg-gray-900/80 backdrop-blur-sm border-b border-gray-700/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+                            <span class="material-icons text-white text-xl">spa</span>
                         </div>
-                        <h2 class="text-xl font-bold text-white tracking-tight business-name">Acuity</h2>
+                        <div>
+                            <h2 class="text-lg font-bold text-white tracking-tight">Bio Revive</h2>
+                            <p class="text-xs text-gray-400">by SkinEnvy</p>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
                     <div class="px-4">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-primary-100/70 mb-3">Main Menu</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Analytics</h3>
                     </div>
                     <nav class="mt-1 flex-1 px-2 space-y-1">
-                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg bg-white/10 text-white border-l-4 border-primary-300 transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-200">dashboard</span>
-                            Dashboard
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg border-l-4 border-primary-300 transition-all duration-200">
+                            <span class="material-icons mr-3 text-white">dashboard</span>
+                            Analytics Dashboard
                         </a>
-                        <a href="appointments.html" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">event</span>
+                        <a href="appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">event</span>
                             Appointments
                         </a>
-                        <a href="appointment_types.html" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">spa</span>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">spa</span>
                             Services
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">people</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">people</span>
                             Clients
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">analytics</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">analytics</span>
                             Reports
                         </a>
                     </nav>
 
                     <div class="px-4 mt-8">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-primary-100/70 mb-3">Settings</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Settings</h3>
                     </div>
                     <nav class="mt-1 flex-1 px-2 space-y-1">
-                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">person</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">person</span>
                             Profile
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">settings</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">settings</span>
                             Settings
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
-                            <span class="material-icons mr-3 text-primary-300/70">help</span>
-                            Help
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">help</span>
+                            Help & Support
                         </a>
                     </nav>
                 </div>
-                <div class="p-4 bg-primary-900/70 backdrop-blur-sm border-t border-primary-700/50">
-                    <div class="user-profile">
-                        <!-- User profile will be populated dynamically -->
+                
+                <!-- User Profile Section -->
+                <div class="p-4 bg-gray-900/70 backdrop-blur-sm border-t border-gray-700/50">
+                    <div id="userProfile" class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold">
+                            PK
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-white truncate">Prem Anand K</p>
+                            <div class="flex items-center mt-1">
+                                <div class="h-2 w-2 rounded-full bg-green-400 mr-1.5"></div>
+                                <p class="text-xs text-gray-400">Online</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1072,7 +1351,7 @@
 
         <!-- Main Content -->
         <div class="flex flex-col flex-1 overflow-hidden">
-            <!-- Top Navigation -->
+            <!-- Enhanced Top Navigation -->
             <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 shadow-sm sticky top-0 z-10">
                 <button class="p-2 rounded-md text-gray-500 lg:hidden hover:bg-gray-100">
                     <span class="material-icons">menu</span>
@@ -1084,20 +1363,23 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="material-icons text-gray-400">search</span>
                             </div>
-                            <input type="text" placeholder="Search appointments, clients..." class="block w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-150">
+                            <input type="text" placeholder="Search analytics, clients, services..." class="block w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-150">
                         </div>
                     </div>
                 </div>
                 
-                <div class="ml-4 flex items-center space-x-4">
-                    <button class="p-1.5 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 relative">
+                <div class="ml-4 flex items-center space-x-3">
+                    <button class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 relative transition-colors">
                         <span class="material-icons">notifications</span>
-                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse-ring"></span>
+                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
                     </button>
-                    <button onclick="refreshDashboard()" class="p-1.5 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100" title="Refresh Dashboard">
+                    <button onclick="refreshDashboard()" class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors" title="Refresh Dashboard">
                         <span class="material-icons">refresh</span>
                     </button>
-                    <button class="p-1.5 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                    <button onclick="exportDashboardReport()" class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors" title="Export Report">
+                        <span class="material-icons">download</span>
+                    </button>
+                    <button class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors">
                         <span class="material-icons">help_outline</span>
                     </button>
                 </div>
@@ -1105,135 +1387,17 @@
 
             <!-- Page Content -->
             <main class="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-gray-50">
-                <div class="max-w-7xl mx-auto">
-                    <!-- Header -->
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-                            <p class="mt-1 text-gray-600">Welcome back! Here's what's happening with your business today.</p>
-                        </div>
-                        <div class="mt-4 md:mt-0 flex space-x-3">
-                            <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
-                                <span class="material-icons text-sm mr-2">add</span>
-                                New Appointment
-                            </button>
-                            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
-                                <span class="material-icons text-sm mr-2">calendar_today</span>
-                                View Calendar
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Stats Overview -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsContainer">
-                        <!-- Stats will be dynamically inserted here -->
-                    </div>
-                    
-                    <!-- Main Content Grid -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                        <!-- Upcoming Appointments -->
-                        <div class="lg:col-span-2">
-                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                    <div class="flex items-center space-x-2">
-                                        <h3 class="text-lg font-semibold text-gray-800">Upcoming Appointments</h3>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            Next 5
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
-                                            <span class="material-icons">refresh</span>
-                                        </button>
-                                        <button onclick="viewAllUpcoming()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                                            View All
-                                            <span class="material-icons text-base ml-1">arrow_forward</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div id="upcomingAppointmentsList">
-                                    <!-- Upcoming appointments will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Activity -->
-                        <div class="lg:col-span-1">
-                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                    <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
-                                </div>
-                                
-                                <div id="recentActivityList" class="divide-y divide-gray-100">
-                                    <!-- Recent activity will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Services and Past Appointments -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Appointment Types/Services -->
-                        <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                <div id="appointmentTypesHeader">
-                                    <div class="flex items-center space-x-2">
-                                        <h3 class="text-lg font-semibold text-gray-800">Services</h3>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="refreshAppointmentTypes()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
-                                        <span class="material-icons">refresh</span>
-                                    </button>
-                                    <button onclick="viewAllAppointmentTypes()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                                        View All
-                                        <span class="material-icons text-base ml-1">arrow_forward</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div id="appointmentTypesList">
-                                <!-- Appointment types will be loaded here -->
-                            </div>
-                        </div>
-
-                        <!-- Past Appointments -->
-                        <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                                <div class="flex items-center space-x-2">
-                                    <h3 class="text-lg font-semibold text-gray-800">Recent History</h3>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Recent 5
-                                    </span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
-                                        <span class="material-icons">refresh</span>
-                                    </button>
-                                    <button onclick="viewAllPast()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
-                                        View All
-                                        <span class="material-icons text-base ml-1">arrow_forward</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div id="pastAppointmentsList">
-                                <!-- Past appointments will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Content will be dynamically inserted here -->
             </main>
         </div>
     </div>
 
-    <!-- Mobile Navigation (Hidden on Desktop) -->
+    <!-- Mobile Navigation -->
     <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50">
         <div class="flex justify-around items-center">
             <a href="#" class="flex flex-col items-center p-2 text-primary-600">
                 <span class="material-icons text-xl">dashboard</span>
-                <span class="text-xs mt-1">Dashboard</span>
+                <span class="text-xs mt-1">Analytics</span>
             </a>
             <a href="appointments.html" class="flex flex-col items-center p-2 text-gray-500">
                 <span class="material-icons text-xl">event</span>
@@ -1250,26 +1414,31 @@
         </div>
     </div>
 
-    <!-- Quick Actions Floating Button -->
+    <!-- Enhanced Quick Actions Floating Button -->
     <div class="fixed bottom-20 lg:bottom-6 right-6 z-40">
         <div class="relative">
-            <button id="quickActionsBtn" class="w-14 h-14 bg-primary-600 hover:bg-primary-700 rounded-full shadow-lg flex items-center justify-center text-white transition-all duration-200 hover:shadow-xl">
+            <button id="quickActionsBtn" class="w-14 h-14 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 rounded-full shadow-xl flex items-center justify-center text-white transition-all duration-200 hover:shadow-2xl hover:scale-105">
                 <span class="material-icons text-2xl">add</span>
             </button>
             
             <!-- Quick Actions Menu -->
-            <div id="quickActionsMenu" class="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48 hidden">
-                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+            <div id="quickActionsMenu" class="absolute bottom-16 right-0 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-48 hidden">
+                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                     <span class="material-icons text-sm mr-3 text-primary-600">event</span>
                     New Appointment
                 </a>
-                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                     <span class="material-icons text-sm mr-3 text-emerald-600">spa</span>
                     New Service
                 </a>
-                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                     <span class="material-icons text-sm mr-3 text-blue-600">person_add</span>
                     New Client
+                </a>
+                <div class="border-t border-gray-100 my-1"></div>
+                <a href="#" onclick="exportDashboardReport()" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <span class="material-icons text-sm mr-3 text-purple-600">analytics</span>
+                    Export Analytics
                 </a>
             </div>
         </div>
