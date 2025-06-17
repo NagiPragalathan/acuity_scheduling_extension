@@ -1,0 +1,23 @@
+<html>
+	<head>
+	<script type="text/javascript" src="../js/lib/jquery-3.3.1.min.js"></script>
+	<script src="../js/lib/ZohoEmbededAppSDK.min.js"></script>
+	<script src="../js/custom.js"></script>
+	</head>
+	<body>
+	<script type="text/javascript">
+        $(document).ready(function() {
+            var fieldValues;
+            ZOHO.embeddedApp.on("PageLoad", function(data) {
+                fieldValues = data;
+                getFieldValueData(fieldValues);
+                //console.log(data);
+            })
+
+            ZOHO.embeddedApp.init()
+                .then(loadPage);
+        });
+    </script>
+	<div id="error"> </div>
+	</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- zoho sdk  -->
+    <script
+      type="text/javascript"
+      src="../js/lib/ZohoEmbededAppSDK.min.js"
+    ></script>
+    <!-- jquery  -->
+    <script type="text/javascript" src="../js/lib/jquery-3.3.1.min.js"></script>
+    <!-- handler  -->
+    <script type="text/javascript" src="../js/handlerNew.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", () => {
+        // Utils.showLoading();
+        ZOHO.embeddedApp.init().then(loadSettings);
+      });
+    </script>
+    <div class="flex flex-col p-8 mx-8">
+      <!-- Top Row Part  -->
+      <div class="flex flex-row justify-between">
+        <!-- Setting with Dropdown  -->
+        <div class="flex flex-col w-full basis-1/3 space-y-8">
+          <!-- title  -->
+          <div class="text-2xl font-bold text-orange-500">Settings</div>
+          <!-- Leads or Contacts Option  -->
+          <div class="flex flex-row justify-between items-center">
+            <!-- title  -->
+            <div class="text-lg font-medium">Add New Clients to</div>
+            <!-- select dropdown  -->
+            <div class="border-2 shadow-lg">
+              <select
+                onchange="handleModuleChange()"
+                name="leadsOrContactsSelect"
+                class="text-lg px-4 font-medium text-orange-500 w-48"
+                id="LeadsOrContacts"
+              >
+                <option value="Leads">Leads</option>
+                <option value="Contacts">Contacts</option>
+              </select>
+            </div>
+          </div>
+          <!-- Meetings or Tasks Option  -->
+          <div class="flex flex-row justify-between items-center">
+            <!-- title  -->
+            <div class="text-lg font-medium">Add Acuity Appointments to</div>
+            <!-- select dropdown  -->
+            <div class="border-2 shadow-lg">
+              <select
+                onchange="handleActivityChange()"
+                name="leadsOrContactsSelect"
+                class="text-lg px-4 font-medium text-orange-500 w-48"
+                id="TasksOrEvents"
+              >
+                <option value="Events">Meetings</option>
+                <option value="Tasks">Tasks</option>
+              </select>
+            </div>
+          </div>
+          <!-- Phone or Mobile  -->
+          <div class="flex flex-row justify-between items-center">
+            <!-- title  -->
+            <div class="text-lg font-medium">Choose Default Contact Number</div>
+            <!-- select dropdown  -->
+            <div class="border-2 shadow-lg">
+              <select
+                name="leadsOrContactsSelect"
+                class="text-lg px-4 font-medium text-orange-500 w-48"
+                id="PhoneOrMobile"
+                onchange="handleContactUpdate()"
+              >
+                <option value="Phone">Phone</option>
+                <option value="Mobile">Mobile</option>
+              </select>
+            </div>
+          </div>
+          <!-- Notifications  -->
+          <div class="flex flex-row justify-between items-center">
+            <!-- title  -->
+            <div class="text-lg font-medium">
+              New Appointments Notifications
+            </div>
+            <!-- select dropdown  -->
+            <div class="border-2 shadow-lg">
+              <select
+                name="leadsOrContactsSelect"
+                class="text-lg px-4 font-medium text-orange-500 w-48"
+                id="Notifications"
+                onchange="handleNotificationChange()"
+              >
+                <option value="Off">Off</option>
+                <option value="On">On</option>
+              </select>
+            </div>
+          </div>
+          <!-- Private Calendar in Email  -->
+          <div class="flex flex-row justify-between items-center">
+            <!-- title  -->
+            <div class="text-lg font-medium">
+              Send Private Calendars in Email
+            </div>
+            <!-- select dropdown  -->
+            <div class="border-2 shadow-lg">
+              <select
+                name="leadsOrContactsSelect"
+                class="text-lg px-4 font-medium text-orange-500 w-48"
+                id="PrivateCalendar"
+                onchange="handlePrivateCalendarChange()"
+              >
+                <option value="Off">Off</option>
+                <option value="On">On</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Youtube Video  -->
+        <div
+          class="flex flex-col justify-center-items-center basis-1/2 space-y-8"
+        >
+          <!-- title  -->
+          <div class="text-2xl font-bold text-orange-500">Tutorial Video</div>
+
+          <iframe
+            width="500"
+            height="300"
+            src="https://www.youtube.com/embed/7NCe6vErdZk"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+      <!-- Bottom Help Card  -->
+      <div
+        class="m-8 flex flex-col bg-gray-100 p-4 space-y-4 rounded-md shadow-md"
+      >
+        <div class="text-3xl font-bold text-orange-500">Help Card</div>
+        <div class="font-bold text-orange-500">
+          Welcome to the Acuity Scheduling Extension by Xtracut Systems!
+        </div>
+        <div>
+          Our extension is designed to provide you with a seamless experience
+          for managing your appointments and scheduling. We've incorporated two
+          dropdown menus that offer you flexibility and control over your
+          workflow.
+        </div>
+        <div class="font-semibold">
+          The first dropdown menu let's you to decide whether new person
+          contacts should be added to Leads or Contacts.
+        </div>
+        <div class="font-semibold">
+          The second dropdown menu let's you to decide whether new appointments
+          should be added to Tasks or Meetings.
+        </div>
+        <div class="font-semibold">
+          The third dropdown menu let's you to decide whether new contact phone
+          numbers should be added as Phone or Mobile.
+        </div>
+        <div class="font-semibold">
+          The fourth dropdown menu let's you to turn the Notifications On or
+          Off.
+        </div>
+        <div class="font-semibold">
+          The fourth dropdown menu let's you to decide wheather to send Private
+          Calendars in Email.
+        </div>
+        <div>
+          For any support or assistance you may need, we're here to help. Reach
+          out to our support team by email at
+          <a href="mailto:support@extracut.com" class="text-orange-500 font-bold"
+            >support@extracut.com</a
+          >, and we'll promptly address your inquiries.
+        </div>
+        <div>
+          Thank you for using the Acuity Scheduling Extension by Xtracut
+          Systems. We're dedicated to enhancing your scheduling capabilities and
+          making your experience seamless and efficient.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

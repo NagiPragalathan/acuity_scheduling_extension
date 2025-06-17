@@ -1,0 +1,125 @@
+<html>
+<title>Acuity Scheduling Configuration</title>
+<head>
+  <script type="text/javascript" src="../js/lib/ZohoEmbededAppSDK.min.js"></script>
+  <script type="text/javascript" src="../js/lib/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="../js/handler.js"></script>
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+
+</head>
+<body>
+  <script type="text/javascript">
+    $(document).ready(function(){
+        Utils.showLoading();
+        ZOHO.embeddedApp.init().then(
+          loadSettings
+        );
+    });
+  </script>
+
+</div>
+  <div id="contentDiv" style=" overflow : auto;" class="mappingDiv">
+  
+  <table>
+    <tr>
+      <td>
+  <label>Add new Acuity Clients to<label>
+  </td>
+  <td>
+    <div class="newSelect">
+    <select id="modules" name="field4" onchange="clientModule()">
+        <option value="Contacts">Contacts</option>
+        <option value="Leads">Leads</option>
+      </select>
+    </div>
+    </td>
+    <td width="15%">
+    </td>
+    <td rowspan="5">
+        <iframe width="500" height="300" src="https://www.youtube.com/embed/7NCe6vErdZk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </td>
+  </tr>
+  <tr>
+      <td>
+        <label>Add Acuity Appointments to<label>
+  </td>
+  <td>
+    <div class="newSelect">
+    <select id="activities" name="field4" onchange="appointModule()">
+        <option value="Events">Events</option>
+        <option value="Tasks">Tasks</option>
+      </select>
+    </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label>Create Deal<label>
+    </td>
+    <td>
+      <label class="switch" align="right">
+        <input id="createdeal" type="checkbox" onchange="createdeal()">
+        <span class="slider round"></span>
+        </label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label>New Appointment Notifications<label>
+    </td>
+    <td>
+      <label class="switch" align="right">
+        <input id="salessignals" type="checkbox" onchange="salessignal()">
+        <span class="slider round"></span>
+        </label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label>Private Calendars in Email<label>
+    </td>
+    <td>
+      <label class="switch" align="right">
+        <input id="privatecalendar" type="checkbox" onchange="privateCalendar()">
+        <span class="slider round"></span>
+        </label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label>12Hr Clock Format<label>
+    </td>
+    <td>
+      <label class="switch" align="right">
+        <input id="timeformat" type="checkbox" onchange="timeFormat()">
+        <span class="slider round"></span>
+        </label>
+    </td>
+  </tr>
+  <tr>
+      <td>
+  <label>Choose default contact number<label>
+  </td>
+  <td>
+    <div class="newSelect">
+    <select id="phone" name="field4" onchange="updatePhone()">
+        <option value="Phone">Phone</option>
+        <option value="Home_Phone">Home_Phone</option>
+        <option value="Mobile">Mobile</option>
+      </select>
+    </div>
+    </td>
+  </tr>
+    </table>
+</div>
+  </form>
+  </script>
+  <div class="helpcard" syle="padding:20px">
+  <h2><img src="../images/help-tooltip-icon.png" width="50" height="50" border="0">  Help Card</h2>
+  <p>You can choose the module into which the new Acuity clients data should be added in Zoho CRM by selecting <b>Contacts</b> OR <b>Leads</b> in the drop-down near <b>'Add new Calendly Clients to'</b>. First Name, Last Name, E-mail address and Phone number will be added to the record from the data received from Acuity Scheduling.</p>
+  <p>Click  on the drop-down near <b>'Add Appointments to'</b> and select <b>Events</b> OR <b>Tasks</b> into which Acuity's appointments should be added in Zoho CRM. Events will be created with the appointment start time and end time in the 'From' and 'To' fields respectively. <mark>For Tasks, only start time will be added in the 'Due Date' field</mark>.</p>
+  <p><b>Enable</b> OR <b>Disable</b> sales signal notifications (<img src="../images/bell.png" width="20" height="20" border="0">) for new appointments by clicking on the switch (<img src="../images/switch.png" width="30" height="20" border="0">) next to <b>'New Appointment Notifications'.</b></p>
+  <p><button onclick="fixIssues()">Click Here!</button> to fix synchronizing issues. For Queries/Demo write us to <a href="mailto:support@extracut.com">support@extracut.com</a>.</p>
+</div>
+</body>
+</html>

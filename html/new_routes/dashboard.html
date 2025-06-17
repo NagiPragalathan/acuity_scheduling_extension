@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Scheduling Data</title>
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        pre {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .debug-info {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .error {
+            color: #dc3545;
+            background: #fff5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        // Debug logging function
+        function logDebug(message, data = null) {
+            console.log(`[DEBUG] ${message}`, data ? data : '');
+            const debugContainer = document.getElementById('debugContainer');
+            if (debugContainer) {
+                const debugEntry = document.createElement('div');
+                debugEntry.className = 'debug-info';
+                debugEntry.innerHTML = `<strong>${message}</strong>${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}`;
+                debugContainer.appendChild(debugEntry);
+            }
+        }
+
+        // Error handling function
+        function handleError(error, context) {
+            console.error(`[ERROR] ${context}:`, error);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = `Error in ${context}: ${error.message}`;
+            document.body.appendChild(errorDiv);
+            
+            // Log error to external service
+            const payload = {
+                log_msg: `Error in ${context}: ${error.message}`,
+                StatusCode: "500",
+                user_mailid: "test@gmail.com",
+                Plugin: "api_testing",
+                function: "api_handling"
+            };
+            
+            fetch('https://xtracut-log-management-system.vercel.app/api/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(payload)
+            }).catch(e => console.error('Failed to log error:', e));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            logDebug("DOM Content Loaded - Initializing Zoho SDK");
+            
+            if (typeof ZOHO === "undefined") {
+                handleError(new Error("ZOHO SDK not loaded"), "SDK Initialization");
+                return;
+            }
+            
+            ZOHO.embeddedApp.init().then(function() {
+                logDebug("ZOHO SDK initialized successfully");
+                fetchAppointmentTypes();
+                fetchUpcomingAppointments();
+            }).catch(function(error) {
+                handleError(error, "SDK Initialization");
+            });
+        });
+        
+        function fetchAppointmentTypes() {
+            logDebug("Fetching appointment types");
+            
+            const requestData = {
+                crmAPIRequest: { type: 1 }
+            };
+            
+            logDebug("Request data for appointment types", requestData);
+            
+            ZOHO.CRM.FUNCTIONS.execute("acuityscheduling1__apihandler", requestData)
+                .then(function(data) {
+                    logDebug("Raw response from Zoho function for appointment types", data);
+                    
+                    try {
+                        if (data.code === "INVALID_DATA" || data.code === "ERROR") {
+                            throw new Error(data.message || "Error from Zoho function");
+                        }
+                        
+                        if (!data.details || !data.details.output) {
+                            throw new Error("Invalid response structure from Zoho function");
+                        }
+                        
+                        const outputData = JSON.parse(data.details.output);
+                        logDebug("Parsed output data for appointment types", outputData);
+                        
+                        if (outputData.status_code !== 200) {
+                            throw new Error(`API returned status code ${outputData.status_code}`);
+                        }
+                        
+                        if (!outputData.response) {
+                            throw new Error("No response data found");
+                        }
+                        
+                        const appointmentTypes = JSON.parse(outputData.response);
+                        logDebug("Final appointment types data", appointmentTypes);
+                        
+                        const container = document.createElement('div');
+                        container.className = 'section';
+                        container.innerHTML = `
+                            <h2>Appointment Types (Type: 1)</h2>
+                            <pre>${JSON.stringify(appointmentTypes, null, 2)}</pre>
+                        `;
+                        document.body.appendChild(container);
+                        
+                    } catch (error) {
+                        handleError(error, "Processing Appointment Types");
+                    }
+                })
+                .catch(function(error) {
+                    handleError(error, "Fetching Appointment Types");
+                });
+        }
+        
+        function fetchUpcomingAppointments() {
+            logDebug("Fetching upcoming appointments");
+            
+            const requestData = {
+                crmAPIRequest: { type: 2 }
+            };
+            
+            logDebug("Request data for appointments", requestData);
+            
+            ZOHO.CRM.FUNCTIONS.execute("acuityscheduling1__apihandler", requestData)
+                .then(function(data) {
+                    logDebug("Raw response from Zoho function for appointments", data);
+                    
+                    try {
+                        if (data.code === "INVALID_DATA" || data.code === "ERROR") {
+                            throw new Error(data.message || "Error from Zoho function");
+                        }
+                        
+                        if (!data.details || !data.details.output) {
+                            throw new Error("Invalid response structure from Zoho function");
+                        }
+                        
+                        const outputData = JSON.parse(data.details.output);
+                        logDebug("Parsed output data for appointments", outputData);
+                        
+                        if (outputData.status_code !== 200) {
+                            throw new Error(`API returned status code ${outputData.status_code}`);
+                        }
+                        
+                        if (!outputData.response) {
+                            throw new Error("No response data found");
+                        }
+                        
+                        const appointments = JSON.parse(outputData.response);
+                        logDebug("Final appointments data", appointments);
+                        
+                        const container = document.createElement('div');
+                        container.className = 'section';
+                        container.innerHTML = `
+                            <h2>Upcoming Appointments (Type: 2)</h2>
+                            <pre>${JSON.stringify(appointments, null, 2)}</pre>
+                        `;
+                        document.body.appendChild(container);
+                        
+                    } catch (error) {
+                        handleError(error, "Processing Appointments");
+                    }
+                })
+                .catch(function(error) {
+                    handleError(error, "Fetching Appointments");
+                });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Acuity Scheduling Data</h1>
+        <div id="debugContainer"></div>
+    </div>
+</body>
+</html>

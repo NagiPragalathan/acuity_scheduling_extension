@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Scheduling Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef9ff',
+                            100: '#dcf2ff',
+                            200: '#b3e8ff',
+                            300: '#83d9ff',
+                            400: '#48c2ff',
+                            500: '#1aa1ff',
+                            600: '#0080f5',
+                            700: '#0067d9',
+                            800: '#0055b0',
+                            900: '#064b8d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        card: '0 2px 12px -2px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 4px 16px -2px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            50% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(0.8); opacity: 0.8; }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .service-color-indicator {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+    <script>
+        // Global variables for data
+        let dashboardData = {
+            appointmentTypes: [],
+            upcomingAppointments: [],
+            pastAppointments: [],
+            userData: {}
+        };
+
+        // Initialize Dashboard
+        document.addEventListener("DOMContentLoaded", function() {
+            ZOHO.embeddedApp.init()
+                .then(function() {
+                    console.log("ZOHO SDK initialized successfully");
+                    loadDashboardData();
+                })
+                .catch(function(error) {
+                    console.error("Error initializing dashboard:", error);
+                    showErrorState();
+                });
+        });
+
+        // Load all dashboard data
+        async function loadDashboardData() {
+            try {
+                showLoadingState();
+                
+                // Check if data exists in localStorage
+                const storedAppointmentTypes = localStorage.getItem('appointmentTypes');
+                const storedUpcomingAppointments = localStorage.getItem('upcomingAppointments');
+                const storedPastAppointments = localStorage.getItem('pastAppointments');
+                const storedUserData = localStorage.getItem('userData');
+
+                // If no data in localStorage, fetch from API
+                if (!storedAppointmentTypes || !storedUpcomingAppointments || !storedPastAppointments || !storedUserData) {
+                    console.log("No data in localStorage, fetching from API...");
+                    await fetchAllData();
+                }
+
+                // Parse data from localStorage (now it should exist)
+                dashboardData.appointmentTypes = JSON.parse(localStorage.getItem('appointmentTypes') || '[]');
+                dashboardData.upcomingAppointments = JSON.parse(localStorage.getItem('upcomingAppointments') || '[]');
+                dashboardData.pastAppointments = JSON.parse(localStorage.getItem('pastAppointments') || '[]');
+                dashboardData.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+                // Restore the main dashboard HTML structure
+                restoreDashboardStructure();
+                
+                // Display all sections
+                displayUserProfile(dashboardData.userData);
+                updateDashboardStats();
+                displayAppointmentTypes(dashboardData.appointmentTypes);
+                displayUpcomingAppointments(dashboardData.upcomingAppointments);
+                displayPastAppointments(dashboardData.pastAppointments);
+                displayRecentActivity();
+                
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+                showErrorState();
+            }
+        }
+
+        // Fetch all data from API
+        async function fetchAllData() {
+            try {
+                console.log("Fetching all data from API...");
+                
+                // Fetch all data in parallel
+                const [appointmentTypesResult, appointmentsResult, userDataResult] = await Promise.all([
+                    fetchAndStoreAppointmentTypes().catch(e => {
+                        console.error("Failed to fetch appointment types:", e);
+                        return [];
+                    }),
+                    fetchAndStoreAppointments().catch(e => {
+                        console.error("Failed to fetch appointments:", e);
+                        return { pastAppointments: [], upcomingAppointments: [] };
+                    }),
+                    fetchAndStoreUserData().catch(e => {
+                        console.error("Failed to fetch user data:", e);
+                        return {};
+                    })
+                ]);
+
+                console.log("All data fetched successfully");
+                return true;
+            } catch (error) {
+                console.error("Error in fetchAllData:", error);
+                throw error;
+            }
+        }
+
+        // Restore the main dashboard HTML structure
+        function restoreDashboardStructure() {
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div class="max-w-7xl mx-auto">
+                        <!-- Header -->
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+                                <p class="mt-1 text-gray-600">Welcome back! Here's what's happening with your business today.</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 flex space-x-3">
+                                <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                                    <span class="material-icons text-sm mr-2">add</span>
+                                    New Appointment
+                                </button>
+                                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                                    <span class="material-icons text-sm mr-2">calendar_today</span>
+                                    View Calendar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Overview -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsContainer">
+                            <!-- Stats will be dynamically inserted here -->
+                        </div>
+                        
+                        <!-- Main Content Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                            <!-- Upcoming Appointments -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                        <div class="flex items-center space-x-2">
+                                            <h3 class="text-lg font-semibold text-gray-800">Upcoming Appointments</h3>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                Next 5
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
+                                                <span class="material-icons">refresh</span>
+                                            </button>
+                                            <button onclick="viewAllUpcoming()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                                View All
+                                                <span class="material-icons text-base ml-1">arrow_forward</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="upcomingAppointmentsList">
+                                        <!-- Upcoming appointments will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                        <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
+                                    </div>
+                                    
+                                    <div id="recentActivityList" class="divide-y divide-gray-100">
+                                        <!-- Recent activity will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Services and Past Appointments -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Appointment Types/Services -->
+                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                    <div id="appointmentTypesHeader">
+                                        <div class="flex items-center space-x-2">
+                                            <h3 class="text-lg font-semibold text-gray-800">Services</h3>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="refreshAppointmentTypes()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
+                                            <span class="material-icons">refresh</span>
+                                        </button>
+                                        <button onclick="viewAllAppointmentTypes()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                            View All
+                                            <span class="material-icons text-base ml-1">arrow_forward</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="appointmentTypesList">
+                                    <!-- Appointment types will be loaded here -->
+                                </div>
+                            </div>
+
+                            <!-- Past Appointments -->
+                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="text-lg font-semibold text-gray-800">Recent History</h3>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            Recent 5
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
+                                            <span class="material-icons">refresh</span>
+                                        </button>
+                                        <button onclick="viewAllPast()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                            View All
+                                            <span class="material-icons text-base ml-1">arrow_forward</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="pastAppointmentsList">
+                                    <!-- Past appointments will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Calculate dashboard statistics
+        function calculateDashboardStats() {
+            const now = new Date();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+            // Total appointments
+            const totalAppointments = dashboardData.upcomingAppointments.length + dashboardData.pastAppointments.length;
+            
+            // Active services
+            const activeServices = dashboardData.appointmentTypes.filter(type => type.active).length;
+            
+            // Upcoming today
+            const upcomingToday = dashboardData.upcomingAppointments.filter(apt => {
+                const aptDate = new Date(apt.datetime);
+                return aptDate.toDateString() === today.toDateString();
+            }).length;
+
+            // Completed this week
+            const completedThisWeek = dashboardData.pastAppointments.filter(apt => {
+                const aptDate = new Date(apt.datetime);
+                return aptDate >= oneWeekAgo && !apt.canceled;
+            }).length;
+
+            // Revenue this month
+            const revenueThisMonth = dashboardData.pastAppointments
+                .filter(apt => {
+                    const aptDate = new Date(apt.datetime);
+                    return aptDate >= thisMonth && !apt.canceled;
+                })
+                .reduce((total, apt) => total + parseFloat(apt.priceSold || apt.price || 0), 0);
+
+            // Cancellation rate
+            const totalPastAppointments = dashboardData.pastAppointments.length;
+            const canceledAppointments = dashboardData.pastAppointments.filter(apt => apt.canceled).length;
+            const cancellationRate = totalPastAppointments > 0 ? (canceledAppointments / totalPastAppointments * 100).toFixed(1) : 0;
+
+            // Next appointment
+            const nextAppointment = dashboardData.upcomingAppointments
+                .filter(apt => !apt.canceled && new Date(apt.datetime) > now)
+                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))[0];
+
+            // Most popular service
+            const serviceCount = {};
+            [...dashboardData.upcomingAppointments, ...dashboardData.pastAppointments].forEach(apt => {
+                if (!apt.canceled) {
+                    serviceCount[apt.type] = (serviceCount[apt.type] || 0) + 1;
+                }
+            });
+            const mostPopularService = Object.keys(serviceCount).reduce((a, b) => 
+                serviceCount[a] > serviceCount[b] ? a : b, '');
+
+            return {
+                totalAppointments,
+                activeServices,
+                upcomingToday,
+                completedThisWeek,
+                revenueThisMonth,
+                cancellationRate,
+                nextAppointment,
+                mostPopularService
+            };
+        }
+
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            const stats = calculateDashboardStats();
+            const statsContainer = document.getElementById('statsContainer');
+            if (!statsContainer) return;
+
+            statsContainer.innerHTML = `
+                <!-- Total Appointments -->
+                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500">Total Appointments</h3>
+                            <div class="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
+                                <span class="material-icons text-xl">event_note</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <p class="text-3xl font-bold text-gray-900">${stats.totalAppointments}</p>
+                        </div>
+                        <div class="mt-3 flex items-center text-sm text-gray-500">
+                            <span class="material-icons text-gray-400 mr-1.5 text-base">trending_up</span>
+                            <span>All time appointments</span>
+                        </div>
+                    </div>
+                    <div class="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                </div>
+
+                <!-- Active Services -->
+                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500">Active Services</h3>
+                            <div class="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 transition-colors">
+                                <span class="material-icons text-xl">verified</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <p class="text-3xl font-bold text-gray-900">${stats.activeServices}</p>
+                            <span class="text-sm text-gray-500">/ ${dashboardData.appointmentTypes.length}</span>
+                        </div>
+                        <div class="mt-3 flex items-center text-sm text-gray-500">
+                            <span class="material-icons text-gray-400 mr-1.5 text-base">spa</span>
+                            <span>Available services</span>
+                        </div>
+                    </div>
+                    <div class="h-1 w-full bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+                </div>
+
+                <!-- Today's Appointments -->
+                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500">Today's Schedule</h3>
+                            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 transition-colors">
+                                <span class="material-icons text-xl">today</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <p class="text-3xl font-bold text-gray-900">${stats.upcomingToday}</p>
+                        </div>
+                        <div class="mt-3 flex items-center text-sm text-gray-500">
+                            <span class="material-icons text-gray-400 mr-1.5 text-base">schedule</span>
+                            <span>${stats.nextAppointment ? `Next: ${formatTime(stats.nextAppointment.datetime)}` : 'No appointments today'}</span>
+                        </div>
+                    </div>
+                    <div class="h-1 w-full bg-gradient-to-r from-indigo-400 to-indigo-600"></div>
+                </div>
+
+                <!-- Monthly Revenue -->
+                <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden border border-gray-100 group">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-medium text-gray-500">This Month Revenue</h3>
+                            <div class="p-2 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-100 transition-colors">
+                                <span class="material-icons text-xl">attach_money</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <p class="text-3xl font-bold text-gray-900">$${stats.revenueThisMonth.toFixed(2)}</p>
+                        </div>
+                        <div class="mt-3 flex items-center text-sm text-gray-500">
+                            <span class="material-icons text-gray-400 mr-1.5 text-base">payments</span>
+                            <span>Completed appointments</span>
+                        </div>
+                    </div>
+                    <div class="h-1 w-full bg-gradient-to-r from-purple-400 to-purple-600"></div>
+                </div>
+            `;
+        }
+
+        // Display appointment types
+        function displayAppointmentTypes(appointmentTypes) {
+            const container = document.getElementById('appointmentTypesList');
+            if (!container || !appointmentTypes.length) {
+                if (container) {
+                    container.innerHTML = '<div class="p-6 text-center text-gray-500">No appointment types found</div>';
+                }
+                return;
+            }
+
+            const activeTypes = appointmentTypes.filter(type => type.active);
+            const displayTypes = activeTypes.slice(0, 6); // Show first 6 active types
+
+            const html = displayTypes.map(type => `
+                <div class="relative p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
+                    <div class="service-color-indicator" style="background-color: ${type.color}"></div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: ${type.color}20">
+                                    <span class="material-icons text-xl" style="color: ${type.color}">spa</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-semibold text-gray-900 truncate">${type.name}</h4>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <span class="text-xs text-gray-500 flex items-center">
+                                        <span class="material-icons text-xs mr-1">schedule</span>
+                                        ${type.duration} min
+                                    </span>
+                                    <span class="text-xs text-gray-500 flex items-center">
+                                        <span class="material-icons text-xs mr-1">attach_money</span>
+                                        ${type.price > 0 ? `$${type.price}` : 'Free'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${type.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                ${type.active ? 'Active' : 'Inactive'}
+                            </span>
+                            <a href="${type.schedulingUrl}" target="_blank" class="p-1 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded transition-colors" title="Open booking page">
+                                <span class="material-icons text-sm">open_in_new</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+
+            // Update the header with counts
+            const headerElement = document.querySelector('#appointmentTypesHeader');
+            if (headerElement) {
+                headerElement.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-lg font-semibold text-gray-800">Services</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                            ${activeTypes.length} Active
+                        </span>
+                    </div>
+                `;
+            }
+        }
+
+        // Display upcoming appointments
+        function displayUpcomingAppointments(appointments) {
+            const container = document.getElementById('upcomingAppointmentsList');
+            if (!container) return;
+
+            if (!appointments.length) {
+                container.innerHTML = `
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-gray-400 text-2xl">event_available</span>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-900 mb-1">No upcoming appointments</h3>
+                        <p class="text-sm text-gray-500">New appointments will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort appointments by date and time
+            const sortedAppointments = appointments
+                .filter(apt => !apt.canceled)
+                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
+                .slice(0, 5); // Show first 5 upcoming
+
+            const html = sortedAppointments.map(appt => {
+                const appointmentDate = new Date(appt.datetime);
+                const isToday = appointmentDate.toDateString() === new Date().toDateString();
+                const isTomorrow = appointmentDate.toDateString() === new Date(Date.now() + 86400000).toDateString();
+                
+                let dateLabel = formatDate(appt.datetime);
+                if (isToday) dateLabel = 'Today';
+                else if (isTomorrow) dateLabel = 'Tomorrow';
+
+                return `
+                    <div class="p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-1">
+                                <div class="flex-shrink-0">
+                                    <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
+                                        ${appt.firstName[0]}${appt.lastName[0]}
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h5 class="text-sm font-semibold text-gray-900">${appt.firstName} ${appt.lastName}</h5>
+                                    <div class="flex items-center space-x-2 mt-1">
+                                        <span class="text-xs text-gray-500">${appt.type}</span>
+                                        ${appt.phone ? `<span class="text-xs text-gray-400">•</span><span class="text-xs text-gray-500">${appt.phone}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="flex items-center space-x-2">
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium text-gray-900">${dateLabel}</p>
+                                        <p class="text-xs text-gray-500">${appt.time} - ${appt.endTime}</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Display past appointments
+        function displayPastAppointments(appointments) {
+            const container = document.getElementById('pastAppointmentsList');
+            if (!container) return;
+
+            if (!appointments.length) {
+                container.innerHTML = `
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-gray-400 text-2xl">history</span>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-900 mb-1">No appointment history</h3>
+                        <p class="text-sm text-gray-500">Completed appointments will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by most recent first
+            const sortedAppointments = appointments
+                .sort((a, b) => new Date(b.datetime) - new Date(a.datetime))
+                .slice(0, 5); // Show first 5 recent
+
+            const html = sortedAppointments.map(appt => `
+                <div class="p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-semibold text-sm">
+                                    ${appt.firstName[0]}${appt.lastName[0]}
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h5 class="text-sm font-semibold text-gray-900">${appt.firstName} ${appt.lastName}</h5>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <span class="text-xs text-gray-500">${appt.type}</span>
+                                    ${appt.priceSold && parseFloat(appt.priceSold) > 0 ? `<span class="text-xs text-gray-400">•</span><span class="text-xs text-gray-500">$${appt.priceSold}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center space-x-2">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-900">${appt.date}</p>
+                                    <p class="text-xs text-gray-500">${appt.time} - ${appt.endTime}</p>
+                                </div>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${appt.canceled ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">
+                                    ${appt.canceled ? 'Cancelled' : 'Completed'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Display user profile
+        function displayUserProfile(userData) {
+            const userProfileContainer = document.querySelector('.user-profile');
+            if (!userProfileContainer || !userData.firstName) return;
+
+            const userInitials = userData.firstName && userData.lastName ? 
+                `${userData.firstName[0]}${userData.lastName[0]}` : 'NA';
+
+            userProfileContainer.innerHTML = `
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        ${userData.avatarUrl ? 
+                            `<img class="h-10 w-10 rounded-full ring-2 ring-primary-300/30" src="${userData.avatarUrl}" alt="${userData.displayName}">` :
+                            `<div class="h-10 w-10 rounded-full ring-2 ring-primary-300/30 bg-primary-100 flex items-center justify-center text-primary-600 font-medium">
+                                ${userInitials}
+                            </div>`
+                        }
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-white">${userData.displayName || userData.name}</p>
+                        <div class="flex items-center mt-1">
+                            <div class="h-2 w-2 rounded-full bg-green-400 mr-1.5"></div>
+                            <p class="text-xs text-primary-200">Online</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Update business name in header
+            const businessNameElement = document.querySelector('.business-name');
+            if (businessNameElement && userData.name) {
+                businessNameElement.textContent = userData.name;
+            }
+        }
+
+        // Display recent activity
+        function displayRecentActivity() {
+            const container = document.getElementById('recentActivityList');
+            if (!container) return;
+
+            // Combine recent appointments for activity feed
+            const allAppointments = [...dashboardData.upcomingAppointments, ...dashboardData.pastAppointments]
+                .sort((a, b) => new Date(b.datetimeCreated) - new Date(a.datetimeCreated))
+                .slice(0, 5);
+
+            if (!allAppointments.length) {
+                container.innerHTML = `
+                    <div class="p-6 text-center text-gray-500">
+                        <span class="material-icons text-gray-300 text-3xl mb-2">notifications_none</span>
+                        <p>No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = allAppointments.map(appt => {
+                const createdDate = new Date(appt.datetimeCreated);
+                const isPast = new Date(appt.datetime) < new Date();
+                const actionText = isPast ? 'completed' : 'scheduled';
+                const iconName = isPast ? 'check_circle' : 'event';
+                const iconColor = isPast ? 'text-green-500' : 'text-blue-500';
+
+                return `
+                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="flex-shrink-0">
+                            <span class="material-icons ${iconColor} text-lg">${iconName}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-900">
+                                <span class="font-medium">${appt.firstName} ${appt.lastName}</span> 
+                                ${actionText} <span class="font-medium">${appt.type}</span>
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">${formatRelativeTime(createdDate)}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        }
+
+        // Loading and error states
+        function showLoadingState() {
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div class="flex items-center justify-center h-64">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                            <span class="text-gray-600">Loading dashboard...</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function hideLoadingState() {
+            // Loading state will be replaced by actual content
+        }
+
+        function showErrorState() {
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <span class="material-icons text-gray-300 text-6xl mb-4">error_outline</span>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Unable to load dashboard</h3>
+                        <p class="text-gray-500 mb-4">There was an error loading your appointment data.</p>
+                        <button onclick="location.reload()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Refresh functions - updated to be async
+        async function refreshDashboard() {
+            try {
+                showLoadingState();
+                await fetchAllData();
+                await loadDashboardData();
+            } catch (error) {
+                console.error("Error refreshing dashboard:", error);
+                showErrorState();
+            }
+        }
+
+        async function refreshAppointmentTypes() {
+            try {
+                await fetchAndStoreAppointmentTypes();
+                dashboardData.appointmentTypes = JSON.parse(localStorage.getItem('appointmentTypes') || '[]');
+                displayAppointmentTypes(dashboardData.appointmentTypes);
+                updateDashboardStats();
+            } catch (error) {
+                console.error("Error refreshing appointment types:", error);
+            }
+        }
+
+        async function refreshAppointments() {
+            try {
+                await fetchAndStoreAppointments();
+                dashboardData.upcomingAppointments = JSON.parse(localStorage.getItem('upcomingAppointments') || '[]');
+                dashboardData.pastAppointments = JSON.parse(localStorage.getItem('pastAppointments') || '[]');
+                displayUpcomingAppointments(dashboardData.upcomingAppointments);
+                displayPastAppointments(dashboardData.pastAppointments);
+                updateDashboardStats();
+            } catch (error) {
+                console.error("Error refreshing appointments:", error);
+            }
+        }
+
+        // View all functions
+        function viewAllAppointmentTypes() {
+            window.location.href = 'appointment_types.html';
+        }
+
+        function viewAllUpcoming() {
+            window.location.href = 'appointments.html?type=upcoming';
+        }
+
+        function viewAllPast() {
+            window.location.href = 'appointments.html?type=past';
+        }
+
+        // Additional fetch functions for API calls
+        function fetchAndStoreAppointmentTypes() {
+            const requestData = {
+                crmAPIRequest: { 
+                    type: 1 // Type 1 for appointment types
+                }
+            };
+            
+            return ZOHO.CRM.FUNCTIONS.execute("acuityscheduling1__apihandler", requestData)
+                .then(function(data) {
+                    try {
+                        console.log("Raw response from Zoho function for appointment types:", data);
+                        
+                        if (data.code === "INVALID_DATA" || data.code === "ERROR") {
+                            throw new Error(data.message || "Error from Zoho function");
+                        }
+                        
+                        if (!data.details || !data.details.output) {
+                            throw new Error("Invalid response structure from Zoho function");
+                        }
+                        
+                        const outputData = JSON.parse(data.details.output);
+                        
+                        if (outputData.status_code !== 200) {
+                            throw new Error(`API returned status code ${outputData.status_code}`);
+                        }
+                        
+                        if (!outputData.response) {
+                            throw new Error("No response data found");
+                        }
+                        
+                        const appointmentTypes = JSON.parse(outputData.response);
+                        localStorage.setItem('appointmentTypes', JSON.stringify(appointmentTypes));
+                        console.log("Appointment types stored successfully", appointmentTypes);
+                        
+                        return appointmentTypes;
+                    } catch (error) {
+                        console.error("Error processing appointment types:", error);
+                        throw error;
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error fetching appointment types:", error);
+                    throw error;
+                });
+        }
+        
+        function fetchAndStoreAppointments() {
+            const requestData = {
+                crmAPIRequest: { 
+                    type: 2 // Type 2 for appointments
+                }
+            };
+            
+            return ZOHO.CRM.FUNCTIONS.execute("acuityscheduling1__apihandler", requestData)
+                .then(function(data) {
+                    try {
+                        console.log("Raw response from Zoho function for appointments:", data);
+                        
+                        if (data.code === "INVALID_DATA" || data.code === "ERROR") {
+                            throw new Error(data.message || "Error from Zoho function");
+                        }
+                        
+                        if (!data.details || !data.details.output) {
+                            throw new Error("Invalid response structure from Zoho function");
+                        }
+                        
+                        const outputData = JSON.parse(data.details.output);
+                        
+                        if (outputData.status_code !== 200) {
+                            throw new Error(`API returned status code ${outputData.status_code}`);
+                        }
+                        
+                        if (!outputData.response) {
+                            throw new Error("No response data found");
+                        }
+                        
+                        const appointments = JSON.parse(outputData.response);
+                        
+                        // Separate past and upcoming appointments
+                        const now = new Date();
+                        const pastAppointments = [];
+                        const upcomingAppointments = [];
+                        
+                        appointments.forEach(appointment => {
+                            const appointmentDate = new Date(appointment.datetime);
+                            if (appointmentDate < now) {
+                                pastAppointments.push(appointment);
+                            } else {
+                                upcomingAppointments.push(appointment);
+                            }
+                        });
+                        
+                        // Store in localStorage
+                        localStorage.setItem('pastAppointments', JSON.stringify(pastAppointments));
+                        localStorage.setItem('upcomingAppointments', JSON.stringify(upcomingAppointments));
+                        console.log("Appointments stored successfully", { past: pastAppointments, upcoming: upcomingAppointments });
+                        
+                        return { pastAppointments, upcomingAppointments };
+                    } catch (error) {
+                        console.error("Error processing appointments:", error);
+                        throw error;
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error fetching appointments:", error);
+                    throw error;
+                });
+        }
+        
+        function fetchAndStoreUserData() {
+            const requestData = {
+                crmAPIRequest: { 
+                    type: 3 // Type 3 for GetMe
+                }
+            };
+            
+            return ZOHO.CRM.FUNCTIONS.execute("acuityscheduling1__apihandler", requestData)
+                .then(function(data) {
+                    try {
+                        console.log("Raw response from Zoho function for user data:", data);
+                        
+                        if (data.code === "INVALID_DATA" || data.code === "ERROR") {
+                            throw new Error(data.message || "Error from Zoho function");
+                        }
+                        
+                        if (!data.details || !data.details.output) {
+                            throw new Error("Invalid response structure from Zoho function");
+                        }
+                        
+                        const outputData = JSON.parse(data.details.output);
+                        
+                        if (outputData.status_code !== 200) {
+                            throw new Error(`API returned status code ${outputData.status_code}`);
+                        }
+                        
+                        if (!outputData.response) {
+                            throw new Error("No response data found");
+                        }
+                        
+                        const userData = JSON.parse(outputData.response);
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        console.log("User data stored successfully", userData);
+                        
+                        return userData;
+                    } catch (error) {
+                        console.error("Error processing user data:", error);
+                        throw error;
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error fetching user data:", error);
+                    throw error;
+                });
+        }
+
+        // Mobile responsive enhancements
+        function adjustMobileLayout() {
+            const isMobile = window.innerWidth < 1024;
+            
+            if (isMobile) {
+                // Adjust grid layouts for mobile
+                const statsGrid = document.getElementById('statsContainer');
+                if (statsGrid) {
+                    statsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6';
+                }
+                
+                const mainGrid = document.querySelector('.grid.lg\\:grid-cols-3');
+                if (mainGrid) {
+                    mainGrid.className = 'grid grid-cols-1 gap-4 mb-6';
+                }
+                
+                const servicesGrid = document.querySelector('.grid.lg\\:grid-cols-2:last-child');
+                if (servicesGrid) {
+                    servicesGrid.className = 'grid grid-cols-1 gap-4';
+                }
+            }
+        }
+
+        // Call on window resize
+        window.addEventListener('resize', adjustMobileLayout);
+        window.addEventListener('load', adjustMobileLayout);
+    </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-64 bg-gradient-to-br from-primary-800 via-primary-900 to-primary-900 shadow-xl">
+                <div class="flex items-center justify-center h-16 px-6 bg-primary-900/80 backdrop-blur-sm border-b border-primary-700/50">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center">
+                            <span class="material-icons text-white text-lg">spa</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white tracking-tight business-name">Acuity</h2>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-4">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-primary-100/70 mb-3">Main Menu</h3>
+                    </div>
+                    <nav class="mt-1 flex-1 px-2 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg bg-white/10 text-white border-l-4 border-primary-300 transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-200">dashboard</span>
+                            Dashboard
+                        </a>
+                        <a href="appointments.html" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">event</span>
+                            Appointments
+                        </a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">spa</span>
+                            Services
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">people</span>
+                            Clients
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">analytics</span>
+                            Reports
+                        </a>
+                    </nav>
+
+                    <div class="px-4 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-primary-100/70 mb-3">Settings</h3>
+                    </div>
+                    <nav class="mt-1 flex-1 px-2 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">person</span>
+                            Profile
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">settings</span>
+                            Settings
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-primary-100 hover:bg-white/5 hover:text-white transition-all duration-150">
+                            <span class="material-icons mr-3 text-primary-300/70">help</span>
+                            Help
+                        </a>
+                    </nav>
+                </div>
+                <div class="p-4 bg-primary-900/70 backdrop-blur-sm border-t border-primary-700/50">
+                    <div class="user-profile">
+                        <!-- User profile will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 shadow-sm sticky top-0 z-10">
+                <button class="p-2 rounded-md text-gray-500 lg:hidden hover:bg-gray-100">
+                    <span class="material-icons">menu</span>
+                </button>
+                
+                <div class="flex-1 flex justify-center lg:justify-end max-w-lg ml-auto">
+                    <div class="w-full">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-icons text-gray-400">search</span>
+                            </div>
+                            <input type="text" placeholder="Search appointments, clients..." class="block w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-150">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-4 flex items-center space-x-4">
+                    <button class="p-1.5 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 relative">
+                        <span class="material-icons">notifications</span>
+                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse-ring"></span>
+                    </button>
+                    <button onclick="refreshDashboard()" class="p-1.5 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100" title="Refresh Dashboard">
+                        <span class="material-icons">refresh</span>
+                    </button>
+                    <button class="p-1.5 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                        <span class="material-icons">help_outline</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-gray-50">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Header -->
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+                            <p class="mt-1 text-gray-600">Welcome back! Here's what's happening with your business today.</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 flex space-x-3">
+                            <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                                <span class="material-icons text-sm mr-2">add</span>
+                                New Appointment
+                            </button>
+                            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                                <span class="material-icons text-sm mr-2">calendar_today</span>
+                                View Calendar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Overview -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsContainer">
+                        <!-- Stats will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Upcoming Appointments -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="text-lg font-semibold text-gray-800">Upcoming Appointments</h3>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            Next 5
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
+                                            <span class="material-icons">refresh</span>
+                                        </button>
+                                        <button onclick="viewAllUpcoming()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                            View All
+                                            <span class="material-icons text-base ml-1">arrow_forward</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="upcomingAppointmentsList">
+                                    <!-- Upcoming appointments will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                    <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
+                                </div>
+                                
+                                <div id="recentActivityList" class="divide-y divide-gray-100">
+                                    <!-- Recent activity will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Services and Past Appointments -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Appointment Types/Services -->
+                        <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                <div id="appointmentTypesHeader">
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="text-lg font-semibold text-gray-800">Services</h3>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="refreshAppointmentTypes()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
+                                        <span class="material-icons">refresh</span>
+                                    </button>
+                                    <button onclick="viewAllAppointmentTypes()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                        View All
+                                        <span class="material-icons text-base ml-1">arrow_forward</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="appointmentTypesList">
+                                <!-- Appointment types will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Past Appointments -->
+                        <div class="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-lg font-semibold text-gray-800">Recent History</h3>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        Recent 5
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="refreshAppointments()" class="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100" title="Refresh">
+                                        <span class="material-icons">refresh</span>
+                                    </button>
+                                    <button onclick="viewAllPast()" class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center">
+                                        View All
+                                        <span class="material-icons text-base ml-1">arrow_forward</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="pastAppointmentsList">
+                                <!-- Past appointments will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation (Hidden on Desktop) -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="#" class="flex flex-col items-center p-2 text-primary-600">
+                <span class="material-icons text-xl">dashboard</span>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="appointments.html" class="flex flex-col items-center p-2 text-gray-500">
+                <span class="material-icons text-xl">event</span>
+                <span class="text-xs mt-1">Appointments</span>
+            </a>
+            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-gray-500">
+                <span class="material-icons text-xl">spa</span>
+                <span class="text-xs mt-1">Services</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-gray-500">
+                <span class="material-icons text-xl">person</span>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions Floating Button -->
+    <div class="fixed bottom-20 lg:bottom-6 right-6 z-40">
+        <div class="relative">
+            <button id="quickActionsBtn" class="w-14 h-14 bg-primary-600 hover:bg-primary-700 rounded-full shadow-lg flex items-center justify-center text-white transition-all duration-200 hover:shadow-xl">
+                <span class="material-icons text-2xl">add</span>
+            </button>
+            
+            <!-- Quick Actions Menu -->
+            <div id="quickActionsMenu" class="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48 hidden">
+                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <span class="material-icons text-sm mr-3 text-primary-600">event</span>
+                    New Appointment
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <span class="material-icons text-sm mr-3 text-emerald-600">spa</span>
+                    New Service
+                </a>
+                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <span class="material-icons text-sm mr-3 text-blue-600">person_add</span>
+                    New Client
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quick actions menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickActionsBtn = document.getElementById('quickActionsBtn');
+            const quickActionsMenu = document.getElementById('quickActionsMenu');
+            
+            if (quickActionsBtn && quickActionsMenu) {
+                quickActionsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    quickActionsMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function() {
+                    quickActionsMenu.classList.add('hidden');
+                });
+
+                quickActionsMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
