@@ -12,85 +12,180 @@
     <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
+                        'theme-bg-primary': 'var(--bg-primary)',
+                        'theme-bg-secondary': 'var(--bg-secondary)',
+                        'theme-bg-accent': 'var(--bg-accent)',
+                        'theme-text-primary': 'var(--text-primary)',
+                        'theme-text-secondary': 'var(--text-secondary)',
+                        'theme-border': 'var(--border-color)',
+                        'theme-primary': 'var(--color-primary)',
+                        'theme-secondary': 'var(--color-secondary)',
+                        'theme-accent': 'var(--color-accent)',
+
                         primary: {
-                            50: '#eef9ff',
-                            100: '#dcf2ff',
-                            200: '#b3e8ff',
-                            300: '#83d9ff',
-                            400: '#48c2ff',
-                            500: '#1aa1ff',
-                            600: '#0080f5',
-                            700: '#0067d9',
-                            800: '#0055b0',
-                            900: '#064b8d',
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
                         },
                         success: {
-                            50: '#f0fdf4',
-                            500: '#22c55e',
-                            600: '#16a34a',
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d',
                         },
                         warning: {
-                            50: '#fffbeb',
-                            500: '#f59e0b',
-                            600: '#d97706',
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
                         },
                         danger: {
-                            50: '#fef2f2',
-                            500: '#ef4444',
-                            600: '#dc2626',
+                            50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                     },
                     boxShadow: {
-                        card: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                        'card-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                     }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-accent: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+        }
+        
+        /* Default Color Theme (Blue) */
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out;
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        html.dark .glass-effect {
+            background: rgba(31, 41, 55, 0.98);
+            border: 1px solid rgba(55, 65, 81, 0.8);
+        }
+        
         .gradient-border {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 1px;
-            border-radius: 12px;
+            padding: 2px;
+            border-radius: 16px;
         }
+        
         .gradient-border-content {
-            background: white;
-            border-radius: 11px;
+            background: var(--bg-primary);
+            border-radius: 14px;
         }
+        
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 320px;
             width: 100%;
         }
+        
         .metric-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
         }
-        .service-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
+        
+        .modern-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .modern-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        html.dark .modern-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-modern {
+            background: var(--color-primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-modern:hover {
+            background: var(--color-accent);
+        }
+        
+        .btn-view-more {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
             font-weight: 500;
-            border-radius: 9999px;
-            border: 1px solid transparent;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-view-more:hover {
+            background: var(--bg-primary);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        .card-hover-effect {
+            transition: all 0.2s ease;
+        }
+        
+        .card-hover-effect:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        html.dark .card-hover-effect:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
     </style>
     <script>
@@ -108,19 +203,184 @@
         const analyticsConfig = {
             charts: {},
             colors: {
-                primary: '#0080f5',
+                primary: '#0ea5e9',
                 success: '#22c55e',
                 warning: '#f59e0b',
                 danger: '#ef4444',
-                purple: '#8b5cf6',
+                purple: '#a855f7',
                 teal: '#14b8a6',
                 orange: '#f97316',
-                pink: '#ec4899'
+                pink: '#ec4899',
+                indigo: '#6366f1'
             }
         };
 
+        // Theme Configuration
+        const themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+                red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+                teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+                pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+                indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+            }
+        };
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('dashboard_theme', theme);
+            updateChartsTheme();
+        }
+
+        function applyThemeColor(colorName) {
+            const color = themeConfig.colors[colorName];
+            if (!color) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', color.primary);
+            root.style.setProperty('--color-secondary', color.secondary);
+            root.style.setProperty('--color-accent', color.accent);
+            localStorage.setItem('dashboard_theme_color', colorName);
+            updateChartsTheme();
+            addThemeSwitcher(); // Re-render to update active color
+        }
+
+        function toggleTheme() {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            addThemeSwitcher(); // Re-render to update toggle state
+        }
+        
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+            const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+            applyTheme(savedTheme);
+            applyThemeColor(savedColor);
+        }
+
+        function updateChartsTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb';
+            const textColor = isDark ? '#d1d5db' : '#6b7280';
+            const tooltipBg = isDark ? '#111827' : '#ffffff';
+            const tooltipText = isDark ? '#f9fafb' : '#111827';
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
+            Object.values(analyticsConfig.charts).forEach(chart => {
+                if (!chart || !chart.options || !chart.options.scales) return;
+                
+                if (chart.options.scales.x) {
+                    chart.options.scales.x.grid.color = gridColor;
+                    chart.options.scales.x.ticks.color = textColor;
+                }
+                if (chart.options.scales.y) {
+                    chart.options.scales.y.grid.color = gridColor;
+                    chart.options.scales.y.ticks.color = textColor;
+                }
+
+                if(chart.options.plugins.tooltip) {
+                    chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+                    chart.options.plugins.tooltip.titleColor = tooltipText;
+                    chart.options.plugins.tooltip.bodyColor = tooltipText;
+                }
+                
+                if (chart.config.type === 'line' && chart.data.datasets[0]) {
+                    chart.data.datasets[0].borderColor = primaryColor;
+                    chart.data.datasets[0].backgroundColor = `${primaryColor}33`;
+                    chart.data.datasets[0].pointBackgroundColor = primaryColor;
+                }
+                
+                if (chart.config.type === 'bar' && chart.data.datasets[0]) {
+                    chart.data.datasets[0].backgroundColor = `${primaryColor}80`;
+                    chart.data.datasets[0].borderColor = primaryColor;
+                }
+
+                chart.update();
+            });
+        }
+
+        function addThemeSwitcher() {
+            const container = document.getElementById('theme-switcher-container');
+            if (!container) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+            container.innerHTML = `
+                <div class="fixed bottom-5 right-5 z-50">
+                    <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-56 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-theme-text-primary">Theme Mode</span>
+                                <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-primary ${isDark ? 'bg-theme-primary' : 'bg-gray-300'}">
+                                    <span class="sr-only">Toggle theme</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${isDark ? 'right-1 opacity-100' : 'right-1 opacity-0'}" style="color: #fbbf24;">dark_mode</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${!isDark ? 'left-1 opacity-100' : 'left-1 opacity-0'}" style="color: #f59e0b;">light_mode</span>
+                                    <span class="inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full shadow ${isDark ? 'translate-x-6' : 'translate-x-1'}"></span>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-sm font-medium text-theme-text-primary">Color Theme</span>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${Object.keys(themeConfig.colors).map(name => `
+                                        <button onclick="applyThemeColor('${name}')" 
+                                                class="relative w-8 h-8 rounded-full transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary focus:ring-offset-theme-bg-primary ${currentColor === name ? 'ring-2 ring-offset-2 ring-white ring-offset-theme-bg-primary scale-110' : ''}"
+                                                style="background-color: ${themeConfig.colors[name].primary}"
+                                                title="${name.charAt(0).toUpperCase() + name.slice(1)}">
+                                            ${currentColor === name ? '<span class="absolute inset-0 flex items-center justify-center"><span class="material-icons text-white text-sm">check</span></span>' : ''}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-secondary">
+                        <span class="material-icons">palette</span>
+                    </button>
+                </div>
+            `;
+
+            const menuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            
+            if (menuButton && themeMenu) {
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (themeMenu.classList.contains('hidden')) {
+                        themeMenu.classList.remove('hidden');
+                        setTimeout(() => {
+                            themeMenu.classList.remove('opacity-0', '-translate-y-2');
+                        }, 10);
+                    } else {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        }
+
         // Initialize Dashboard
         document.addEventListener("DOMContentLoaded", function() {
+            initializeTheme();
+            addThemeSwitcher();
             ZOHO.embeddedApp.init()
                 .then(function() {
                     console.log("ZOHO SDK initialized successfully");
@@ -138,7 +398,9 @@
                 showLoadingState();
                 await loadAndProcessData();
                 renderDashboard();
-                initializeCharts();
+                setTimeout(() => {
+                    initializeCharts();
+                }, 500); // Small delay to ensure DOM is ready
             } catch (error) {
                 console.error("Error initializing dashboard:", error);
                 showErrorState();
@@ -191,7 +453,7 @@
                 category: type.category || 'General',
                 duration: type.duration,
                 price: parseFloat(type.price),
-                color: type.color,
+                color: type.color || analyticsConfig.colors.primary,
                 active: type.active,
                 bookingCount: 0,
                 revenue: 0,
@@ -448,36 +710,41 @@
             if (mainContent) {
                 mainContent.innerHTML = `
                     <div class="max-w-7xl mx-auto space-y-8 animate-fade-in">
-                        <!-- Header Section -->
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                            <div>
-                                <h1 class="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
-                                <p class="text-gray-600">Comprehensive insights for ${dashboardData.userData.name || 'your business'}</p>
+                        <!-- Modern Header Section -->
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between glass-effect rounded-2xl p-6 border-l-4 border-theme-primary">
+                            <div class="animate-slide-in">
+                                <h1 class="text-4xl font-bold bg-gradient-to-r from-theme-text-primary to-theme-text-secondary bg-clip-text text-transparent mb-3">
+                                    Analytics Dashboard
+                                </h1>
+                                <p class="text-theme-text-secondary text-lg">Comprehensive insights for ${dashboardData.userData.name || 'your business'}</p>
                             </div>
-                            <div class="mt-4 lg:mt-0 flex items-center space-x-3">
-                                <button onclick="refreshDashboard()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                            <div class="mt-6 lg:mt-0 flex items-center space-x-4">
+                                <button onclick="refreshDashboard()" class="btn-modern inline-flex items-center">
                                     <span class="material-icons text-sm mr-2">refresh</span>
                                     Refresh Data
                                 </button>
-                                <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200">
+                                <button onclick="exportDashboardReport()" class="btn-modern inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600">
                                     <span class="material-icons text-sm mr-2">download</span>
                                     Export Report
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Key Metrics Cards -->
+                        <!-- Enhanced Key Metrics Cards -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="keyMetrics">
                             <!-- Metrics will be inserted here -->
                         </div>
 
-                        <!-- Charts Section -->
+                        <!-- Modern Charts Section -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <!-- Revenue Chart -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                            <div class="modern-card rounded-lg p-6">
                                 <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-800">Revenue Overview</h3>
-                                    <select id="revenueChartPeriod" class="text-sm border border-gray-300 rounded-lg px-3 py-1">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-theme-text-primary">Revenue Overview</h3>
+                                        <p class="text-sm text-theme-text-secondary">Monthly revenue trends</p>
+                                    </div>
+                                    <select id="revenueChartPeriod" class="text-sm border border-theme-border rounded-lg px-3 py-2 bg-theme-bg-primary text-theme-text-primary focus:ring-2 focus:ring-theme-primary focus:border-transparent">
                                         <option value="6months">Last 6 Months</option>
                                         <option value="12months">Last 12 Months</option>
                                         <option value="all">All Time</option>
@@ -489,10 +756,12 @@
                             </div>
 
                             <!-- Service Performance Chart -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                            <div class="modern-card rounded-lg p-6">
                                 <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-800">Service Performance</h3>
-                                    <div class="text-sm text-gray-500">Top 5 Services</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-theme-text-primary">Service Performance</h3>
+                                        <p class="text-sm text-theme-text-secondary">Top 5 Services by bookings</p>
+                                    </div>
                                 </div>
                                 <div class="chart-container">
                                     <canvas id="serviceChart"></canvas>
@@ -500,10 +769,12 @@
                             </div>
 
                             <!-- Appointment Status Distribution -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                            <div class="modern-card rounded-lg p-6">
                                 <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-800">Appointment Status</h3>
-                                    <div class="text-sm text-gray-500">Overall Distribution</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-theme-text-primary">Appointment Status</h3>
+                                        <p class="text-sm text-theme-text-secondary">Overall distribution</p>
+                                    </div>
                                 </div>
                                 <div class="chart-container">
                                     <canvas id="statusChart"></canvas>
@@ -511,10 +782,12 @@
                             </div>
 
                             <!-- Peak Hours Chart -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 p-6">
+                            <div class="modern-card rounded-lg p-6">
                                 <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-800">Peak Booking Hours</h3>
-                                    <div class="text-sm text-gray-500">24-Hour Distribution</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-theme-text-primary">Peak Booking Hours</h3>
+                                        <p class="text-sm text-theme-text-secondary">24-Hour distribution</p>
+                                    </div>
                                 </div>
                                 <div class="chart-container">
                                     <canvas id="hoursChart"></canvas>
@@ -522,50 +795,62 @@
                             </div>
                         </div>
 
-                        <!-- Detailed Sections -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Enhanced Detailed Sections -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <!-- Top Services -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
-                                <div class="px-6 py-4 border-b border-gray-100">
-                                    <h3 class="text-lg font-semibold text-gray-800">Top Services</h3>
+                            <div class="modern-card rounded-2xl overflow-hidden card-hover-effect">
+                                <div class="px-8 py-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-theme-border">
+                                    <h3 class="text-xl font-bold text-theme-text-primary flex items-center">
+                                        <span class="material-icons text-theme-primary mr-3">spa</span>
+                                        Top Services
+                                    </h3>
                                 </div>
-                                <div id="topServices" class="divide-y divide-gray-100">
+                                <div id="topServices" class="divide-y divide-theme-border">
                                     <!-- Top services will be inserted here -->
                                 </div>
                             </div>
 
-                            <!-- Recent Appointments -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
-                                <div class="px-6 py-4 border-b border-gray-100">
-                                    <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
+                            <!-- Recent Activity -->
+                            <div class="modern-card rounded-2xl overflow-hidden card-hover-effect">
+                                <div class="px-8 py-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-b border-theme-border">
+                                    <h3 class="text-xl font-bold text-theme-text-primary flex items-center">
+                                        <span class="material-icons text-success-600 mr-3">timeline</span>
+                                        Recent Activity
+                                    </h3>
                                 </div>
-                                <div id="recentActivity" class="divide-y divide-gray-100">
+                                <div id="recentActivity" class="divide-y divide-theme-border">
                                     <!-- Recent activity will be inserted here -->
                                 </div>
                             </div>
 
                             <!-- Top Clients -->
-                            <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
-                                <div class="px-6 py-4 border-b border-gray-100">
-                                    <h3 class="text-lg font-semibold text-gray-800">Top Clients</h3>
+                            <div class="modern-card rounded-2xl overflow-hidden card-hover-effect">
+                                <div class="px-8 py-6 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border-b border-theme-border">
+                                    <h3 class="text-xl font-bold text-theme-text-primary flex items-center">
+                                        <span class="material-icons text-purple-600 mr-3">stars</span>
+                                        Top Clients
+                                    </h3>
                                 </div>
-                                <div id="topClients" class="divide-y divide-gray-100">
+                                <div id="topClients" class="divide-y divide-theme-border">
                                     <!-- Top clients will be inserted here -->
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Upcoming Appointments -->
-                        <div class="bg-white rounded-xl shadow-card border border-gray-100">
-                            <div class="px-6 py-4 border-b border-gray-100">
+                        <!-- Enhanced Upcoming Appointments -->
+                        <div class="modern-card rounded-2xl card-hover-effect">
+                            <div class="px-8 py-6 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 border-b border-theme-border">
                                 <div class="flex items-center justify-between">
-                                    <h3 class="text-lg font-semibold text-gray-800">Upcoming Appointments</h3>
-                                    <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                        ${dashboardData.upcomingAppointments.length} appointments
+                                    <h3 class="text-xl font-bold text-theme-text-primary flex items-center">
+                                        <span class="material-icons text-warning-600 mr-3">event_note</span>
+                                        Upcoming Appointments
+                                    </h3>
+                                    <span class="bg-theme-primary/10 text-theme-primary text-sm font-semibold px-4 py-2 rounded-full shadow-sm">
+                                        ${dashboardData.upcomingAppointments?.length || 0} appointments
                                     </span>
                                 </div>
                             </div>
-                            <div id="upcomingAppointments" class="divide-y divide-gray-100">
+                            <div id="upcomingAppointments" class="divide-y divide-theme-border">
                                 <!-- Upcoming appointments will be inserted here -->
                             </div>
                         </div>
@@ -581,207 +866,350 @@
             renderUpcomingAppointments();
         }
 
-        // Render Key Metrics
+        // Enhanced Render Key Metrics
         function renderKeyMetrics() {
             const container = document.getElementById('keyMetrics');
+            if (!container || !dashboardData.analytics) return;
+            
             const metrics = dashboardData.analytics.overview;
 
             const metricCards = [
                 {
                     title: 'Total Revenue',
-                    value: `$${metrics.totalRevenue.toFixed(2)}`,
-                    icon: 'attach_money',
-                    color: 'bg-gradient-to-r from-green-500 to-green-600',
-                    subtitle: `$${metrics.monthlyRevenue.toFixed(2)} this month`
+                    value: `$${metrics.totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+                    icon: 'trending_up',
+                    gradient: 'from-emerald-500 to-teal-600',
+                    subtitle: `$${metrics.monthlyRevenue.toFixed(2)} this month`,
+                    change: '+12.5%'
                 },
                 {
                     title: 'Total Appointments',
-                    value: metrics.totalAppointments.toString(),
-                    icon: 'event',
-                    color: 'bg-gradient-to-r from-blue-500 to-blue-600',
-                    subtitle: `${metrics.todayAppointments} today`
+                    value: metrics.totalAppointments.toLocaleString(),
+                    icon: 'event_available',
+                    gradient: 'from-blue-500 to-cyan-600',
+                    subtitle: `${metrics.todayAppointments} scheduled today`,
+                    change: '+8.2%'
                 },
                 {
                     title: 'Active Services',
                     value: `${metrics.activeServices}/${metrics.totalServices}`,
                     icon: 'spa',
-                    color: 'bg-gradient-to-r from-purple-500 to-purple-600',
-                    subtitle: 'services available'
+                    gradient: 'from-purple-500 to-pink-600',
+                    subtitle: 'services available',
+                    change: 'Active'
                 },
                 {
-                    title: 'Cancellation Rate',
-                    value: `${metrics.cancellationRate.toFixed(1)}%`,
-                    icon: 'cancel',
-                    color: metrics.cancellationRate > 15 ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-orange-500 to-orange-600',
-                    subtitle: `${metrics.canceledAppointments} canceled`
+                    title: 'Success Rate',
+                    value: `${(100 - metrics.cancellationRate).toFixed(1)}%`,
+                    icon: 'check_circle',
+                    gradient: metrics.cancellationRate > 15 ? 'from-red-500 to-rose-600' : 'from-green-500 to-emerald-600',
+                    subtitle: `${metrics.canceledAppointments} cancelled`,
+                    change: metrics.cancellationRate > 15 ? 'Needs attention' : 'Excellent'
                 }
             ];
 
-            container.innerHTML = metricCards.map(metric => `
-                <div class="relative overflow-hidden rounded-xl ${metric.color} text-white">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-white/80 text-sm font-medium">${metric.title}</p>
-                                <p class="text-3xl font-bold mt-2">${metric.value}</p>
-                                <p class="text-white/70 text-xs mt-1">${metric.subtitle}</p>
+            container.innerHTML = metricCards.map((metric, index) => `
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br ${metric.gradient} text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+                    <div class="relative p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
+                                <span class="material-icons text-2xl text-white">${metric.icon}</span>
                             </div>
-                            <div class="p-3 bg-white/20 rounded-lg">
-                                <span class="material-icons text-2xl">${metric.icon}</span>
+                            <div class="text-right">
+                                                                <span class="text-xs font-medium text-white text-opacity-80 px-3 py-1 bg-white bg-opacity-20 rounded-full">
+                                    ${metric.change}
+                                </span>
                             </div>
                         </div>
+                        <div>
+                            <p class="text-white text-opacity-90 text-sm font-medium mb-2">${metric.title}</p>
+                            <p class="text-3xl font-bold text-white mb-2">${metric.value}</p>
+                            <p class="text-white text-opacity-70 text-sm">${metric.subtitle}</p>
+                        </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/30"></div>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-30"></div>
                 </div>
             `).join('');
         }
 
-        // Render Top Services
+        // Enhanced Render Top Services
         function renderTopServices() {
             const container = document.getElementById('topServices');
+            if (!container || !dashboardData.analytics) return;
+            
             const services = dashboardData.analytics.services.popular.slice(0, 5);
+            const allServices = dashboardData.analytics.services.all;
 
-            container.innerHTML = services.map((service, index) => `
-                <div class="p-4 hover:bg-gray-50 transition-colors">
+            const servicesHtml = services.map((service, index) => `
+                <div class="p-6 hover:bg-theme-bg-accent transition-all duration-300 group animate-slide-in" style="animation-delay: ${index * 0.1}s">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-4">
                             <div class="flex-shrink-0">
-                                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: ${service.color}20">
-                                    <span class="material-icons text-sm" style="color: ${service.color}">spa</span>
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-110" 
+                                     style="background: linear-gradient(135deg, ${service.color}20, ${service.color}40)">
+                                    <span class="material-icons text-xl" style="color: ${service.color}">spa</span>
                                 </div>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-gray-900">${service.name}</p>
-                                <p class="text-xs text-gray-500">${service.totalBookings} bookings</p>
+                                <p class="text-base font-bold text-theme-text-primary mb-2">${service.name}</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
+                                        ${service.totalBookings} bookings
+                                    </span>
+                                    <span class="text-xs text-theme-text-secondary">${service.duration} min</span>
+                                </div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-semibold text-gray-900">$${service.revenue.toFixed(2)}</p>
-                            <p class="text-xs text-gray-500">${service.duration} min</p>
+                            <p class="text-xl font-bold text-theme-text-primary">$${service.revenue.toFixed(2)}</p>
+                            <p class="text-sm text-emerald-600 font-semibold">$${((service.revenue / service.totalBookings) || 0).toFixed(0)} avg</p>
                         </div>
                     </div>
                 </div>
             `).join('');
+
+            const viewMoreButton = allServices.length > 5 ? `
+                <div class="p-6 bg-theme-bg-accent">
+                    <button onclick="showAllServices()" class="btn-view-more w-full text-center py-3 px-6 text-sm font-semibold flex items-center justify-center space-x-2">
+                        <span>View All ${allServices.length} Services</span>
+                        <span class="material-icons text-sm">arrow_forward</span>
+                    </button>
+                </div>
+            ` : '';
+
+            container.innerHTML = servicesHtml + viewMoreButton;
         }
 
-        // Render Recent Activity
+        // Enhanced Render Recent Activity
         function renderRecentActivity() {
             const container = document.getElementById('recentActivity');
+            if (!container) return;
+            
             const recentAppointments = [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments]
                 .sort((a, b) => new Date(b.datetimeCreated) - new Date(a.datetimeCreated))
-                .slice(0, 5);
+                .slice(0, 6);
 
-            container.innerHTML = recentAppointments.map(apt => {
+            const activitiesHtml = recentAppointments.map((apt, index) => {
                 const isPast = new Date(apt.datetime) < new Date();
                 const actionText = isPast ? (apt.canceled ? 'cancelled' : 'completed') : 'scheduled';
-                const iconName = isPast ? (apt.canceled ? 'cancel' : 'check_circle') : 'event';
-                const iconColor = isPast ? (apt.canceled ? 'text-red-500' : 'text-green-500') : 'text-blue-500';
+                const iconName = isPast ? (apt.canceled ? 'cancel' : 'check_circle') : 'event_note';
+                const iconColor = isPast ? (apt.canceled ? 'text-red-500' : 'text-emerald-500') : 'text-blue-500';
+                const bgColor = isPast ? (apt.canceled ? 'bg-red-50 dark:bg-red-900/20' : 'bg-emerald-50 dark:bg-emerald-900/20') : 'bg-blue-50 dark:bg-blue-900/20';
+                const service = dashboardData.services.find(s => s.id === apt.appointmentTypeID);
+                const price = apt.priceSold || apt.price || (service ? service.price : 0);
 
                 return `
-                    <div class="p-4 hover:bg-gray-50 transition-colors">
-                        <div class="flex items-start space-x-3">
+                    <div class="p-6 hover:bg-theme-bg-accent transition-all duration-300 group animate-slide-in" style="animation-delay: ${index * 0.1}s">
+                        <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0">
-                                <span class="material-icons ${iconColor} text-lg">${iconName}</span>
+                                <div class="w-12 h-12 rounded-xl ${bgColor} flex items-center justify-center group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-110">
+                                    <span class="material-icons ${iconColor} text-lg">${iconName}</span>
+                                </div>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm text-gray-900">
-                                    <span class="font-medium">${apt.firstName} ${apt.lastName}</span> 
-                                    ${actionText} <span class="font-medium">${apt.type}</span>
+                                <div class="flex items-center justify-between mb-2">
+                                    <p class="text-base font-bold text-theme-text-primary">
+                                        ${apt.firstName} ${apt.lastName}
+                                    </p>
+                                    <span class="text-sm font-bold text-theme-text-primary">$${parseFloat(price).toFixed(2)}</span>
+                                </div>
+                                <p class="text-sm text-theme-text-secondary mb-3">
+                                    ${actionText} <span class="font-semibold text-theme-primary">${apt.type}</span>
                                 </p>
-                                <p class="text-xs text-gray-500 mt-1">${formatRelativeTime(new Date(apt.datetimeCreated))}</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-theme-text-secondary">${formatRelativeTime(new Date(apt.datetimeCreated))}</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                                        isPast 
+                                            ? (apt.canceled ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300')
+                                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
+                                    }">
+                                        ${actionText}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            const viewMoreButton = `
+                <div class="p-6 bg-theme-bg-accent">
+                    <button onclick="showAllActivity()" class="btn-view-more w-full text-center py-3 px-6 text-sm font-semibold flex items-center justify-center space-x-2">
+                        <span>View All Activity</span>
+                        <span class="material-icons text-sm">timeline</span>
+                    </button>
+                </div>
+            `;
+
+            container.innerHTML = activitiesHtml + viewMoreButton;
         }
 
-        // Render Top Clients
+        // Enhanced Render Top Clients
         function renderTopClients() {
             const container = document.getElementById('topClients');
+            if (!container || !dashboardData.analytics) return;
+            
             const clients = dashboardData.analytics.clients.topClients.slice(0, 5);
+            const totalClients = dashboardData.analytics.clients.totalClients;
 
-            container.innerHTML = clients.map(client => `
-                <div class="p-4 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
-                                    ${client.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+            const clientsHtml = clients.map((client, index) => {
+                const initials = client.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const isVIP = client.totalSpent > 500;
+                const lastVisit = client.lastVisit ? new Date(client.lastVisit) : null;
+                const daysSinceLastVisit = lastVisit ? Math.floor((new Date() - lastVisit) / (1000 * 60 * 60 * 24)) : null;
+
+                return `
+                    <div class="p-6 hover:bg-theme-bg-accent transition-all duration-300 group animate-slide-in" style="animation-delay: ${index * 0.1}s">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0 relative">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-theme-primary/20 to-theme-primary/40 flex items-center justify-center text-theme-primary font-bold text-base shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-110">
+                                        ${initials}
+                                    </div>
+                                    ${isVIP ? '<div class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center"><span class="material-icons text-xs text-white">star</span></div>' : ''}
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <p class="text-base font-bold text-theme-text-primary">${client.name}</p>
+                                        ${isVIP ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">VIP</span>' : ''}
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                                            ${client.appointments.length} visits
+                                        </span>
+                                        ${daysSinceLastVisit !== null ? `<span class="text-xs text-theme-text-secondary">• ${daysSinceLastVisit}d ago</span>` : ''}
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">${client.name}</p>
-                                <p class="text-xs text-gray-500">${client.appointments.length} appointments</p>
+                            <div class="text-right">
+                                <p class="text-xl font-bold text-theme-text-primary">$${client.totalSpent.toFixed(2)}</p>
+                                <p class="text-sm text-theme-text-secondary font-semibold">
+                                    $${(client.totalSpent / client.appointments.length).toFixed(0)} avg
+                                </p>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-gray-900">$${client.totalSpent.toFixed(2)}</p>
-                            <p class="text-xs text-gray-500">total spent</p>
-                        </div>
                     </div>
+                `;
+            }).join('');
+
+            const viewMoreButton = totalClients > 5 ? `
+                <div class="p-6 bg-theme-bg-accent">
+                    <button onclick="showAllClients()" class="btn-view-more w-full text-center py-3 px-6 text-sm font-semibold flex items-center justify-center space-x-2">
+                        <span>View All ${totalClients} Clients</span>
+                        <span class="material-icons text-sm">arrow_forward</span>
+                    </button>
                 </div>
-            `).join('');
+            ` : '';
+
+            container.innerHTML = clientsHtml + viewMoreButton;
         }
 
-        // Render Upcoming Appointments
+        // Enhanced Render Upcoming Appointments
         function renderUpcomingAppointments() {
             const container = document.getElementById('upcomingAppointments');
-            const upcoming = dashboardData.upcomingAppointments
+            if (!container) return;
+            
+            const allUpcoming = dashboardData.upcomingAppointments
                 .filter(apt => !apt.canceled)
-                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
-                .slice(0, 10);
+                .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+            
+            const upcoming = allUpcoming.slice(0, 8);
 
             if (!upcoming.length) {
                 container.innerHTML = `
-                    <div class="p-8 text-center">
-                        <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-gray-400 text-2xl">event_available</span>
+                    <div class="p-12 text-center">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl flex items-center justify-center shadow-lg">
+                            <span class="material-icons text-blue-500 text-4xl">event_available</span>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-900 mb-1">No upcoming appointments</h3>
-                        <p class="text-sm text-gray-500">New appointments will appear here</p>
+                        <h3 class="text-2xl font-bold text-theme-text-primary mb-3">No upcoming appointments</h3>
+                        <p class="text-theme-text-secondary text-lg mb-6">Your schedule is clear. New appointments will appear here.</p>
+                        <button onclick="openNewAppointmentModal()" class="btn-modern inline-flex items-center">
+                            <span class="material-icons text-sm mr-2">add</span>
+                            Schedule Appointment
+                        </button>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = upcoming.map(apt => {
+            const appointmentsHtml = upcoming.map((apt, index) => {
                 const appointmentDate = new Date(apt.datetime);
                 const isToday = appointmentDate.toDateString() === new Date().toDateString();
                 const isTomorrow = appointmentDate.toDateString() === new Date(Date.now() + 86400000).toDateString();
+                const isThisWeek = appointmentDate <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                 
                 let dateLabel = formatDate(apt.datetime);
-                if (isToday) dateLabel = 'Today';
-                else if (isTomorrow) dateLabel = 'Tomorrow';
+                let dateColor = 'text-theme-text-secondary';
+                let urgencyClass = 'border-l-theme-primary';
+                
+                if (isToday) {
+                    dateLabel = 'Today';
+                    dateColor = 'text-red-600 font-bold';
+                    urgencyClass = 'border-l-red-400 bg-red-50 dark:bg-red-900/20';
+                } else if (isTomorrow) {
+                    dateLabel = 'Tomorrow';
+                    dateColor = 'text-orange-600 font-bold';
+                    urgencyClass = 'border-l-orange-400 bg-orange-50 dark:bg-orange-900/20';
+                } else if (isThisWeek) {
+                    dateColor = 'text-blue-600 font-semibold';
+                }
 
                 const service = dashboardData.services.find(s => s.id === apt.appointmentTypeID);
+                const price = apt.priceSold || apt.price || (service ? service.price : 0);
 
                 return `
-                    <div class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="p-6 hover:bg-theme-bg-accent transition-all duration-300 group border-l-4 ${urgencyClass} animate-slide-in" style="animation-delay: ${index * 0.1}s">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3 flex-1">
+                            <div class="flex items-center space-x-6 flex-1">
                                 <div class="flex-shrink-0">
-                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: ${service?.color || '#6b7280'}20">
-                                        <span class="material-icons text-lg" style="color: ${service?.color || '#6b7280'}">person</span>
+                                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-110" 
+                                         style="background: linear-gradient(135deg, ${service?.color || '#6b7280'}20, ${service?.color || '#6b7280'}40)">
+                                        <span class="material-icons text-2xl" style="color: ${service?.color || '#6b7280'}">person</span>
                                     </div>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h5 class="text-sm font-semibold text-gray-900">${apt.firstName} ${apt.lastName}</h5>
-                                    <div class="flex items-center space-x-2 mt-1">
-                                        <span class="service-badge bg-gray-100 text-gray-800">${apt.type}</span>
-                                        ${apt.phone ? `<span class="text-xs text-gray-500">${apt.phone}</span>` : ''}
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h5 class="text-xl font-bold text-theme-text-primary">${apt.firstName} ${apt.lastName}</h5>
+                                        <span class="text-xl font-bold text-emerald-600">$${parseFloat(price).toFixed(2)}</span>
                                     </div>
+                                    <div class="flex items-center space-x-4 mb-2">
+                                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-theme-primary/10 text-theme-primary shadow-sm">
+                                            ${apt.type}
+                                        </span>
+                                        ${service?.duration ? `<span class="text-sm text-theme-text-secondary font-medium">• ${service.duration} min</span>` : ''}
+                                        ${apt.phone ? `<span class="text-sm text-theme-text-secondary font-medium">• ${apt.phone}</span>` : ''}
+                                    </div>
+                                    ${apt.email ? `<p class="text-sm text-theme-text-secondary mt-2">${apt.email}</p>` : ''}
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-gray-900">${dateLabel}</p>
-                                <p class="text-xs text-gray-500">${apt.time} - ${apt.endTime}</p>
-                                ${service?.duration ? `<p class="text-xs text-gray-400">${service.duration} min</p>` : ''}
+                            <div class="text-right ml-6">
+                                <p class="text-xl font-bold ${dateColor} mb-1">${dateLabel}</p>
+                                <p class="text-base text-theme-text-primary font-semibold mb-3">${apt.time} - ${apt.endTime}</p>
+                                <div class="flex items-center justify-end space-x-3">
+                                    <button class="p-2 rounded-xl text-theme-text-secondary hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 transform hover:scale-110" title="Edit Appointment">
+                                        <span class="material-icons text-lg">edit</span>
+                                    </button>
+                                    <button class="p-2 rounded-xl text-theme-text-secondary hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 transform hover:scale-110" title="Cancel Appointment">
+                                        <span class="material-icons text-lg">cancel</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            const viewMoreButton = allUpcoming.length > 8 ? `
+                <div class="p-6 bg-theme-bg-accent">
+                    <button onclick="viewAllUpcoming()" class="btn-view-more w-full text-center py-4 px-6 text-sm font-semibold flex items-center justify-center space-x-2 border-2 border-theme-primary/20 hover:border-theme-primary/40">
+                        <span>View All ${allUpcoming.length} Upcoming Appointments</span>
+                        <span class="material-icons text-sm">arrow_forward</span>
+                    </button>
+                </div>
+            ` : '';
+
+            container.innerHTML = appointmentsHtml + viewMoreButton;
         }
 
         // Initialize Charts
@@ -790,47 +1218,136 @@
             initializeServiceChart();
             initializeStatusChart();
             initializeHoursChart();
+            updateChartsTheme(); // Apply theme to newly created charts
         }
 
-        // Initialize Revenue Chart
+        // Enhanced Initialize Revenue Chart
         function initializeRevenueChart() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx) return;
+            
             const revenueData = dashboardData.analytics.revenue.byMonth;
+            
+            // Handle empty data case
+            if (!revenueData || Object.keys(revenueData).length === 0) {
+                const context = ctx.getContext('2d');
+                context.clearRect(0, 0, ctx.width, ctx.height);
+                context.fillStyle = '#6B7280';
+                context.font = '14px Inter';
+                context.textAlign = 'center';
+                context.fillText('No revenue data available', ctx.width / 2, ctx.height / 2);
+                return;
+            }
             
             const labels = Object.keys(revenueData).sort();
             const data = labels.map(label => revenueData[label]);
 
-            analyticsConfig.charts.revenue = new Chart(ctx, {
+            // Destroy existing chart if it exists
+            if (analyticsConfig.charts.revenue) {
+                analyticsConfig.charts.revenue.destroy();
+            }
+
+            // Calculate min and max values for better y-axis scaling
+            const maxRevenue = Math.max(...data);
+            const minRevenue = Math.min(...data);
+            const yAxisMax = Math.ceil(maxRevenue * 1.1); // Add 10% padding
+            const yAxisMin = Math.floor(Math.max(0, minRevenue * 0.9)); // Ensure we don't go below 0
+
+            analyticsConfig.charts.revenue = new Chart(ctx.getContext('2d'), {
                 type: 'line',
                 data: {
                     labels: labels.map(label => {
                         const [year, month] = label.split('-');
-                        return new Date(year, month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                        return new Date(year, month - 1).toLocaleDateString('en-US', { 
+                            month: 'short',
+                            year: 'numeric'
+                        });
                     }),
                     datasets: [{
                         label: 'Revenue',
                         data: data,
-                        borderColor: analyticsConfig.colors.primary,
-                        backgroundColor: analyticsConfig.colors.primary + '20',
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() + '1A',
                         borderWidth: 3,
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        pointBackgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#1F2937',
+                            bodyColor: '#1F2937',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Revenue: $${context.parsed.y.toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}`;
+                                }
+                            }
                         }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            },
                             ticks: {
+                                color: '#6B7280',
+                                font: {
+                                    family: 'Inter',
+                                    size: 12
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            min: yAxisMin,
+                            max: yAxisMax,
+                            grid: {
+                                color: '#F3F4F6',
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#6B7280',
+                                font: {
+                                    family: 'Inter',
+                                    size: 12
+                                },
+                                padding: 8,
                                 callback: function(value) {
-                                    return '$' + value.toFixed(0);
+                                    return '$' + value.toLocaleString('en-US', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    });
                                 }
                             }
                         }
@@ -839,12 +1356,29 @@
             });
         }
 
-        // Initialize Service Chart
+        // Enhanced Initialize Service Chart
         function initializeServiceChart() {
-            const ctx = document.getElementById('serviceChart').getContext('2d');
+            const ctx = document.getElementById('serviceChart');
+            if (!ctx) return;
+            
             const serviceData = dashboardData.analytics.services.popular.slice(0, 5);
             
-            analyticsConfig.charts.service = new Chart(ctx, {
+            if (!serviceData || serviceData.length === 0) {
+                const context = ctx.getContext('2d');
+                context.clearRect(0, 0, ctx.width, ctx.height);
+                context.fillStyle = '#9CA3AF';
+                context.font = '16px Inter';
+                context.textAlign = 'center';
+                context.fillText('No service data available', ctx.width / 2, ctx.height / 2);
+                return;
+            }
+
+            // Destroy existing chart if it exists
+            if (analyticsConfig.charts.service) {
+                analyticsConfig.charts.service.destroy();
+            }
+            
+            analyticsConfig.charts.service = new Chart(ctx.getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: serviceData.map(s => s.name),
@@ -857,19 +1391,44 @@
                             analyticsConfig.colors.purple,
                             analyticsConfig.colors.teal
                         ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
+                        borderWidth: 4,
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim(),
+                        hoverBorderWidth: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '60%',
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
                                 padding: 20,
-                                usePointStyle: true
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                    family: 'Inter',
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim()
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#374151',
+                            bodyColor: '#374151',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 12,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed * 100) / total).toFixed(1);
+                                    return context.label + ': ' + context.parsed + ' bookings (' + percentage + '%)';
+                                }
                             }
                         }
                     }
@@ -877,12 +1436,19 @@
             });
         }
 
-        // Initialize Status Chart
+        // Enhanced Initialize Status Chart
         function initializeStatusChart() {
-            const ctx = document.getElementById('statusChart').getContext('2d');
-            const statusData = dashboardData.analytics.appointments.statusDistribution;
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
             
-            analyticsConfig.charts.status = new Chart(ctx, {
+            const statusData = dashboardData.analytics.appointments.statusDistribution;
+
+            // Destroy existing chart if it exists
+            if (analyticsConfig.charts.status) {
+                analyticsConfig.charts.status.destroy();
+            }
+            
+            analyticsConfig.charts.status = new Chart(ctx.getContext('2d'), {
                 type: 'pie',
                 data: {
                     labels: ['Completed', 'Upcoming', 'Canceled'],
@@ -893,8 +1459,9 @@
                             analyticsConfig.colors.primary,
                             analyticsConfig.colors.danger
                         ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
+                        borderWidth: 4,
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim(),
+                        hoverBorderWidth: 6
                     }]
                 },
                 options: {
@@ -905,7 +1472,30 @@
                             position: 'bottom',
                             labels: {
                                 padding: 20,
-                                usePointStyle: true
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                    family: 'Inter',
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim()
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#374151',
+                            bodyColor: '#374151',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 12,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed * 100) / total).toFixed(1);
+                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                }
                             }
                         }
                     }
@@ -913,12 +1503,19 @@
             });
         }
 
-        // Initialize Hours Chart
+        // Enhanced Initialize Hours Chart
         function initializeHoursChart() {
-            const ctx = document.getElementById('hoursChart').getContext('2d');
-            const hourlyData = dashboardData.analytics.appointments.hourlyDistribution;
+            const ctx = document.getElementById('hoursChart');
+            if (!ctx) return;
             
-            analyticsConfig.charts.hours = new Chart(ctx, {
+            const hourlyData = dashboardData.analytics.appointments.hourlyDistribution;
+
+            // Destroy existing chart if it exists
+            if (analyticsConfig.charts.hours) {
+                analyticsConfig.charts.hours.destroy();
+            }
+            
+            analyticsConfig.charts.hours = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: Array.from({length: 24}, (_, i) => {
@@ -929,9 +1526,11 @@
                     datasets: [{
                         label: 'Appointments',
                         data: hourlyData,
-                        backgroundColor: analyticsConfig.colors.primary + '80',
-                        borderColor: analyticsConfig.colors.primary,
-                        borderWidth: 1
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() + '80',
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
                     }]
                 },
                 options: {
@@ -940,13 +1539,54 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#374151',
+                            bodyColor: '#374151',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 12,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Appointments: ' + context.parsed.y;
+                                }
+                            }
                         }
                     },
                     scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#6B7280',
+                                font: {
+                                    family: 'Inter',
+                                    size: 10
+                                }
+                            }
+                        },
                         y: {
                             beginAtZero: true,
+                            grid: {
+                                color: '#F3F4F6',
+                                borderDash: [5, 5]
+                            },
+                            border: {
+                                display: false
+                            },
                             ticks: {
-                                stepSize: 1
+                                stepSize: 1,
+                                color: '#6B7280',
+                                font: {
+                                    family: 'Inter',
+                                    size: 12
+                                }
                             }
                         }
                     }
@@ -983,15 +1623,19 @@
             return `${Math.floor(diffInSeconds / 86400)}d ago`;
         }
 
-        // Loading and Error States
+        // Enhanced Loading and Error States
         function showLoadingState() {
             const mainContent = document.querySelector('main');
             if (mainContent) {
                 mainContent.innerHTML = `
-                    <div class="flex items-center justify-center h-64">
+                    <div class="flex items-center justify-center min-h-96">
                         <div class="text-center">
-                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-                            <span class="text-gray-600">Loading analytics dashboard...</span>
+                            <div class="relative mb-8">
+                                <div class="animate-spin rounded-full h-16 w-16 border-4 border-theme-primary/20 border-t-theme-primary mx-auto"></div>
+                                <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-theme-primary/30 animate-pulse"></div>
+                            </div>
+                            <h3 class="text-xl font-semibold text-theme-text-primary mb-2">Loading Analytics Dashboard</h3>
+                            <p class="text-theme-text-secondary">Please wait while we fetch your data...</p>
                         </div>
                     </div>
                 `;
@@ -1002,11 +1646,14 @@
             const mainContent = document.querySelector('main');
             if (mainContent) {
                 mainContent.innerHTML = `
-                    <div class="text-center py-12">
-                        <span class="material-icons text-gray-300 text-6xl mb-4">error_outline</span>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Unable to load dashboard</h3>
-                        <p class="text-gray-500 mb-4">There was an error loading your analytics data.</p>
-                        <button onclick="location.reload()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                    <div class="text-center py-16">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/20 dark:to-rose-900/20 rounded-3xl flex items-center justify-center">
+                            <span class="material-icons text-red-500 text-4xl">error_outline</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-theme-text-primary mb-3">Unable to load dashboard</h3>
+                        <p class="text-theme-text-secondary text-lg mb-6">There was an error loading your analytics data.</p>
+                        <button onclick="location.reload()" class="btn-modern inline-flex items-center">
+                            <span class="material-icons text-sm mr-2">refresh</span>
                             Try Again
                         </button>
                     </div>
@@ -1014,10 +1661,18 @@
             }
         }
 
-        // Refresh Dashboard
+        // Enhanced Refresh Dashboard
         async function refreshDashboard() {
             try {
                 showLoadingState();
+                
+                // Clear localStorage to force fresh data fetch
+                localStorage.removeItem('appointmentTypes');
+                localStorage.removeItem('upcomingAppointments');
+                localStorage.removeItem('pastAppointments');
+                localStorage.removeItem('userData');
+                localStorage.removeItem('services');
+                
                 await fetchAllData();
                 await loadAndProcessData();
                 renderDashboard();
@@ -1030,14 +1685,47 @@
                 });
                 analyticsConfig.charts = {};
                 
-                initializeCharts();
+                setTimeout(() => {
+                    initializeCharts();
+                }, 500);
+                
+                // Show success message
+                showToast('Dashboard refreshed successfully!', 'success');
             } catch (error) {
                 console.error("Error refreshing dashboard:", error);
                 showErrorState();
+                showToast('Error refreshing dashboard. Please try again.', 'error');
             }
         }
 
-        // API Fetch Functions
+        // Toast Notification Function
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            
+            toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-sm">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>
+                    <span class="font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // API Fetch Functions (keeping existing ones)
         function fetchAndStoreAppointmentTypes() {
             const requestData = {
                 crmAPIRequest: { 
@@ -1216,6 +1904,8 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+            
+            showToast('Report exported successfully!', 'success');
         }
 
         // Quick Action Functions
@@ -1231,6 +1921,211 @@
             window.location.href = 'appointments.html?type=past';
         }
 
+        // Enhanced View More Functions
+        function showAllServices() {
+            const modal = createEnhancedDataModal('All Services', renderAllServicesTable());
+            document.body.appendChild(modal);
+        }
+
+        function showAllClients() {
+            const modal = createEnhancedDataModal('All Clients', renderAllClientsTable());
+            document.body.appendChild(modal);
+        }
+
+        function showAllActivity() {
+            const modal = createEnhancedDataModal('All Activity', renderAllActivityTable());
+            document.body.appendChild(modal);
+        }
+
+        // Enhanced Create Data Modal
+        function createEnhancedDataModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fade-in';
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            };
+
+            modal.innerHTML = `
+                <div class="bg-theme-bg-primary rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden animate-slide-in">
+                    <div class="p-8 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-3xl font-bold text-theme-text-primary">${title}</h2>
+                            <button onclick="this.closest('.fixed').remove()" class="p-3 rounded-full text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent transition-all duration-200 transform hover:scale-110">
+                                <span class="material-icons text-xl">close</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-y-auto max-h-[calc(90vh-140px)]">
+                        ${content}
+                    </div>
+                </div>
+            `;
+
+            return modal;
+        }
+
+        // Enhanced Render All Services Table
+        function renderAllServicesTable() {
+            const services = dashboardData.analytics.services.all.sort((a, b) => b.revenue - a.revenue);
+            
+            return `
+                <div class="p-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-theme-border">
+                            <thead class="bg-theme-bg-accent">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Service</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Category</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Bookings</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Revenue</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Avg Revenue</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Duration</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-theme-bg-primary divide-y divide-theme-border">
+                                ${services.map((service, index) => `
+                                    <tr class="hover:bg-theme-bg-accent transition-all duration-200">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-12 h-12 rounded-xl flex items-center justify-center mr-4 shadow-lg" style="background-color: ${service.color}20">
+                                                    <span class="material-icons text-lg" style="color: ${service.color}">spa</span>
+                                                </div>
+                                                <div class="text-sm font-semibold text-theme-text-primary">${service.name}</div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-secondary font-medium">${service.category}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-theme-text-primary">${service.totalBookings}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">$${service.revenue.toFixed(2)}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary font-medium">$${(service.averageRevenue || 0).toFixed(2)}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-secondary">${service.duration} min</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${service.active ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'}">
+                                                ${service.active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Enhanced Render All Clients Table
+        function renderAllClientsTable() {
+            const clients = dashboardData.analytics.clients.topClients;
+            
+            return `
+                <div class="p-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-theme-border">
+                            <thead class="bg-theme-bg-accent">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Client</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Contact</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Appointments</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Total Spent</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Avg Spend</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Last Visit</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-theme-bg-primary divide-y divide-theme-border">
+                                ${clients.map((client, index) => {
+                                    const isVIP = client.totalSpent > 500;
+                                    const lastVisit = client.lastVisit ? new Date(client.lastVisit).toLocaleDateString() : 'Never';
+                                    
+                                    return `
+                                        <tr class="hover:bg-theme-bg-accent transition-all duration-200">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-theme-primary/20 to-theme-primary/40 flex items-center justify-center text-theme-primary font-bold text-sm mr-4 shadow-lg">
+                                                        ${client.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <div class="flex items-center space-x-2">
+                                                            <div class="text-sm font-semibold text-theme-text-primary">${client.name}</div>
+                                                            ${isVIP ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">VIP</span>' : ''}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-theme-text-primary font-medium">${client.email || 'N/A'}</div>
+                                                <div class="text-sm text-theme-text-secondary">${client.phone || 'N/A'}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-theme-text-primary">${client.appointments.length}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">$${client.totalSpent.toFixed(2)}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary font-medium">$${(client.totalSpent / client.appointments.length).toFixed(2)}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-secondary">${lastVisit}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Enhanced Render All Activity Table
+        function renderAllActivityTable() {
+            const allActivity = [...dashboardData.pastAppointments, ...dashboardData.upcomingAppointments]
+                .sort((a, b) => new Date(b.datetimeCreated) - new Date(a.datetimeCreated));
+            
+            return `
+                <div class="p-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-theme-border">
+                            <thead class="bg-theme-bg-accent">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Client</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Service</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Date & Time</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Price</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">Created</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-theme-bg-primary divide-y divide-theme-border">
+                                ${allActivity.map((apt, index) => {
+                                    const isPast = new Date(apt.datetime) < new Date();
+                                    const status = apt.canceled ? 'Cancelled' : (isPast ? 'Completed' : 'Scheduled');
+                                    const statusColor = apt.canceled ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300' : (isPast ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300');
+                                    const service = dashboardData.services.find(s => s.id === apt.appointmentTypeID);
+                                    const price = apt.priceSold || apt.price || (service ? service.price : 0);
+                                    
+                                    return `
+                                        <tr class="hover:bg-theme-bg-accent transition-all duration-200">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-semibold text-theme-text-primary">${apt.firstName} ${apt.lastName}</div>
+                                                <div class="text-sm text-theme-text-secondary">${apt.phone || apt.email || 'N/A'}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary font-medium">${apt.type}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-theme-text-primary font-medium">${new Date(apt.datetime).toLocaleDateString()}</div>
+                                                <div class="text-sm text-theme-text-secondary">${apt.time} - ${apt.endTime}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusColor}">
+                                                    ${status}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-theme-text-primary">$${parseFloat(price).toFixed(2)}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-secondary">${formatRelativeTime(new Date(apt.datetimeCreated))}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
         // Mobile responsive enhancements
         function adjustMobileLayout() {
             const isMobile = window.innerWidth < 1024;
@@ -1238,7 +2133,7 @@
             if (isMobile) {
                 // Adjust chart containers for mobile
                 document.querySelectorAll('.chart-container').forEach(container => {
-                    container.style.height = '250px';
+                    container.style.height = '280px';
                 });
                 
                 // Adjust grid layouts for mobile
@@ -1249,10 +2144,6 @@
             }
         }
 
-        // Event Listeners
-        window.addEventListener('resize', adjustMobileLayout);
-        window.addEventListener('load', adjustMobileLayout);
-
         // Chart period change handler
         document.addEventListener('change', function(e) {
             if (e.target.id === 'revenueChartPeriod') {
@@ -1261,87 +2152,229 @@
         });
 
         function updateRevenueChart(period) {
-            if (analyticsConfig.charts.revenue) {
-                analyticsConfig.charts.revenue.destroy();
+            const revenueData = dashboardData.analytics.revenue.byMonth;
+            let filteredData = {};
+            
+            const now = new Date();
+            let cutoffDate;
+            
+            if (period === '6months') {
+                cutoffDate = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+            } else if (period === '12months') {
+                cutoffDate = new Date(now.getFullYear(), now.getMonth() - 12, 1);
             }
+            
+            if (cutoffDate) {
+                const cutoffKey = `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, '0')}`;
+                Object.keys(revenueData)
+                    .filter(key => key >= cutoffKey)
+                    .sort()
+                    .forEach(key => {
+                        filteredData[key] = revenueData[key];
+                    });
+            } else {
+                filteredData = { ...revenueData };
+            }
+            
+            // Store current data temporarily
+            const originalData = dashboardData.analytics.revenue.byMonth;
+            dashboardData.analytics.revenue.byMonth = filteredData;
+            
+            // Reinitialize chart
             initializeRevenueChart();
+            
+            // Restore original data
+            dashboardData.analytics.revenue.byMonth = originalData;
         }
+
+        // Event Listeners
+        window.addEventListener('resize', adjustMobileLayout);
+        window.addEventListener('load', adjustMobileLayout);
+
+        // Modal Functions
+        function openNewAppointmentModal() {
+            const modal = document.getElementById('newAppointmentModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            populateServiceOptions();
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = today;
+        }
+
+        function closeNewAppointmentModal() {
+            const modal = document.getElementById('newAppointmentModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('newAppointmentForm').reset();
+            document.getElementById('serviceDetails').classList.add('hidden');
+        }
+
+        function populateServiceOptions() {
+            const serviceSelect = document.getElementById('serviceSelect');
+            serviceSelect.innerHTML = '<option value="">Choose a service...</option>';
+            
+            dashboardData.services.forEach(service => {
+                if (service.active) {
+                    const option = document.createElement('option');
+                    option.value = service.id;
+                    option.textContent = `${service.name} - $${service.price} (${service.duration} min)`;
+                    serviceSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Update service details display
+        function updateServiceDetails(service) {
+            const serviceDetails = document.getElementById('serviceDetails');
+            if (service) {
+                serviceDetails.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-theme-text-primary">${service.name}</h4>
+                            <p class="text-sm text-theme-text-secondary">${service.category || 'General'}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-semibold text-theme-primary">$${service.price}</p>
+                            <p class="text-sm text-theme-text-secondary">${service.duration} minutes</p>
+                        </div>
+                    </div>
+                `;
+                serviceDetails.classList.remove('hidden');
+            } else {
+                serviceDetails.classList.add('hidden');
+            }
+        }
+
+        // Service selection handler
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'serviceSelect') {
+                const serviceId = e.target.value;
+                const serviceDetails = document.getElementById('serviceDetails');
+                
+                if (serviceId) {
+                    const service = dashboardData.services.find(s => s.id === serviceId);
+                    if (service) {
+                        updateServiceDetails(service);
+                    }
+                } else {
+                    serviceDetails.classList.add('hidden');
+                }
+            }
+        });
+
+        // Form submission handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('newAppointmentForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = {
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        serviceId: document.getElementById('serviceSelect').value,
+                        date: document.getElementById('appointmentDate').value,
+                        time: document.getElementById('appointmentTime').value,
+                        notes: document.getElementById('notes').value
+                    };
+                    
+                    console.log('New appointment data:', formData);
+                    
+                    // Here you would typically send the data to your backend
+                    // For now, we'll just show a success message
+                    showToast('Appointment scheduled successfully! (This is a demo)', 'success');
+                    closeNewAppointmentModal();
+                });
+            }
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('newAppointmentModal');
+            if (modal && e.target === modal) {
+                closeNewAppointmentModal();
+            }
+        });
     </script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 antialiased min-h-screen">
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300">
     <div class="flex h-screen overflow-hidden">
-        <!-- Enhanced Sidebar -->
+        <!-- Modern Sidebar -->
         <div class="hidden lg:flex lg:flex-shrink-0">
-            <div class="flex flex-col w-64 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-2xl">
-                <div class="flex items-center justify-center h-16 px-6 bg-gray-900/80 backdrop-blur-sm border-b border-gray-700/50">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
                             <span class="material-icons text-white text-xl">spa</span>
                         </div>
                         <div>
-                            <h2 class="text-lg font-bold text-white tracking-tight">Bio Revive</h2>
-                            <p class="text-xs text-gray-400">by SkinEnvy</p>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
+                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
-                    <div class="px-4">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Analytics</h3>
+                    <div class="px-6">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
                     </div>
-                    <nav class="mt-1 flex-1 px-2 space-y-1">
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg border-l-4 border-primary-300 transition-all duration-200">
-                            <span class="material-icons mr-3 text-white">dashboard</span>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
+                            <span class="material-icons mr-3 text-theme-primary text-xl">dashboard</span>
                             Analytics Dashboard
                         </a>
-                        <a href="appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">event</span>
+                        <a href="appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">event</span>
                             Appointments
                         </a>
-                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">spa</span>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">spa</span>
                             Services
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">people</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">people</span>
                             Clients
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">analytics</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">analytics</span>
                             Reports
                         </a>
                     </nav>
 
-                    <div class="px-4 mt-8">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Settings</h3>
+                    <div class="px-6 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
                     </div>
-                    <nav class="mt-1 flex-1 px-2 space-y-1">
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">person</span>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">person</span>
                             Profile
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">settings</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">settings</span>
                             Settings
                         </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
-                            <span class="material-icons mr-3 text-gray-400 group-hover:text-white">help</span>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">help</span>
                             Help & Support
                         </a>
                     </nav>
                 </div>
                 
                 <!-- User Profile Section -->
-                <div class="p-4 bg-gray-900/70 backdrop-blur-sm border-t border-gray-700/50">
-                    <div id="userProfile" class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold">
+                <div class="p-4 border-t border-theme-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium">
                             PK
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-white truncate">Prem Anand K</p>
+                            <p class="text-sm font-medium text-theme-text-primary truncate">Prem Anand K</p>
                             <div class="flex items-center mt-1">
-                                <div class="h-2 w-2 rounded-full bg-green-400 mr-1.5"></div>
-                                <p class="text-xs text-gray-400">Online</p>
+                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
+                                <p class="text-xs text-theme-text-secondary">Online</p>
                             </div>
                         </div>
                     </div>
@@ -1351,9 +2384,9 @@
 
         <!-- Main Content -->
         <div class="flex flex-col flex-1 overflow-hidden">
-            <!-- Enhanced Top Navigation -->
-            <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 shadow-sm sticky top-0 z-10">
-                <button class="p-2 rounded-md text-gray-500 lg:hidden hover:bg-gray-100">
+            <!-- Top Navigation -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent">
                     <span class="material-icons">menu</span>
                 </button>
                 
@@ -1361,111 +2394,158 @@
                     <div class="w-full">
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons text-gray-400">search</span>
+                                <span class="material-icons text-theme-text-secondary">search</span>
                             </div>
-                            <input type="text" placeholder="Search analytics, clients, services..." class="block w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-150">
+                            <input type="text" placeholder="Search analytics, clients, services..." class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary">
                         </div>
                     </div>
                 </div>
                 
-                <div class="ml-4 flex items-center space-x-3">
-                    <button class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 relative transition-colors">
+                <div class="ml-4 flex items-center space-x-2">
+                    <button class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent relative">
                         <span class="material-icons">notifications</span>
-                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+                        <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-danger-500"></span>
                     </button>
-                    <button onclick="refreshDashboard()" class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors" title="Refresh Dashboard">
+                    <button onclick="refreshDashboard()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Dashboard">
                         <span class="material-icons">refresh</span>
                     </button>
-                    <button onclick="exportDashboardReport()" class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors" title="Export Report">
+                    <button onclick="exportDashboardReport()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Export Report">
                         <span class="material-icons">download</span>
                     </button>
-                    <button class="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors">
+                    <button class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent">
                         <span class="material-icons">help_outline</span>
                     </button>
                 </div>
             </div>
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-gray-50">
+            <main class="flex-1 overflow-auto p-6 bg-theme-bg-secondary">
                 <!-- Content will be dynamically inserted here -->
             </main>
         </div>
     </div>
 
     <!-- Mobile Navigation -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50">
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
         <div class="flex justify-around items-center">
-            <a href="#" class="flex flex-col items-center p-2 text-primary-600">
-                <span class="material-icons text-xl">dashboard</span>
-                <span class="text-xs mt-1">Analytics</span>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-primary">
+                <span class="material-icons text-lg">dashboard</span>
+                <span class="text-xs mt-1 font-medium">Analytics</span>
             </a>
-            <a href="appointments.html" class="flex flex-col items-center p-2 text-gray-500">
-                <span class="material-icons text-xl">event</span>
+            <a href="appointments.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">event</span>
                 <span class="text-xs mt-1">Appointments</span>
             </a>
-            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-gray-500">
-                <span class="material-icons text-xl">spa</span>
+            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">spa</span>
                 <span class="text-xs mt-1">Services</span>
             </a>
-            <a href="#" class="flex flex-col items-center p-2 text-gray-500">
-                <span class="material-icons text-xl">person</span>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">person</span>
                 <span class="text-xs mt-1">Profile</span>
             </a>
         </div>
     </div>
 
-    <!-- Enhanced Quick Actions Floating Button -->
-    <div class="fixed bottom-20 lg:bottom-6 right-6 z-40">
-        <div class="relative">
-            <button id="quickActionsBtn" class="w-14 h-14 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 rounded-full shadow-xl flex items-center justify-center text-white transition-all duration-200 hover:shadow-2xl hover:scale-105">
-                <span class="material-icons text-2xl">add</span>
-            </button>
-            
-            <!-- Quick Actions Menu -->
-            <div id="quickActionsMenu" class="absolute bottom-16 right-0 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-48 hidden">
-                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span class="material-icons text-sm mr-3 text-primary-600">event</span>
-                    New Appointment
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span class="material-icons text-sm mr-3 text-emerald-600">spa</span>
-                    New Service
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span class="material-icons text-sm mr-3 text-blue-600">person_add</span>
-                    New Client
-                </a>
-                <div class="border-t border-gray-100 my-1"></div>
-                <a href="#" onclick="exportDashboardReport()" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span class="material-icons text-sm mr-3 text-purple-600">analytics</span>
-                    Export Analytics
-                </a>
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+
+    <!-- New Appointment Modal -->
+    <div id="newAppointmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-theme-bg-primary rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-theme-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-theme-text-primary">Schedule New Appointment</h2>
+                            <p class="text-theme-text-secondary mt-1">Create a new appointment booking</p>
+                        </div>
+                        <button onclick="closeNewAppointmentModal()" class="p-2 rounded-lg text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="newAppointmentForm" class="p-6 space-y-6">
+                    <!-- Client Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-theme-text-primary flex items-center">
+                            <span class="material-icons text-theme-primary mr-2">person</span>
+                            Client Information
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-1">First Name *</label>
+                                <input type="text" id="firstName" required class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-1">Last Name *</label>
+                                <input type="text" id="lastName" required class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-1">Email *</label>
+                                <input type="email" id="email" required class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-1">Phone</label>
+                                <input type="tel" id="phone" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Selection -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-theme-text-primary flex items-center">
+                            <span class="material-icons text-theme-primary mr-2">spa</span>
+                            Service Details
+                        </h3>
+                        <div>
+                            <label class="block text-sm font-medium text-theme-text-secondary mb-1">Select Service *</label>
+                            <select id="serviceSelect" required class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                <option value="">Choose a service...</option>
+                            </select>
+                        </div>
+                        <div id="serviceDetails" class="hidden bg-theme-bg-accent rounded-lg p-4 border border-theme-border">
+                            <!-- Service details will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-theme-text-primary flex items-center">
+                            <span class="material-icons text-theme-primary mr-2">schedule</span>
+                            Date & Time
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-1">Date *</label>
+                                <input type="date" id="appointmentDate" required class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-1">Time *</label>
+                                <input type="time" id="appointmentTime" required class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-medium text-theme-text-secondary mb-1">Notes</label>
+                        <textarea id="notes" rows="3" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary" placeholder="Any special requirements or notes..."></textarea>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex items-center justify-end space-x-3 pt-4 border-t border-theme-border">
+                        <button type="button" onclick="closeNewAppointmentModal()" class="px-4 py-2 border border-theme-border rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent text-sm font-medium">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-modern px-4 py-2 text-sm font-medium">
+                            Schedule Appointment
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-    <script>
-        // Quick actions menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const quickActionsBtn = document.getElementById('quickActionsBtn');
-            const quickActionsMenu = document.getElementById('quickActionsMenu');
-            
-            if (quickActionsBtn && quickActionsMenu) {
-                quickActionsBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    quickActionsMenu.classList.toggle('hidden');
-                });
-
-                // Close menu when clicking outside
-                document.addEventListener('click', function() {
-                    quickActionsMenu.classList.add('hidden');
-                });
-
-                quickActionsMenu.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            }
-        });
-    </script>
 </body>
 </html>

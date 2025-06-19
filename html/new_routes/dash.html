@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Acuity Scheduling</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            font-family: ProximaNovaLight;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-family: ProximaNovaXbold;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .stat-card .trend {
+            color: #98cb00;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .appointments-list {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-widget {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .search-bar input {
+            border: none;
+            padding: 8px;
+            width: 200px;
+            font-family: ProximaNovaRegular;
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-time {
+            width: 100px;
+            color: #666;
+        }
+
+        .appointment-details {
+            flex-grow: 1;
+        }
+
+        .appointment-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .status-confirmed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="top-nav">
+            <h1 class="f18">Dashboard</h1>
+            <div class="search-bar">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Search appointments...">
+            </div>
+            <div class="notification-bell">
+                <img src="../../images/bell.png" alt="Notifications" width="24">
+                <span class="notification-badge">3</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Appointments</h3>
+                <div class="value">248</div>
+                <div class="trend">↑ 12% from last month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Upcoming Today</h3>
+                <div class="value">28</div>
+                <div class="trend">5 pending confirmation</div>
+            </div>
+            <div class="stat-card">
+                <h3>Available Slots</h3>
+                <div class="value">42</div>
+                <div class="trend">Next 7 days</div>
+            </div>
+            <div class="stat-card">
+                <h3>Client Satisfaction</h3>
+                <div class="value">4.8/5</div>
+                <div class="trend">↑ 0.3 from last month</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="appointments-list">
+                <h2>Today's Appointments</h2>
+                <div class="appointment-item">
+                    <div class="appointment-time">09:00 AM</div>
+                    <div class="appointment-details">
+                        <div>John Smith - Business Consultation</div>
+                        <div style="color: #666;">30 minutes</div>
+                    </div>
+                    <span class="appointment-status status-confirmed">Confirmed</span>
+                </div>
+                <div class="appointment-item">
+                    <div class="appointment-time">10:30 AM</div>
+                    <div class="appointment-details">
+                        <div>Sarah Johnson - Strategy Meeting</div>
+                        <div style="color: #666;">60 minutes</div>
+                    </div>
+                    <span class="appointment-status status-pending">Pending</span>
+                </div>
+                <div class="appointment-item">
+                    <div class="appointment-time">02:00 PM</div>
+                    <div class="appointment-details">
+                        <div>Mike Wilson - Project Review</div>
+                        <div style="color: #666;">45 minutes</div>
+                    </div>
+                    <span class="appointment-status status-confirmed">Confirmed</span>
+                </div>
+            </div>
+
+            <div class="calendar-widget">
+                <h2>Quick Actions</h2>
+                <div style="margin-top: 20px;">
+                    <button class="Btn greenBtn whiteTxt" style="width: 100%; margin-bottom: 10px;">
+                        New Appointment
+                    </button>
+                    <button class="Btn whiteTxt" style="width: 100%; background: #2196f3;">
+                        View Calendar
+                    </button>
+                </div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Upcoming Events</h3>
+                <div style="color: #666; font-size: 14px;">
+                    <div style="margin-bottom: 10px;">
+                        <strong>Team Meeting</strong><br>
+                        Tomorrow, 10:00 AM
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Client Workshop</strong><br>
+                        Wed, 2:30 PM
+                    </div>
+                    <div>
+                        <strong>Strategy Review</strong><br>
+                        Thu, 11:00 AM
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+    <script src="../../js/handler.js"></script>
+    <script>
+        // Initialize any dashboard-specific functionality here
+        $(document).ready(function() {
+            // Add click handlers for buttons
+            $('.greenBtn').click(function() {
+                // Handle new appointment button click
+                window.location.href = 'appointments.html';
+            });
+
+            // Initialize notifications
+            $('.notification-bell').click(function() {
+                // Handle notifications click
+                alert('Notifications feature coming soon!');
+            });
+
+            // Add search functionality
+            $('.search-bar input').on('keyup', function() {
+                // Implement search functionality
+                const searchTerm = $(this).val().toLowerCase();
+                // Add your search logic here
+            });
+        });
+    </script>
+</body>
+</html> 

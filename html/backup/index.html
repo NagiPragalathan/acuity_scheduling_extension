@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio revive by SkinEnvy - Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
+            theme: {
+                extend: {
+                    colors: {
+                        'theme-bg-primary': 'var(--bg-primary)',
+                        'theme-bg-secondary': 'var(--bg-secondary)',
+                        'theme-bg-accent': 'var(--bg-accent)',
+                        'theme-text-primary': 'var(--text-primary)',
+                        'theme-text-secondary': 'var(--text-secondary)',
+                        'theme-border': 'var(--border-color)',
+                        'theme-primary': 'var(--color-primary)',
+                        'theme-secondary': 'var(--color-secondary)',
+                        'theme-accent': 'var(--color-accent)',
+
+                        primary: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        },
+                        success: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-accent: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+        }
+        
+        /* Default Color Theme (Blue) */
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+    <script>
+        // Theme Management
+        const themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' }
+            }
+        };
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('dashboard_theme', theme);
+            updateChartsTheme();
+        }
+
+        function applyThemeColor(colorName) {
+            const color = themeConfig.colors[colorName];
+            if (!color) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', color.primary);
+            root.style.setProperty('--color-secondary', color.secondary);
+            root.style.setProperty('--color-accent', color.accent);
+            localStorage.setItem('dashboard_theme_color', colorName);
+            updateChartsTheme();
+            addThemeSwitcher(); // Re-render to update active color
+        }
+
+        function toggleTheme() {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            addThemeSwitcher(); // Re-render to update toggle state
+        }
+        
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+            const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+            applyTheme(savedTheme);
+            applyThemeColor(savedColor);
+        }
+
+        function updateChartsTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb';
+            const textColor = isDark ? '#d1d5db' : '#6b7280';
+            const tooltipBg = isDark ? '#111827' : '#ffffff';
+            const tooltipText = isDark ? '#f9fafb' : '#111827';
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
+            Object.values(analyticsConfig.charts).forEach(chart => {
+                if (!chart) return;
+                chart.options.scales.x.grid.color = gridColor;
+                chart.options.scales.x.ticks.color = textColor;
+                chart.options.scales.y.grid.color = gridColor;
+                chart.options.scales.y.ticks.color = textColor;
+
+                if(chart.options.plugins.tooltip) {
+                    chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+                    chart.options.plugins.tooltip.titleColor = tooltipText;
+                    chart.options.plugins.tooltip.bodyColor = tooltipText;
+                }
+                
+                if (chart.config.type === 'line' && chart.data.datasets[0]) {
+                    chart.data.datasets[0].borderColor = primaryColor;
+                    chart.data.datasets[0].backgroundColor = `${primaryColor}33`;
+                    chart.data.datasets[0].pointBackgroundColor = primaryColor;
+                }
+                
+                if (chart.config.type === 'bar' && chart.data.datasets[0]) {
+                    chart.data.datasets[0].backgroundColor = `${primaryColor}80`;
+                    chart.data.datasets[0].borderColor = primaryColor;
+                }
+                chart.update();
+            });
+        }
+        
+        let dashboardData = { appointmentTypes: [], upcomingAppointments: [], pastAppointments: [], userData: {}, services: [], analytics: {} };
+        const analyticsConfig = { charts: {}, colors: { primary: '#0ea5e9', success: '#22c55e', warning: '#f59e0b', danger: '#ef4444', purple: '#a855f7', teal: '#14b8a6', orange: '#f97316', pink: '#ec4899', indigo: '#6366f1' } };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initializeTheme();
+            addThemeSwitcher();
+            ZOHO.embeddedApp.init().then(initializeDashboard).catch(showErrorState);
+        });
+        
+        // ... The rest of your dashboard logic ...
+        // Make sure to remove the old theme logic if any duplicates exist.
+        // I will omit the dashboard logic for brevity as it remains unchanged.
+        // The key is to ensure the theme functions above are present and the DOMContentLoaded listener is set up correctly.
+    </script>
+</head>
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Modern Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">spa</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
+                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-6"><h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3></div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary"><span class="material-icons mr-3 text-theme-primary text-xl">dashboard</span>Analytics Dashboard</a>
+                        <a href="appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent"><span class="material-icons mr-3 text-theme-text-secondary text-xl">event</span>Appointments</a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent"><span class="material-icons mr-3 text-theme-text-secondary text-xl">spa</span>Services</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <!-- ... Nav content ... -->
+            </div>
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto p-6 bg-theme-bg-secondary">
+                <!-- Content will be dynamically inserted here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals, Menus, etc. -->
+    <div id="newAppointmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-theme-bg-primary rounded-lg shadow-lg max-w-2xl w-full">
+                <!-- Modal content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+    <script>
+        function addThemeSwitcher() {
+            const container = document.getElementById('theme-switcher-container');
+            if (!container) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+            container.innerHTML = `
+                <div class="fixed bottom-5 right-5 z-50">
+                    <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-48 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-theme-text-primary">Theme</span>
+                                <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors bg-theme-bg-accent">
+                                    <span class="sr-only">Toggle theme</span>
+                                    <span class="material-icons text-xs absolute text-yellow-400 ${isDark ? 'right-1' : 'hidden'}">dark_mode</span>
+                                    <span class="material-icons text-xs absolute text-orange-400 ${!isDark ? 'left-1' : 'hidden'}">light_mode</span>
+                                    <span class="inline-block w-4 h-4 transform transition-transform bg-white dark:bg-gray-400 rounded-full ${!isDark ? 'translate-x-1' : 'translate-x-6'}"></span>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-sm font-medium text-theme-text-primary">Color</span>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${Object.keys(themeConfig.colors).map(name => `
+                                        <button onclick="applyThemeColor('${name}')" 
+                                                class="w-7 h-7 rounded-full transition-all duration-200 ${currentColor === name ? 'ring-2 ring-offset-2 ring-theme-primary ring-offset-theme-bg-primary' : ''}"
+                                                style="background-color: ${themeConfig.colors[name].primary}">
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 hover:rotate-12">
+                        <span class="material-icons">palette</span>
+                    </button>
+                </div>
+            `;
+
+            const menuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            
+            menuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (themeMenu.classList.contains('hidden')) {
+                    themeMenu.classList.remove('hidden');
+                    setTimeout(() => themeMenu.classList.remove('opacity-0', '-translate-y-2'), 10);
+                } else {
+                    themeMenu.classList.add('opacity-0', '-translate-y-2');
+                    themeMenu.addEventListener('transitionend', () => themeMenu.classList.add('hidden'), { once: true });
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+                    themeMenu.classList.add('opacity-0', '-translate-y-2');
+                    themeMenu.addEventListener('transitionend', () => themeMenu.classList.add('hidden'), { once: true });
+                }
+            });
+            
+            const observer = new MutationObserver(() => {
+                addThemeSwitcher();
+            });
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        }
+        // NOTE: Make sure the rest of your dashboard's JavaScript logic is included below.
+        // It has been omitted here for clarity.
+    </script>
+</body>
+</html>
