@@ -10,6 +10,7 @@
     <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
     <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -397,6 +398,55 @@
                             </div>
                         </div>
 
+                        <!-- Charts Section - Moved to top -->
+                        <div class="space-y-6">
+                            <!-- First Row of Charts -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Bookings Distribution Chart -->
+                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Service Bookings Distribution</h3>
+                                    <div class="h-72">
+                                        <canvas id="bookingsChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Revenue Distribution Chart -->
+                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Revenue Distribution</h3>
+                                    <div class="h-72">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Second Row of Charts -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <!-- Duration Distribution Chart -->
+                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Duration Analysis</h3>
+                                    <div class="h-64">
+                                        <canvas id="durationChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Service Status Chart -->
+                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Status Overview</h3>
+                                    <div class="h-64">
+                                        <canvas id="statusChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Timeline Chart -->
+                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Booking Timeline</h3>
+                                    <div class="h-64">
+                                        <canvas id="timelineChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Statistics Cards -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="statsCards">
                             ${!appointmentTypesData.isDataLoaded ? Array(4).fill(0).map(() => `
@@ -495,6 +545,7 @@
             if (appointmentTypesData.isDataLoaded) {
                 renderStatsCards();
                 renderServices();
+                createCharts();
             }
         }
 
@@ -1046,24 +1097,29 @@
             }, 3000);
         }
 
-        // Add this function to create charts
+        // Add this function to create and update the charts
         function createCharts() {
-            // Booking Distribution Chart
-            const bookingCtx = document.getElementById('bookingDistributionChart').getContext('2d');
-            const bookingData = appointmentTypesData.types.map(service => ({
-                name: service.name,
-                bookings: service.bookingCount || 0,
-                color: service.color
-            })).sort((a, b) => b.bookings - a.bookings).slice(0, 5);
+            const chartTextColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+            const chartBorderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
 
-            new Chart(bookingCtx, {
+            // Common chart options
+            Chart.defaults.color = chartTextColor;
+            Chart.defaults.borderColor = chartBorderColor;
+
+            // 1. Bookings Distribution Chart
+            const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
+            const bookingsData = appointmentTypesData.types
+                .sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0))
+                .slice(0, 5);
+
+            new Chart(bookingsCtx, {
                 type: 'bar',
                 data: {
-                    labels: bookingData.map(d => d.name),
+                    labels: bookingsData.map(service => service.name),
                     datasets: [{
-                        label: 'Bookings',
-                        data: bookingData.map(d => d.bookings),
-                        backgroundColor: bookingData.map(d => d.color),
+                        label: 'Number of Bookings',
+                        data: bookingsData.map(service => service.bookingCount || 0),
+                        backgroundColor: bookingsData.map(service => service.color),
                         borderRadius: 8
                     }]
                 },
@@ -1073,50 +1129,34 @@
                     plugins: {
                         legend: {
                             display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Top 5 Services by Bookings',
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
-                            },
-                            ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                            title: {
+                                display: true,
+                                text: 'Number of Bookings'
                             }
                         }
                     }
                 }
             });
 
-            // Revenue Distribution Chart
-            const revenueCtx = document.getElementById('revenueDistributionChart').getContext('2d');
-            const revenueData = appointmentTypesData.types.map(service => ({
-                name: service.name,
-                revenue: service.revenue || 0,
-                color: service.color
-            })).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+            // 2. Revenue Distribution Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const revenueData = appointmentTypesData.types
+                .filter(service => service.revenue > 0)
+                .sort((a, b) => b.revenue - a.revenue)
+                .slice(0, 5);
 
             new Chart(revenueCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: revenueData.map(d => d.name),
+                    labels: revenueData.map(service => service.name),
                     datasets: [{
-                        data: revenueData.map(d => d.revenue),
-                        backgroundColor: revenueData.map(d => d.color)
+                        data: revenueData.map(service => service.revenue),
+                        backgroundColor: revenueData.map(service => service.color)
                     }]
                 },
                 options: {
@@ -1124,15 +1164,125 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'right',
-                            labels: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // 3. Duration Distribution Chart
+            const durationCtx = document.getElementById('durationChart').getContext('2d');
+            const durationRanges = {
+                'Short (0-30min)': services => services.filter(s => s.duration <= 30).length,
+                'Medium (31-60min)': services => services.filter(s => s.duration > 30 && s.duration <= 60).length,
+                'Long (61-120min)': services => services.filter(s => s.duration > 60 && s.duration <= 120).length,
+                'Extended (120min+)': services => services.filter(s => s.duration > 120).length
+            };
+
+            new Chart(durationCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(durationRanges),
+                    datasets: [{
+                        data: Object.values(durationRanges).map(fn => fn(appointmentTypesData.types)),
+                        backgroundColor: [
+                            'rgba(74, 222, 128, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(168, 85, 247, 0.6)',
+                            'rgba(249, 115, 22, 0.6)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // 4. Service Status Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            const activeServices = appointmentTypesData.types.filter(s => s.active).length;
+            const inactiveServices = appointmentTypesData.types.length - activeServices;
+
+            new Chart(statusCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Active', 'Inactive'],
+                    datasets: [{
+                        data: [activeServices, inactiveServices],
+                        backgroundColor: ['rgba(34, 197, 94, 0.6)', 'rgba(239, 68, 68, 0.6)']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // 5. Timeline Chart
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            const timelineData = appointmentTypesData.types
+                .filter(service => service.lastBooked)
+                .map(service => ({
+                    x: new Date(service.lastBooked),
+                    y: service.bookingCount || 0,
+                    name: service.name,
+                    color: service.color
+                }))
+                .sort((a, b) => a.x - b.x);
+
+            new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Bookings Over Time',
+                        data: timelineData,
+                        borderColor: 'rgba(59, 130, 246, 0.8)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const point = timelineData[context.dataIndex];
+                                    return `${point.name}: ${point.y} bookings`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
                             }
                         },
-                        title: {
-                            display: true,
-                            text: 'Revenue Distribution',
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Bookings'
+                            }
                         }
                     }
                 }
