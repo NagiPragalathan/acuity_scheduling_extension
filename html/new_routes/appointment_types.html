@@ -590,8 +590,7 @@
             if (isGridView) {
                 return `
                     <div class="service-card modern-card rounded-2xl overflow-hidden card-hover-effect animate-fade-in" 
-                         style="border-left-color: ${service.color}; animation-delay: ${index * 0.1}s"
-                         onclick="viewServiceDetails('${service.id}')">
+                         style="border-left-color: ${service.color}; animation-delay: ${index * 0.1}s">
                         <div class="p-6">
                             <div class="flex items-start justify-between mb-4">
                                 <div class="flex items-center space-x-3">
@@ -650,16 +649,9 @@
                             </div>
                             
                             <div class="mt-6 pt-4 border-t border-theme-border">
-                                <div class="flex items-center justify-between">
-                                    <button onclick="event.stopPropagation(); editService('${service.id}')" class="text-theme-primary hover:bg-theme-primary hover:text-white p-2 rounded-lg transition-all duration-200" title="Edit Service">
-                                        <span class="material-icons text-sm">edit</span>
-                                    </button>
-                                    <button onclick="event.stopPropagation(); viewBookings('${service.id}')" class="btn-modern text-sm px-4 py-2" title="View Bookings">
-                                        <span class="material-icons text-sm mr-1">visibility</span>
-                                        View
-                                    </button>
-                                    <button onclick="event.stopPropagation(); toggleServiceStatus('${service.id}')" class="text-theme-text-secondary hover:bg-theme-bg-accent p-2 rounded-lg transition-all duration-200" title="${service.active ? 'Deactivate' : 'Activate'}">
-                                        <span class="material-icons text-sm">${service.active ? 'visibility_off' : 'visibility'}</span>
+                                <div class="flex items-center justify-end">
+                                    <button onclick="event.stopPropagation(); viewServiceDetails('${service.id}')" class="btn-modern text-sm px-4 py-2">
+                                        View Details
                                     </button>
                                 </div>
                             </div>
@@ -670,8 +662,7 @@
                 // List view
                 return `
                     <div class="service-card modern-card rounded-xl card-hover-effect animate-slide-in" 
-                         style="border-left-color: ${service.color}; animation-delay: ${index * 0.05}s"
-                         onclick="viewServiceDetails('${service.id}')">
+                         style="border-left-color: ${service.color}; animation-delay: ${index * 0.05}s">
                         <div class="flex items-center justify-between p-6">
                             <div class="flex items-center space-x-4 flex-1">
                                 <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" 
@@ -707,17 +698,9 @@
                                     </div>
                                 </div>
                             </div>
-                            
                             <div class="flex items-center space-x-2 ml-4">
-                                <button onclick="event.stopPropagation(); editService('${service.id}')" class="text-theme-primary hover:bg-theme-primary hover:text-white p-2 rounded-lg transition-all duration-200" title="Edit">
-                                    <span class="material-icons text-sm">edit</span>
-                                </button>
-                                <button onclick="event.stopPropagation(); viewBookings('${service.id}')" class="btn-modern text-sm px-4 py-2" title="View Bookings">
-                                    <span class="material-icons text-sm mr-1">visibility</span>
-                                    View
-                                </button>
-                                <button onclick="event.stopPropagation(); toggleServiceStatus('${service.id}')" class="text-theme-text-secondary hover:bg-theme-bg-accent p-2 rounded-lg transition-all duration-200" title="${service.active ? 'Deactivate' : 'Activate'}">
-                                    <span class="material-icons text-sm">${service.active ? 'visibility_off' : 'visibility'}</span>
+                                <button onclick="event.stopPropagation(); viewServiceDetails('${service.id}')" class="btn-modern text-sm px-4 py-2">
+                                    View Details
                                 </button>
                             </div>
                         </div>
@@ -823,8 +806,8 @@
                     <div class="p-6 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                         <div class="flex items-center justify-between">
                             <h2 class="text-2xl font-bold text-theme-text-primary">Service Details</h2>
-                            <button onclick="this.closest('.fixed').remove()" class="p-2 rounded-full text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent transition-all duration-200 transform hover:scale-110">
-                                <span class="material-icons">close</span>
+                            <button onclick="this.closest('.fixed').remove()" class="btn-modern text-sm px-4 py-2">
+                                Close
                             </button>
                         </div>
                     </div>
@@ -919,17 +902,8 @@
                                 ` : ''}
                                 
                                 <div class="flex items-center justify-between pt-4 border-t border-theme-border">
-                                    <div class="flex items-center space-x-3">
-                                        <button onclick="editService('${service.id}'); this.closest('.fixed').remove();" class="btn-modern px-6 py-2">
-                                            <span class="material-icons text-sm mr-2">edit</span>
-                                            Edit Service
-                                        </button>
-                                        <button onclick="toggleServiceStatus('${service.id}'); this.closest('.fixed').remove();" class="px-6 py-2 border border-theme-border rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent text-sm font-medium">
-                                            <span class="material-icons text-sm mr-2">${service.active ? 'visibility_off' : 'visibility'}</span>
-                                            ${service.active ? 'Deactivate' : 'Activate'}
-                                        </button>
-                                    </div>
-                                    <button onclick="this.closest('.fixed').remove()" class="px-6 py-2 border border-theme-border rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent text-sm font-medium">
+                                    <div></div>
+                                    <button onclick="this.closest('.fixed').remove()" class="btn-modern text-sm px-4 py-2">
                                         Close
                                     </button>
                                 </div>
@@ -940,28 +914,6 @@
             `;
 
             return modal;
-        }
-
-        function editService(serviceId) {
-            showToast('Edit service feature - coming soon', 'info');
-        }
-
-        function viewBookings(serviceId) {
-            const service = appointmentTypesData.types.find(s => s.id == serviceId);
-            if (service) {
-                showToast(`Viewing bookings for ${service.name} (${service.bookingCount || 0} total)`, 'info');
-            }
-        }
-
-        function toggleServiceStatus(serviceId) {
-            const service = appointmentTypesData.types.find(s => s.id == serviceId);
-            if (service) {
-                service.active = !service.active;
-                localStorage.setItem('appointmentTypes', JSON.stringify(appointmentTypesData.types));
-                renderStatsCards();
-                renderServices();
-                showToast(`Service ${service.active ? 'activated' : 'deactivated'} successfully`, 'success');
-            }
         }
 
         function exportServices() {
@@ -982,16 +934,7 @@
 
         // Fixed Refresh Function
         function refreshData() {
-            showLoadingState();
-            
-            // Simulate API call delay
-            setTimeout(() => {
-                loadAppointmentTypesData();
-                renderStatsCards();
-                renderServices();
-                hideLoadingState();
-                showToast('Data refreshed successfully!', 'success');
-            }, 1500);
+            location.reload();
         }
 
         // Loading and Error States
