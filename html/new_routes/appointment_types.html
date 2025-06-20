@@ -203,13 +203,27 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-accent) 100%);
+            background: var(--bg-primary);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark .stat-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Add this new style for the icon boxes */
+        .stat-card .material-icons {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
         .stat-card::before {
@@ -226,11 +240,6 @@
 
         .stat-card:hover::before {
             opacity: 1;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .service-grid {
@@ -395,6 +404,11 @@
             bookingRange: { min: 0, max: 50 }
         };
 
+        // Add these variables at the top of your script to store chart instances
+        let revenueChart = null;
+        let bookingsChart = null;
+        let categoryChart = null;
+
         function applyTheme(theme) {
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -420,6 +434,8 @@
             const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
             applyTheme(newTheme);
             addThemeSwitcher();
+            // Dispatch theme change event
+            document.dispatchEvent(new Event('themeChanged'));
         }
         
         function initializeTheme() {
@@ -537,7 +553,10 @@
                     if (Array.isArray(parsedData) && parsedData.length > 0) {
                         appointmentTypesData = parsedData;
                         applyFilters();
-                        initializeCharts();
+                        // Initialize charts after data is loaded
+                        setTimeout(() => {
+                            initializeCharts();
+                        }, 100);
                         console.log('🎯 Data loaded successfully. Rendering...');
                     } else {
                         console.log('❌ Data is empty or not an array');
@@ -1322,144 +1341,251 @@
 
         // Initialize charts
         function initializeCharts() {
-            if (!appointmentTypesData.length) return;
+            console.log('📊 Initializing charts...');
             
-            // Revenue Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-            const revenueData = appointmentTypesData
-                .sort((a, b) => (b.revenue || 0) - (a.revenue || 0))
-                .slice(0, 5);
+            if (!appointmentTypesData || appointmentTypesData.length === 0) {
+                console.log('❌ No data available for charts');
+                return;
+            }
 
-            new Chart(revenueCtx, {
-                type: 'bar',
-                data: {
-                    labels: revenueData.map(service => service.name),
-                    datasets: [{
-                        label: 'Revenue ($)',
-                        data: revenueData.map(service => service.revenue || 0),
-                        backgroundColor: revenueData.map(service => service.color || '#B7A6EB'),
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
+            // Destroy existing charts if they exist
+            if (revenueChart) revenueChart.destroy();
+            if (bookingsChart) bookingsChart.destroy();
+            if (categoryChart) categoryChart.destroy();
+
+            // Get the theme colors
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            const textColor = isDark ? '#f9fafb' : '#111827';
+
+            try {
+                // Revenue Chart
+                const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
+                if (revenueCtx) {
+                    const revenueData = appointmentTypesData
+                        .sort((a, b) => (b.revenue || 0) - (a.revenue || 0))
+                        .slice(0, 5);
+
+                    const maxRevenue = Math.max(...revenueData.map(service => service.revenue || 0));
+                    const revenueStep = Math.ceil(maxRevenue / 5);
+
+                    revenueChart = new Chart(revenueCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: revenueData.map(service => service.name),
+                            datasets: [{
+                                label: 'Revenue ($)',
+                                data: revenueData.map(service => service.revenue || 0),
+                                backgroundColor: revenueData.map(service => service.color || '#B7A6EB'),
+                                borderRadius: 4,
+                                barThickness: 20
+                            }]
                         },
-                        x: {
-                            grid: {
-                                display: false
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y', // Make it a horizontal bar chart
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                    labels: {
+                                        color: textColor
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `$${context.raw.toLocaleString()}`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: textColor,
+                                        font: {
+                                            size: 11
+                                        }
+                                    }
+                                },
+                                x: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: gridColor
+                                    },
+                                    ticks: {
+                                        color: textColor,
+                                        callback: function(value) {
+                                            return '$' + value.toLocaleString();
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
+                    });
                 }
-            });
 
-            // Bookings Chart
-            const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
-            const bookingsData = appointmentTypesData
-                .sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0))
-                .slice(0, 5);
+                // Bookings Chart
+                const bookingsCtx = document.getElementById('bookingsChart')?.getContext('2d');
+                if (bookingsCtx) {
+                    const bookingsData = appointmentTypesData
+                        .sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0))
+                        .slice(0, 5);
 
-            new Chart(bookingsCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: bookingsData.map(service => service.name),
-                    datasets: [{
-                        data: bookingsData.map(service => service.bookingCount || 0),
-                        backgroundColor: bookingsData.map(service => service.color || '#B7A6EB'),
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 15
-                            }
-                        }
-                    },
-                    cutout: '70%'
-                }
-            });
-
-            // Category Performance Chart
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            const categoryData = Object.entries(
-                appointmentTypesData.reduce((acc, service) => {
-                    const category = service.category || 'Uncategorized';
-                    if (!acc[category]) {
-                        acc[category] = {
-                            revenue: 0,
-                            bookings: 0
-                        };
-                    }
-                    acc[category].revenue += service.revenue || 0;
-                    acc[category].bookings += service.bookingCount || 0;
-                    return acc;
-                }, {})
-            );
-
-            new Chart(categoryCtx, {
-                type: 'line',
-                data: {
-                    labels: categoryData.map(([category]) => category),
-                    datasets: [
-                        {
-                            label: 'Revenue',
-                            data: categoryData.map(([, data]) => data.revenue),
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.4
+                    bookingsChart = new Chart(bookingsCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: bookingsData.map(service => service.name),
+                            datasets: [{
+                                data: bookingsData.map(service => service.bookingCount || 0),
+                                backgroundColor: bookingsData.map(service => service.color || '#B7A6EB'),
+                                borderWidth: 2,
+                                borderColor: isDark ? '#1f2937' : '#ffffff'
+                            }]
                         },
-                        {
-                            label: 'Bookings',
-                            data: categoryData.map(([, data]) => data.bookings),
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            fill: true,
-                            tension: 0.4
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        color: textColor,
+                                        boxWidth: 12,
+                                        padding: 15,
+                                        font: {
+                                            size: 11
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = Math.round((value / total) * 100);
+                                            return `${label}: ${value} bookings (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            cutout: '60%'
                         }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
+                    });
                 }
-            });
+
+                // Category Performance Chart
+                const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
+                if (categoryCtx) {
+                    const categoryData = Object.entries(
+                        appointmentTypesData.reduce((acc, service) => {
+                            const category = service.category || 'Uncategorized';
+                            if (!acc[category]) {
+                                acc[category] = {
+                                    revenue: 0,
+                                    bookings: 0
+                                };
+                            }
+                            acc[category].revenue += service.revenue || 0;
+                            acc[category].bookings += service.bookingCount || 0;
+                            return acc;
+                        }, {})
+                    );
+
+                    // Normalize the data to show relative performance
+                    const maxRevenue = Math.max(...categoryData.map(([, data]) => data.revenue));
+                    const maxBookings = Math.max(...categoryData.map(([, data]) => data.bookings));
+
+                    categoryChart = new Chart(categoryCtx, {
+                        type: 'line',
+                        data: {
+                            labels: categoryData.map(([category]) => category),
+                            datasets: [
+                                {
+                                    label: 'Revenue',
+                                    data: categoryData.map(([, data]) => data.revenue),
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    yAxisID: 'y-revenue'
+                                },
+                                {
+                                    label: 'Bookings',
+                                    data: categoryData.map(([, data]) => data.bookings),
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    yAxisID: 'y-bookings'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        color: textColor,
+                                        font: {
+                                            size: 11
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                'y-revenue': {
+                                    type: 'linear',
+                                    position: 'left',
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: gridColor
+                                    },
+                                    ticks: {
+                                        color: textColor,
+                                        callback: function(value) {
+                                            return '$' + value.toLocaleString();
+                                        }
+                                    }
+                                },
+                                'y-bookings': {
+                                    type: 'linear',
+                                    position: 'right',
+                                    beginAtZero: true,
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: textColor
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: textColor,
+                                        font: {
+                                            size: 11
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                console.log('✅ Charts initialized successfully');
+            } catch (error) {
+                console.error('❌ Error initializing charts:', error);
+            }
         }
 
         // Call initializeCharts when data is loaded
@@ -1467,6 +1593,11 @@
             if (appointmentTypesData.length > 0) {
                 initializeCharts();
             }
+        });
+
+        // Add theme change listener to update charts
+        document.addEventListener('themeChanged', function() {
+            initializeCharts();
         });
     </script>
 </head>
@@ -1658,74 +1789,80 @@
 
                 <!-- Enhanced Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+                    <!-- Total Services Card -->
                     <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Total Services</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="total-services">0</p>
                             </div>
-                            <div class="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl text-white">
-                                <span class="material-icons">spa</span>
+                            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 shadow-lg shadow-blue-500/30">
+                                <span class="material-icons text-white">spa</span>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Active Services Card -->
                     <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Active Services</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="active-services">0</p>
                             </div>
-                            <div class="p-3 bg-gradient-to-br from-green-400 to-green-600 rounded-xl text-white">
-                                <span class="material-icons">check_circle</span>
+                            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
+                                <span class="material-icons text-white">check_circle</span>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Total Bookings Card -->
                     <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Total Bookings</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="total-bookings">0</p>
                             </div>
-                            <div class="p-3 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl text-white">
-                                <span class="material-icons">event</span>
+                            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 shadow-lg shadow-purple-500/30">
+                                <span class="material-icons text-white">event</span>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Total Revenue Card -->
                     <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Total Revenue</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="total-revenue">$0</p>
                             </div>
-                            <div class="p-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl text-white">
-                                <span class="material-icons">attach_money</span>
+                            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 shadow-lg shadow-amber-500/30">
+                                <span class="material-icons text-white">attach_money</span>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Average Price Card -->
                     <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Avg. Price</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="average-price">$0</p>
                             </div>
-                            <div class="p-3 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl text-white">
-                                <span class="material-icons">trending_up</span>
+                            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 via-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
+                                <span class="material-icons text-white">trending_up</span>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Average Duration Card -->
                     <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Avg. Duration</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="average-duration">0min</p>
                             </div>
-                            <div class="p-3 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl text-white">
-                                <span class="material-icons">schedule</span>
+                            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 shadow-lg shadow-cyan-500/30">
+                                <span class="material-icons text-white">schedule</span>
                             </div>
                         </div>
                     </div>
