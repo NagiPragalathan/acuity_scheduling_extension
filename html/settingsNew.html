@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Acuity Scheduling Settings</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <!-- zoho sdk  -->
     <script
       type="text/javascript"
@@ -14,175 +19,693 @@
     <!-- handler  -->
     <script type="text/javascript" src="../js/handlerNew.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'theme-bg-primary': 'var(--bg-primary)',
+              'theme-bg-secondary': 'var(--bg-secondary)',
+              'theme-bg-accent': 'var(--bg-accent)',
+              'theme-text-primary': 'var(--text-primary)',
+              'theme-text-secondary': 'var(--text-secondary)',
+              'theme-border': 'var(--border-color)',
+              'theme-primary': 'var(--color-primary)',
+              'theme-secondary': 'var(--color-secondary)',
+              'theme-accent': 'var(--color-accent)',
+              primary: {
+                50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            boxShadow: {
+              'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+              'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      :root {
+        /* Light Theme Variables */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f9fafb;
+        --bg-accent: #f3f4f6;
+        --text-primary: #111827;
+        --text-secondary: #4b5563;
+        --border-color: #e5e7eb;
+        --color-primary: #3b82f6;
+        --color-secondary: #60a5fa;
+        --color-accent: #2563eb;
+      }
+
+      html.dark {
+        /* Dark Theme Variables */
+        --bg-primary: #1f2937;
+        --bg-secondary: #111827;
+        --bg-accent: #374151;
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+        --border-color: #374151;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+      .animate-slide-in { animation: slideIn 0.5s ease-out; }
+      .animate-pulse-custom { animation: pulse 2s infinite; }
+      
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        backdrop-filter: blur(10px);
+      }
+      
+      html.dark .glass-effect {
+        background: rgba(31, 41, 55, 0.98);
+        border: 1px solid rgba(55, 65, 81, 0.8);
+      }
+      
+      .modern-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+      
+      .modern-card:hover {
+        box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+      }
+      
+      html.dark .modern-card:hover {
+        box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+      }
+
+      .setting-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .setting-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .setting-card:hover::before {
+        left: 100%;
+      }
+
+      .setting-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.15);
+        border-color: var(--color-primary);
+      }
+
+      html.dark .setting-card:hover {
+        box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.4);
+      }
+
+      .custom-select {
+        appearance: none;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .custom-select:hover {
+        border-color: var(--color-secondary);
+        box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+      }
+
+      .custom-select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .select-wrapper {
+        position: relative;
+      }
+
+      .select-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 16px;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid var(--color-primary);
+        pointer-events: none;
+        transition: transform 0.3s ease;
+      }
+
+      .select-wrapper:hover::after {
+        transform: translateY(-50%) rotate(180deg);
+      }
+
+      .tutorial-section {
+        background: linear-gradient(135deg, var(--color-primary)10, var(--color-secondary)20);
+        border: 1px solid var(--color-primary);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .tutorial-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px -12px rgba(59, 130, 246, 0.25);
+      }
+
+      .help-section {
+        background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(251, 146, 60, 0.1));
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .help-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #f97316, #fb923c, #fdba74);
+      }
+
+      .icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .icon-wrapper:hover {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+
+    <script>
+      // Theme Configuration
+      const themeConfig = {
+        colors: {
+          blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+          purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+          green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+          orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+          red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+          teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+          pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+          indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+        }
+      };
+
+      function applyTheme(theme) {
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        localStorage.setItem('dashboard_theme', theme);
+      }
+
+      function applyThemeColor(colorName) {
+        const color = themeConfig.colors[colorName];
+        if (!color) return;
+
+        const root = document.documentElement;
+        root.style.setProperty('--color-primary', color.primary);
+        root.style.setProperty('--color-secondary', color.secondary);
+        root.style.setProperty('--color-accent', color.accent);
+        localStorage.setItem('dashboard_theme_color', colorName);
+        addThemeSwitcher(); // Re-render to update active color
+      }
+
+      function toggleTheme() {
+        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(newTheme);
+        addThemeSwitcher(); // Re-render to update toggle state
+      }
+      
+      function initializeTheme() {
+        const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+        const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+        applyTheme(savedTheme);
+        applyThemeColor(savedColor);
+      }
+
+      function addThemeSwitcher() {
+        const container = document.getElementById('theme-switcher-container');
+        if (!container) return;
+        
+        const isDark = document.documentElement.classList.contains('dark');
+        const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+        container.innerHTML = `
+          <div class="fixed bottom-5 right-5 z-50">
+            <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-56 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-theme-text-primary">Theme Mode</span>
+                  <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-primary ${isDark ? 'bg-theme-primary' : 'bg-gray-300'}">
+                    <span class="sr-only">Toggle theme</span>
+                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${isDark ? 'right-1 opacity-100' : 'right-1 opacity-0'}" style="color: #fbbf24;">dark_mode</span>
+                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${!isDark ? 'left-1 opacity-100' : 'left-1 opacity-0'}" style="color: #f59e0b;">light_mode</span>
+                    <span class="inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full shadow ${isDark ? 'translate-x-6' : 'translate-x-1'}"></span>
+                  </button>
+                </div>
+                <div class="space-y-2">
+                  <span class="text-sm font-medium text-theme-text-primary">Color Theme</span>
+                  <div class="grid grid-cols-4 gap-2">
+                    ${Object.keys(themeConfig.colors).map(name => `
+                      <button onclick="applyThemeColor('${name}')" 
+                              class="relative w-8 h-8 rounded-full transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary focus:ring-offset-theme-bg-primary ${currentColor === name ? 'ring-2 ring-offset-2 ring-white ring-offset-theme-bg-primary scale-110' : ''}"
+                              style="background-color: ${themeConfig.colors[name].primary}"
+                              title="${name.charAt(0).toUpperCase() + name.slice(1)}">
+                        ${currentColor === name ? '<span class="absolute inset-0 flex items-center justify-center"><span class="material-icons text-white text-sm">check</span></span>' : ''}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-secondary">
+              <span class="material-icons">palette</span>
+            </button>
+          </div>
+        `;
+
+        const menuButton = document.getElementById('theme-menu-button');
+        const themeMenu = document.getElementById('theme-menu');
+        
+        if (menuButton && themeMenu) {
+          menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (themeMenu.classList.contains('hidden')) {
+              themeMenu.classList.remove('hidden');
+              setTimeout(() => {
+                themeMenu.classList.remove('opacity-0', '-translate-y-2');
+              }, 10);
+            } else {
+              themeMenu.classList.add('opacity-0', '-translate-y-2');
+              setTimeout(() => {
+                themeMenu.classList.add('hidden');
+              }, 300);
+            }
+          });
+
+          document.addEventListener('click', (e) => {
+            if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+              themeMenu.classList.add('opacity-0', '-translate-y-2');
+              setTimeout(() => {
+                themeMenu.classList.add('hidden');
+              }, 300);
+            }
+          });
+        }
+      }
+
+      // Initialize when DOM is loaded
+      document.addEventListener("DOMContentLoaded", function() {
+        initializeTheme();
+        addThemeSwitcher();
+      });
+    </script>
   </head>
-  <body>
+  <body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 hide-scrollbar">
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", () => {
         // Utils.showLoading();
         ZOHO.embeddedApp.init().then(loadSettings);
       });
     </script>
-    <div class="flex flex-col p-8 mx-8">
-      <!-- Top Row Part  -->
-      <div class="flex flex-row justify-between">
-        <!-- Setting with Dropdown  -->
-        <div class="flex flex-col w-full basis-1/3 space-y-8">
-          <!-- title  -->
-          <div class="text-2xl font-bold text-orange-500">Settings</div>
-          <!-- Leads or Contacts Option  -->
-          <div class="flex flex-row justify-between items-center">
-            <!-- title  -->
-            <div class="text-lg font-medium">Add New Clients to</div>
-            <!-- select dropdown  -->
-            <div class="border-2 shadow-lg">
-              <select
-                onchange="handleModuleChange()"
-                name="leadsOrContactsSelect"
-                class="text-lg px-4 font-medium text-orange-500 w-48"
-                id="LeadsOrContacts"
-              >
-                <option value="Leads">Leads</option>
-                <option value="Contacts">Contacts</option>
-              </select>
-            </div>
+    
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+      <!-- Enhanced Header -->
+      <div class="mb-12 text-center animate-fade-in">
+        <div class="flex items-center justify-center mb-6">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-theme-primary to-theme-accent flex items-center justify-center mr-4 animate-pulse-custom">
+            <span class="material-icons text-white text-2xl">settings</span>
           </div>
-          <!-- Meetings or Tasks Option  -->
-          <div class="flex flex-row justify-between items-center">
-            <!-- title  -->
-            <div class="text-lg font-medium">Add Acuity Appointments to</div>
-            <!-- select dropdown  -->
-            <div class="border-2 shadow-lg">
-              <select
-                onchange="handleActivityChange()"
-                name="leadsOrContactsSelect"
-                class="text-lg px-4 font-medium text-orange-500 w-48"
-                id="TasksOrEvents"
-              >
-                <option value="Events">Meetings</option>
-                <option value="Tasks">Tasks</option>
-              </select>
-            </div>
+          <div>
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-theme-primary to-theme-accent bg-clip-text text-transparent mb-2">
+              Settings
+            </h1>
           </div>
-          <!-- Phone or Mobile  -->
-          <div class="flex flex-row justify-between items-center">
-            <!-- title  -->
-            <div class="text-lg font-medium">Choose Default Contact Number</div>
-            <!-- select dropdown  -->
-            <div class="border-2 shadow-lg">
-              <select
-                name="leadsOrContactsSelect"
-                class="text-lg px-4 font-medium text-orange-500 w-48"
-                id="PhoneOrMobile"
-                onchange="handleContactUpdate()"
-              >
-                <option value="Phone">Phone</option>
-                <option value="Mobile">Mobile</option>
-              </select>
+        </div>
+        <p class="text-theme-text-secondary text-xl max-w-2xl mx-auto">
+          Configure your Acuity Scheduling preferences and customize your workflow to match your business needs
+        </p>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-12">
+        
+        <!-- Settings Panel -->
+        <div class="xl:col-span-8">
+          <div class="setting-card">
+            <div class="flex items-center mb-8">
+              <div class="icon-wrapper bg-gradient-to-br from-theme-primary to-theme-accent text-white mr-4">
+                <span class="material-icons text-2xl">tune</span>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-theme-text-primary">Configuration Options</h2>
+                <p class="text-theme-text-secondary">Customize how your appointments and clients are managed</p>
+              </div>
             </div>
-          </div>
-          <!-- Notifications  -->
-          <div class="flex flex-row justify-between items-center">
-            <!-- title  -->
-            <div class="text-lg font-medium">
-              New Appointments Notifications
-            </div>
-            <!-- select dropdown  -->
-            <div class="border-2 shadow-lg">
-              <select
-                name="leadsOrContactsSelect"
-                class="text-lg px-4 font-medium text-orange-500 w-48"
-                id="Notifications"
-                onchange="handleNotificationChange()"
-              >
-                <option value="Off">Off</option>
-                <option value="On">On</option>
-              </select>
-            </div>
-          </div>
-          <!-- Private Calendar in Email  -->
-          <div class="flex flex-row justify-between items-center">
-            <!-- title  -->
-            <div class="text-lg font-medium">
-              Send Private Calendars in Email
-            </div>
-            <!-- select dropdown  -->
-            <div class="border-2 shadow-lg">
-              <select
-                name="leadsOrContactsSelect"
-                class="text-lg px-4 font-medium text-orange-500 w-48"
-                id="PrivateCalendar"
-                onchange="handlePrivateCalendarChange()"
-              >
-                <option value="Off">Off</option>
-                <option value="On">On</option>
-              </select>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Left Column Settings -->
+              <div class="space-y-8">
+                <!-- Leads or Contacts Option -->
+                <div class="group">
+                  <div class="flex items-start mb-4">
+                    <div class="icon-wrapper bg-blue-100 dark:bg-blue-900/20 text-blue-600 mr-4 mt-1">
+                      <span class="material-icons">person_add</span>
+                    </div>
+                    <div class="flex-1">
+                      <label class="block text-lg font-semibold text-theme-text-primary mb-2">Add New Clients to</label>
+                      <p class="text-sm text-theme-text-secondary mb-4">Choose where new client information should be stored in your CRM</p>
+                    </div>
+                  </div>
+                  <div class="select-wrapper">
+                    <select
+                      onchange="handleModuleChange()"
+                      name="leadsOrContactsSelect"
+                      class="custom-select w-full"
+                      id="LeadsOrContacts"
+                    >
+                      <option value="Leads">Leads</option>
+                      <option value="Contacts">Contacts</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Meetings or Tasks Option -->
+                <div class="group">
+                  <div class="flex items-start mb-4">
+                    <div class="icon-wrapper bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 mr-4 mt-1">
+                      <span class="material-icons">event_note</span>
+                    </div>
+                    <div class="flex-1">
+                      <label class="block text-lg font-semibold text-theme-text-primary mb-2">Add Acuity Appointments to</label>
+                      <p class="text-sm text-theme-text-secondary mb-4">Determine how appointments are tracked in your CRM workflow</p>
+                    </div>
+                  </div>
+                  <div class="select-wrapper">
+                    <select
+                      onchange="handleActivityChange()"
+                      name="leadsOrContactsSelect"
+                      class="custom-select w-full"
+                      id="TasksOrEvents"
+                    >
+                      <option value="Events">Meetings</option>
+                      <option value="Tasks">Tasks</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Phone or Mobile -->
+                <div class="group">
+                  <div class="flex items-start mb-4">
+                    <div class="icon-wrapper bg-purple-100 dark:bg-purple-900/20 text-purple-600 mr-4 mt-1">
+                      <span class="material-icons">phone</span>
+                    </div>
+                    <div class="flex-1">
+                      <label class="block text-lg font-semibold text-theme-text-primary mb-2">Choose Default Contact Number</label>
+                      <p class="text-sm text-theme-text-secondary mb-4">Set the primary phone number field for client contact information</p>
+                    </div>
+                  </div>
+                  <div class="select-wrapper">
+                    <select
+                      name="leadsOrContactsSelect"
+                      class="custom-select w-full"
+                      id="PhoneOrMobile"
+                      onchange="handleContactUpdate()"
+                    >
+                      <option value="Phone">Phone</option>
+                      <option value="Mobile">Mobile</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column Settings -->
+              <div class="space-y-8">
+                <!-- Notifications -->
+                <div class="group">
+                  <div class="flex items-start mb-4">
+                    <div class="icon-wrapper bg-orange-100 dark:bg-orange-900/20 text-orange-600 mr-4 mt-1">
+                      <span class="material-icons">notifications</span>
+                    </div>
+                    <div class="flex-1">
+                      <label class="block text-lg font-semibold text-theme-text-primary mb-2">New Appointments Notifications</label>
+                      <p class="text-sm text-theme-text-secondary mb-4">Control whether you receive alerts for new bookings</p>
+                    </div>
+                  </div>
+                  <div class="select-wrapper">
+                    <select
+                      name="leadsOrContactsSelect"
+                      class="custom-select w-full"
+                      id="Notifications"
+                      onchange="handleNotificationChange()"
+                    >
+                      <option value="Off">Off</option>
+                      <option value="On">On</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Private Calendar in Email -->
+                <div class="group">
+                  <div class="flex items-start mb-4">
+                    <div class="icon-wrapper bg-teal-100 dark:bg-teal-900/20 text-teal-600 mr-4 mt-1">
+                      <span class="material-icons">email</span>
+                    </div>
+                    <div class="flex-1">
+                      <label class="block text-lg font-semibold text-theme-text-primary mb-2">Send Private Calendars in Email</label>
+                      <p class="text-sm text-theme-text-secondary mb-4">Include calendar invitations in appointment confirmation emails</p>
+                    </div>
+                  </div>
+                  <div class="select-wrapper">
+                    <select
+                      name="leadsOrContactsSelect"
+                      class="custom-select w-full"
+                      id="PrivateCalendar"
+                      onchange="handlePrivateCalendarChange()"
+                    >
+                      <option value="Off">Off</option>
+                      <option value="On">On</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Additional Status Info -->
+                <div class="bg-gradient-to-br from-theme-bg-accent to-theme-bg-secondary rounded-xl p-6 border border-theme-border">
+                  <h4 class="font-semibold text-theme-text-primary mb-3 flex items-center">
+                    <span class="material-icons text-theme-primary mr-2">info</span>
+                    Configuration Status
+                  </h4>
+                  <div class="space-y-3 text-sm">
+                    <div class="flex items-center justify-between">
+                      <span class="text-theme-text-secondary">Integration Status</span>
+                      <div class="flex items-center">
+                        <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                        <span class="text-green-600 font-medium">Connected</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-theme-text-secondary">Last Sync</span>
+                      <span class="text-theme-text-primary font-medium">Just now</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-theme-text-secondary">API Status</span>
+                      <div class="flex items-center">
+                        <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                        <span class="text-green-600 font-medium">Active</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <!-- Youtube Video  -->
-        <div
-          class="flex flex-col justify-center-items-center basis-1/2 space-y-8"
-        >
-          <!-- title  -->
-          <div class="text-2xl font-bold text-orange-500">Tutorial Video</div>
 
-          <iframe
-            width="500"
-            height="300"
-            src="https://www.youtube.com/embed/7NCe6vErdZk"
-            frameborder="0"
-            allow="autoplay; encrypted-media"
-            allowfullscreen
-          ></iframe>
+        <!-- Tutorial Video Panel -->
+        <div class="xl:col-span-4">
+          <div class="tutorial-section p-8">
+            <div class="flex items-center mb-6">
+              <div class="icon-wrapper bg-white/20 text-white mr-4">
+                <span class="material-icons text-2xl">play_circle</span>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-white">Tutorial Video</h2>
+                <p class="text-white/80">Learn how to use these settings</p>
+              </div>
+            </div>
+            <div class="relative overflow-hidden rounded-xl shadow-2xl">
+              <iframe
+                width="100%"
+                height="300"
+                src="https://www.youtube.com/embed/7NCe6vErdZk?si=PV8qql3ub-k0-cDy"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+                class="rounded-xl"
+              ></iframe>
+            </div>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-center text-white/90">
+                <span class="material-icons mr-2">schedule</span>
+                <span class="text-sm">Duration: 5 minutes</span>
+              </div>
+              <div class="flex items-center text-white/90">
+                <span class="material-icons mr-2">subtitles</span>
+                <span class="text-sm">Captions available</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- Bottom Help Card  -->
-      <div
-        class="m-8 flex flex-col bg-gray-100 p-4 space-y-4 rounded-md shadow-md"
-      >
-        <div class="text-3xl font-bold text-orange-500">Help Card</div>
-        <div class="font-bold text-orange-500">
-          Welcome to the Acuity Scheduling Extension by Xtracut Systems!
-        </div>
-        <div>
-          Our extension is designed to provide you with a seamless experience
-          for managing your appointments and scheduling. We've incorporated two
-          dropdown menus that offer you flexibility and control over your
-          workflow.
-        </div>
-        <div class="font-semibold">
-          The first dropdown menu let's you to decide whether new person
-          contacts should be added to Leads or Contacts.
-        </div>
-        <div class="font-semibold">
-          The second dropdown menu let's you to decide whether new appointments
-          should be added to Tasks or Meetings.
-        </div>
-        <div class="font-semibold">
-          The third dropdown menu let's you to decide whether new contact phone
-          numbers should be added as Phone or Mobile.
-        </div>
-        <div class="font-semibold">
-          The fourth dropdown menu let's you to turn the Notifications On or
-          Off.
-        </div>
-        <div class="font-semibold">
-          The fourth dropdown menu let's you to decide wheather to send Private
-          Calendars in Email.
-        </div>
-        <div>
-          For any support or assistance you may need, we're here to help. Reach
-          out to our support team by email at
-          <a href="mailto:support@extracut.com" class="text-orange-500 font-bold"
-            >support@extracut.com</a
-          >, and we'll promptly address your inquiries.
-        </div>
-        <div>
-          Thank you for using the Acuity Scheduling Extension by Xtracut
-          Systems. We're dedicated to enhancing your scheduling capabilities and
-          making your experience seamless and efficient.
+
+      <!-- Enhanced Help Card -->
+      <div class="help-section p-8">
+        <div class="flex items-start space-x-6">
+          <div class="flex-shrink-0">
+            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center">
+              <span class="material-icons text-white text-2xl">help_center</span>
+            </div>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-3xl font-bold text-orange-600 mb-4">Welcome to Acuity Scheduling Extension</h3>
+            <p class="text-orange-700 font-semibold mb-6 text-lg">by Xtracut Systems</p>
+            
+            <div class="space-y-6 text-theme-text-secondary">
+              <p class="leading-relaxed text-lg">
+                Our extension provides a seamless experience for managing appointments and scheduling with flexible configuration options that adapt to your business workflow.
+              </p>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white/70 dark:bg-gray-800/70 p-6 rounded-xl border border-orange-200 dark:border-orange-800">
+                  <div class="flex items-center mb-3">
+                    <span class="material-icons text-orange-600 mr-3">group</span>
+                    <h4 class="font-semibold text-orange-600">Client Management</h4>
+                  </div>
+                  <p class="text-sm text-theme-text-secondary">Choose whether new contacts are automatically added to Leads or Contacts module based on your sales process</p>
+                </div>
+                <div class="bg-white/70 dark:bg-gray-800/70 p-6 rounded-xl border border-orange-200 dark:border-orange-800">
+                  <div class="flex items-center mb-3">
+                    <span class="material-icons text-orange-600 mr-3">event</span>
+                    <h4 class="font-semibold text-orange-600">Appointment Tracking</h4>
+                  </div>
+                  <p class="text-sm text-theme-text-secondary">Decide if appointments should be tracked as Tasks for follow-up or Events for calendar integration</p>
+                </div>
+                <div class="bg-white/70 dark:bg-gray-800/70 p-6 rounded-xl border border-orange-200 dark:border-orange-800">
+                  <div class="flex items-center mb-3">
+                    <span class="material-icons text-orange-600 mr-3">phone</span>
+                    <h4 class="font-semibold text-orange-600">Contact Numbers</h4>
+                  </div>
+                  <p class="text-sm text-theme-text-secondary">Set default contact numbers as Phone or Mobile to match your communication preferences</p>
+                </div>
+                <div class="bg-white/70 dark:bg-gray-800/70 p-6 rounded-xl border border-orange-200 dark:border-orange-800">
+                  <div class="flex items-center mb-3">
+                    <span class="material-icons text-orange-600 mr-3">notifications</span>
+                    <h4 class="font-semibold text-orange-600">Smart Notifications</h4>
+                  </div>
+                  <p class="text-sm text-theme-text-secondary">Control appointment notifications and calendar emails to stay informed without being overwhelmed</p>
+                </div>
+              </div>
+              
+              <div class="bg-white/70 dark:bg-gray-800/70 p-6 rounded-xl border border-orange-200 dark:border-orange-800">
+                <h4 class="font-semibold text-orange-600 mb-4 flex items-center">
+                  <span class="material-icons mr-2">support_agent</span>
+                  Need Help or Support?
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="text-theme-text-secondary leading-relaxed">
+                      For technical assistance with this extension, contact our support team at:
+                    </p>
+                    <a href="mailto:support@xtracut.com" class="text-orange-600 font-semibold hover:text-orange-700 transition-colors">
+                      support@xtracut.com
+                    </a>
+                  </div>
+                  <div>
+                    <p class="text-theme-text-secondary leading-relaxed">
+                      For Acuity Scheduling platform support, visit:
+                    </p>
+                    <a href="https://help.acuityscheduling.com" target="_blank" class="text-orange-600 font-semibold hover:text-orange-700 transition-colors">
+                      help.acuityscheduling.com
+                    </a>
+                  </div>
+                </div>
+                <div class="mt-4 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <p class="text-xs text-theme-text-secondary flex items-center">
+                    <span class="material-icons text-orange-500 mr-2 text-sm">info</span>
+                    All settings are automatically saved and synchronized with your Acuity Scheduling account in real-time.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
   </body>
 </html>
