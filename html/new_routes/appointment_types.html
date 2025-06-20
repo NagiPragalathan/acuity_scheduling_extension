@@ -258,6 +258,115 @@
         .filter-panel.expanded {
             max-height: 500px;
         }
+
+        /* Add these new styles after the existing styles */
+        
+        /* Enhanced Card Hover Effects */
+        .modern-card {
+            transform: translateY(0);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modern-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Glassmorphism Effects */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1.5rem;
+        }
+
+        html.dark .chart-container {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        /* Animated Gradients */
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(60deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+            background-size: 200% 200%;
+            animation: gradientBorder 15s ease infinite;
+        }
+
+        @keyframes gradientBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Enhanced Buttons */
+        .enhanced-button {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhanced-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .enhanced-button:hover::before {
+            left: 100%;
+        }
+
+        /* Smooth Scrollbar */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-primary) transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: var(--color-primary);
+            border-radius: 3px;
+        }
+
+        /* Enhanced Filter Section */
+        .filter-section {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-accent) 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Chart Enhancements */
+        .chart-container {
+            transition: transform 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-5px);
+        }
     </style>
     <script>
         // Theme Configuration
@@ -627,16 +736,19 @@
         function toggleAdvancedFilters() {
             const panel = document.getElementById('advanced-filters');
             const button = document.getElementById('filter-toggle-btn');
-            const icon = button.querySelector('.material-icons');
+            const icon = document.getElementById('filter-icon');
+            const text = document.getElementById('filter-text');
             
             panel.classList.toggle('expanded');
             
             if (panel.classList.contains('expanded')) {
                 icon.textContent = 'expand_less';
-                button.querySelector('span').textContent = 'Hide Filters';
+                text.textContent = 'Hide Filters';
+                button.classList.add('bg-theme-bg-accent');
             } else {
                 icon.textContent = 'expand_more';
-                button.querySelector('span').textContent = 'Advanced Filters';
+                text.textContent = 'Advanced Filters';
+                button.classList.remove('bg-theme-bg-accent');
             }
         }
 
@@ -708,9 +820,8 @@
                             <div class="flex items-start space-x-3 flex-1">
                                 <div class="service-category-color h-12 w-1 rounded-full" style="background-color: ${colorClass};"></div>
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-1">${service.name || 'Unnamed Service'}</h3>
-                                    <p class="text-sm text-theme-text-secondary">${service.category || 'General'}</p>
-                                    ${bookingCount > 10 ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 mt-1"><span class="material-icons text-xs mr-1">star</span>Popular</span>' : ''}
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-1">${service.name}</h3>
+                                    <p class="text-sm text-theme-text-secondary">${service.category}</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
@@ -752,7 +863,8 @@
                         </div>
 
                         <div class="flex justify-center pt-4 border-t border-theme-border">
-                            <button onclick="showServiceDetails(${service.id})" class="w-full bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-accent hover:to-theme-primary text-white font-medium text-sm py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition-all duration-300 transform hover:scale-105">
+                            <button onclick="showServiceDetails(${service.id})" class="enhanced-button w-full text-white font-medium text-sm py-2.5 px-4 rounded-lg 
+                                   flex items-center justify-center space-x-2 transition-all duration-300">
                                 <span class="material-icons text-sm">visibility</span>
                                 <span>View Details</span>
                             </button>
@@ -1476,9 +1588,12 @@
                                 <option value="active">Active Only</option>
                                 <option value="inactive">Inactive Only</option>
                             </select>
-                            <button id="filter-toggle-btn" onclick="toggleAdvancedFilters()" class="filter-toggle flex items-center px-4 py-2 border border-theme-border rounded-lg bg-theme-bg-primary text-theme-text-primary hover:bg-theme-bg-accent transition-colors">
-                                <span class="material-icons mr-2">expand_more</span>
-                                <span>Advanced Filters</span>
+                            <button id="filter-toggle-btn" onclick="toggleAdvancedFilters()" 
+                                    class="filter-toggle flex items-center px-4 py-2 border border-theme-border rounded-lg 
+                                           bg-theme-bg-primary text-theme-text-primary hover:bg-theme-bg-accent transition-colors 
+                                           min-w-[160px] whitespace-nowrap">
+                                <span class="material-icons mr-2" id="filter-icon">expand_more</span>
+                                <span class="text-sm font-medium" id="filter-text">Advanced Filters</span>
                             </button>
                         </div>
                     </div>
@@ -1543,74 +1658,74 @@
 
                 <!-- Enhanced Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
-                    <div class="stat-card">
+                    <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Total Services</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="total-services">0</p>
                             </div>
-                            <div class="p-3 bg-blue-100 rounded-xl">
-                                <span class="material-icons text-blue-600">spa</span>
+                            <div class="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl text-white">
+                                <span class="material-icons">spa</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Active Services</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="active-services">0</p>
                             </div>
-                            <div class="p-3 bg-green-100 rounded-xl">
-                                <span class="material-icons text-green-600">check_circle</span>
+                            <div class="p-3 bg-gradient-to-br from-green-400 to-green-600 rounded-xl text-white">
+                                <span class="material-icons">check_circle</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Total Bookings</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="total-bookings">0</p>
                             </div>
-                            <div class="p-3 bg-purple-100 rounded-xl">
-                                <span class="material-icons text-purple-600">event</span>
+                            <div class="p-3 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl text-white">
+                                <span class="material-icons">event</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Total Revenue</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="total-revenue">$0</p>
                             </div>
-                            <div class="p-3 bg-yellow-100 rounded-xl">
-                                <span class="material-icons text-yellow-600">attach_money</span>
+                            <div class="p-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl text-white">
+                                <span class="material-icons">attach_money</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Avg. Price</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="average-price">$0</p>
                             </div>
-                            <div class="p-3 bg-indigo-100 rounded-xl">
-                                <span class="material-icons text-indigo-600">trending_up</span>
+                            <div class="p-3 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl text-white">
+                                <span class="material-icons">trending_up</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-theme-text-secondary">Avg. Duration</p>
                                 <p class="text-2xl font-bold text-theme-text-primary" id="average-duration">0min</p>
                             </div>
-                            <div class="p-3 bg-teal-100 rounded-xl">
-                                <span class="material-icons text-teal-600">schedule</span>
+                            <div class="p-3 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl text-white">
+                                <span class="material-icons">schedule</span>
                             </div>
                         </div>
                     </div>
@@ -1618,9 +1733,11 @@
 
                 <!-- Analytics Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="chart-container">
+                    <div class="chart-container transform hover:scale-105 transition-all duration-300">
                         <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
-                            <span class="material-icons mr-2 text-theme-primary">bar_chart</span>
+                            <div class="gradient-border w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                <span class="material-icons text-white">bar_chart</span>
+                            </div>
                             Revenue by Service
                         </h3>
                         <div class="h-64">
@@ -1628,9 +1745,11 @@
                         </div>
                     </div>
                     
-                    <div class="chart-container">
+                    <div class="chart-container transform hover:scale-105 transition-all duration-300">
                         <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
-                            <span class="material-icons mr-2 text-theme-primary">donut_small</span>
+                            <div class="gradient-border w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                <span class="material-icons text-white">donut_small</span>
+                            </div>
                             Bookings Distribution
                         </h3>
                         <div class="h-64">
@@ -1638,9 +1757,11 @@
                         </div>
                     </div>
                     
-                    <div class="chart-container">
+                    <div class="chart-container transform hover:scale-105 transition-all duration-300">
                         <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
-                            <span class="material-icons mr-2 text-theme-primary">show_chart</span>
+                            <div class="gradient-border w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                <span class="material-icons text-white">show_chart</span>
+                            </div>
                             Category Performance
                         </h3>
                         <div class="h-64">
