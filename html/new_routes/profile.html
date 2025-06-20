@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Bio Revive by SkinEnvy</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery and ZOHO SDK -->
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'theme-bg-primary': 'var(--bg-primary)',
+                        'theme-bg-secondary': 'var(--bg-secondary)',
+                        'theme-bg-accent': 'var(--bg-accent)',
+                        'theme-text-primary': 'var(--text-primary)',
+                        'theme-text-secondary': 'var(--text-secondary)',
+                        'theme-border': 'var(--border-color)',
+                        'theme-primary': 'var(--color-primary)',
+                        'theme-secondary': 'var(--color-secondary)',
+                        'theme-accent': 'var(--color-accent)',
+
+                        primary: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        },
+                        success: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-accent: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        html.dark .glass-effect {
+            background: rgba(31, 41, 55, 0.98);
+            border: 1px solid rgba(55, 65, 81, 0.8);
+        }
+        
+        .modern-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .modern-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        html.dark .modern-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-modern {
+            background: var(--color-primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-modern:hover {
+            background: var(--color-accent);
+            transform: translateY(-1px);
+        }
+        
+        .card-hover-effect {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover-effect:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        html.dark .card-hover-effect:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gradient-border {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2px;
+            border-radius: 16px;
+        }
+        
+        .gradient-border-content {
+            background: var(--bg-primary);
+            border-radius: 14px;
+        }
+
+        .feature-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .feature-enabled {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .feature-disabled {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .plan-badge {
+            background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+            color: #7c3aed;
+            border: 1px solid #a78bfa;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .trial-badge {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 1px solid #f59e0b;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 hide-scrollbar">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Modern Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">spa</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
+                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-6">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="test.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">dashboard</span>
+                            Analytics Dashboard
+                        </a>
+                        <a href="past_appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">history</span>
+                            Past Appointments
+                        </a>
+                        <a href="upcomming_appointmets.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">upcoming</span>
+                            Upcoming Appointments
+                        </a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">spa</span>
+                            Services
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">people</span>
+                            Clients
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">analytics</span>
+                            Reports
+                        </a>
+                    </nav>
+
+                    <div class="px-6 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
+                            <span class="material-icons mr-3 text-theme-primary text-xl">person</span>
+                            Profile
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">settings</span>
+                            Settings
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">help</span>
+                            Help & Support
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- User Profile Section -->
+                <div class="p-4 border-t border-theme-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium" id="sidebarUserInitials">
+                            --
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-theme-text-primary truncate" id="sidebarUserName">--</p>
+                            <div class="flex items-center mt-1">
+                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
+                                <p class="text-xs text-theme-text-secondary">Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent" onclick="toggleMobileMenu()">
+                    <span class="material-icons">menu</span>
+                </button>
+                
+                <div class="flex-1 flex justify-between items-center max-w-7xl mx-auto">
+                    <div>
+                        <h1 class="text-xl font-semibold text-theme-text-primary">Profile & Account Information</h1>
+                        <p class="text-sm text-theme-text-secondary">View your account information and settings</p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <button onclick="refreshProfile()" id="refreshBtn" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Profile">
+                            <span class="material-icons">refresh</span>
+                        </button>
+                        <button onclick="showHelpModal()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Help & Information">
+                            <span class="material-icons">help_outline</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto scrollbar-hide">
+                <div class="max-w-7xl mx-auto p-6 space-y-8 animate-fade-in">
+                    <!-- No Data State -->
+                    <div id="noDataState" class="hidden text-center py-12">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl flex items-center justify-center shadow-lg">
+                            <span class="material-icons text-4xl text-blue-500">person_off</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-theme-text-primary mb-3">No profile data found</h3>
+                        <p class="text-theme-text-secondary text-lg">No user data available in localStorage.</p>
+                    </div>
+
+                    <!-- Profile Content -->
+                    <div id="profileContent" class="hidden">
+                        <!-- Profile Header Card -->
+                        <div class="glass-effect rounded-2xl p-8 border-l-4 border-theme-primary mb-8">
+                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                                <div class="flex items-center space-x-6 animate-slide-in">
+                                    <div class="relative">
+                                        <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-theme-primary/20 to-theme-primary/40 flex items-center justify-center shadow-2xl" id="profileAvatar">
+                                            <span class="text-4xl font-bold text-theme-primary" id="profileInitials">--</span>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-success-500 rounded-full border-4 border-theme-bg-primary flex items-center justify-center">
+                                            <span class="material-icons text-white text-sm">check</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h1 class="text-3xl font-bold text-theme-text-primary mb-2" id="profileDisplayName">--</h1>
+                                        <div class="flex items-center space-x-4 mb-3">
+                                            <span class="text-theme-text-secondary text-lg" id="profileEmail">--</span>
+                                            <span class="plan-badge" id="planBadge">-- Plan</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <span class="trial-badge" id="trialStatus">--</span>
+                                            <div class="flex items-center text-sm text-theme-text-secondary">
+                                                <span class="material-icons mr-1 text-sm">schedule</span>
+                                                <span>Joined <span id="joinedDate">--</span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6 lg:mt-0 text-right">
+                                    <div class="text-sm text-theme-text-secondary mb-2">Account ID</div>
+                                    <div class="font-mono text-theme-text-primary bg-theme-bg-accent px-3 py-2 rounded-lg text-sm" id="accountId">--</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" id="quickStatsCards">
+                            <!-- Quick stats will be populated here -->
+                        </div>
+
+                        <!-- Main Profile Content -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <!-- Personal Information -->
+                            <div class="modern-card rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                                    <span class="material-icons mr-3 text-blue-600">person</span>
+                                    Personal Information
+                                </h3>
+                                <div id="personalInfoContent" class="space-y-4">
+                                    <!-- Personal info will be populated here -->
+                                </div>
+                            </div>
+
+                            <!-- Business Information -->
+                            <div class="modern-card rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                                    <span class="material-icons mr-3 text-green-600">business</span>
+                                    Business Information
+                                </h3>
+                                <div id="businessInfoContent" class="space-y-4">
+                                    <!-- Business info will be populated here -->
+                                </div>
+                            </div>
+
+                            <!-- Account Settings -->
+                            <div class="modern-card rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                                    <span class="material-icons mr-3 text-purple-600">settings</span>
+                                    Account Settings
+                                </h3>
+                                <div id="accountSettingsContent" class="space-y-4">
+                                    <!-- Account settings will be populated here -->
+                                </div>
+                            </div>
+
+                            <!-- Plan & Features -->
+                            <div class="modern-card rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                                    <span class="material-icons mr-3 text-orange-600">workspace_premium</span>
+                                    Plan & Features
+                                </h3>
+                                <div id="planFeaturesContent" class="space-y-4">
+                                    <!-- Plan features will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scheduling Links Section -->
+                        <div class="modern-card rounded-xl p-6 mb-8">
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                                <span class="material-icons mr-3 text-indigo-600">link</span>
+                                Scheduling Links & Integration
+                            </h3>
+                            <div id="schedulingLinksContent" class="space-y-4">
+                                <!-- Scheduling links will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Security & Privacy -->
+                        <div class="modern-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                                <span class="material-icons mr-3 text-red-600">security</span>
+                                Security & Privacy
+                            </h3>
+                            <div id="securityContent" class="space-y-4">
+                                <!-- Security content will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNav" class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="test.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">dashboard</span>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="past_appointments.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">history</span>
+                <span class="text-xs mt-1">Past</span>
+            </a>
+            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">spa</span>
+                <span class="text-xs mt-1">Services</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-primary">
+                <span class="material-icons text-lg">person</span>
+                <span class="text-xs mt-1 font-medium">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+
+    <script>
+        // Global variables
+        let userData = {};
+        let isLoading = false;
+
+        // Theme Configuration
+        const themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+                red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+                teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+                pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+                indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+            }
+        };
+
+        // Theme Functions
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('dashboard_theme', theme);
+        }
+
+        function applyThemeColor(colorName) {
+            const color = themeConfig.colors[colorName];
+            if (!color) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', color.primary);
+            root.style.setProperty('--color-secondary', color.secondary);
+            root.style.setProperty('--color-accent', color.accent);
+            localStorage.setItem('dashboard_theme_color', colorName);
+            addThemeSwitcher();
+        }
+
+        function toggleTheme() {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            addThemeSwitcher();
+        }
+        
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+            const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+            applyTheme(savedTheme);
+            applyThemeColor(savedColor);
+        }
+
+        function addThemeSwitcher() {
+            const container = document.getElementById('theme-switcher-container');
+            if (!container) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+            container.innerHTML = `
+                <div class="fixed bottom-5 right-5 z-50">
+                    <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-56 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-theme-text-primary">Theme Mode</span>
+                                <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-primary ${isDark ? 'bg-theme-primary' : 'bg-gray-300'}">
+                                    <span class="sr-only">Toggle theme</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${isDark ? 'right-1 opacity-100' : 'right-1 opacity-0'}" style="color: #fbbf24;">dark_mode</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${!isDark ? 'left-1 opacity-100' : 'left-1 opacity-0'}" style="color: #f59e0b;">light_mode</span>
+                                    <span class="inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full shadow ${isDark ? 'translate-x-6' : 'translate-x-1'}"></span>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-sm font-medium text-theme-text-primary">Color Theme</span>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${Object.keys(themeConfig.colors).map(name => `
+                                        <button onclick="applyThemeColor('${name}')" 
+                                                class="relative w-8 h-8 rounded-full transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary focus:ring-offset-theme-bg-primary ${currentColor === name ? 'ring-2 ring-offset-2 ring-white ring-offset-theme-bg-primary scale-110' : ''}"
+                                                style="background-color: ${themeConfig.colors[name].primary}"
+                                                title="${name.charAt(0).toUpperCase() + name.slice(1)}">
+                                            ${currentColor === name ? '<span class="absolute inset-0 flex items-center justify-center"><span class="material-icons text-white text-sm">check</span></span>' : ''}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-secondary">
+                        <span class="material-icons">palette</span>
+                    </button>
+                </div>
+            `;
+
+            const menuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            
+            if (menuButton && themeMenu) {
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (themeMenu.classList.contains('hidden')) {
+                        themeMenu.classList.remove('hidden');
+                        setTimeout(() => {
+                            themeMenu.classList.remove('opacity-0', '-translate-y-2');
+                        }, 10);
+                    } else {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log('Initializing Profile Dashboard...');
+            initializeTheme();
+            addThemeSwitcher();
+            loadUserData();
+            populateProfile();
+            
+            // Try ZOHO initialization
+            try {
+                ZOHO.embeddedApp.init()
+                    .then(function() {
+                        console.log("ZOHO SDK initialized successfully");
+                    })
+                    .catch(function(error) {
+                        console.warn("ZOHO SDK initialization failed:", error);
+                    });
+            } catch (error) {
+                console.warn("ZOHO SDK not available:", error);
+            }
+        });
+
+        // Load user data from localStorage (NO HARDCODED DATA)
+        function loadUserData() {
+            try {
+                const storedData = localStorage.getItem('userData');
+                if (storedData) {
+                    userData = JSON.parse(storedData);
+                    console.log('User data loaded:', userData);
+                } else {
+                    console.warn('No user data found in localStorage');
+                    userData = null;
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                userData = null;
+            }
+        }
+
+        // Populate profile with user data
+        function populateProfile() {
+            if (!userData || Object.keys(userData).length === 0) {
+                showNoDataState();
+                return;
+            }
+
+            hideNoDataState();
+            populateProfileHeader();
+            populateQuickStats();
+            populatePersonalInfo();
+            populateBusinessInfo();
+            populateAccountSettings();
+            populatePlanFeatures();
+            populateSchedulingLinks();
+            populateSecurityInfo();
+            updateSidebarProfile();
+        }
+
+        // Show no data state
+        function showNoDataState() {
+            document.getElementById('noDataState').classList.remove('hidden');
+            document.getElementById('profileContent').classList.add('hidden');
+        }
+
+        // Hide no data state
+        function hideNoDataState() {
+            document.getElementById('noDataState').classList.add('hidden');
+            document.getElementById('profileContent').classList.remove('hidden');
+        }
+
+        // Populate profile header
+        function populateProfileHeader() {
+            const initials = userData.initials || `${userData.firstName?.[0] || ''}${userData.lastName?.[0] || ''}`.toUpperCase() || '--';
+            const displayName = userData.displayName || `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || '--';
+            const email = userData.email || '--';
+            const plan = userData.plan || '--';
+            const joinedDate = userData.created ? new Date(userData.created).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            }) : '--';
+
+            document.getElementById('profileInitials').textContent = initials;
+            document.getElementById('profileDisplayName').textContent = displayName;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('planBadge').textContent = `${plan} Plan`;
+            document.getElementById('accountId').textContent = userData.id || '--';
+            document.getElementById('joinedDate').textContent = joinedDate;
+            
+            // Update trial status
+            const trialStatusEl = document.getElementById('trialStatus');
+            if (userData.isTrial) {
+                trialStatusEl.textContent = 'Trial Account';
+                trialStatusEl.className = 'trial-badge';
+            } else {
+                trialStatusEl.textContent = 'Active Account';
+                trialStatusEl.className = 'feature-enabled';
+            }
+        }
+
+        // Populate quick stats
+        function populateQuickStats() {
+            const container = document.getElementById('quickStatsCards');
+            const stats = [
+                {
+                    title: 'Account Type',
+                    value: userData.plan || '--',
+                    icon: 'workspace_premium',
+                    color: 'purple'
+                },
+                {
+                    title: 'Calendar Limit',
+                    value: userData.calendarLimit || '--',
+                    icon: 'calendar_month',
+                    color: 'blue'
+                },
+                {
+                    title: 'Industry',
+                    value: userData.industry || 'Not specified',
+                    icon: 'business_center',
+                    color: 'green'
+                },
+                {
+                    title: 'Account Status',
+                    value: userData.isTrial ? 'Trial' : 'Active',
+                    icon: 'verified_user',
+                    color: userData.isTrial ? 'orange' : 'emerald'
+                }
+            ];
+
+            container.innerHTML = stats.map((stat, index) => `
+                <div class="modern-card rounded-xl p-6 animate-fade-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-${stat.color}-100 dark:bg-${stat.color}-900/20 flex items-center justify-center">
+                            <span class="material-icons text-${stat.color}-600 text-xl">${stat.icon}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-theme-text-secondary">${stat.title}</p>
+                            <p class="text-xl font-bold text-theme-text-primary">${stat.value}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Populate personal information
+        function populatePersonalInfo() {
+            const container = document.getElementById('personalInfoContent');
+            const personalInfo = [
+                { label: 'First Name', value: userData.firstName || 'Not provided', icon: 'person' },
+                { label: 'Last Name', value: userData.lastName || 'Not provided', icon: 'person' },
+                { label: 'Display Name', value: userData.displayName || 'Not provided', icon: 'badge' },
+                { label: 'Email Address', value: userData.email || 'Not provided', icon: 'email' },
+                { label: 'Admin Email', value: userData.adminEmail || 'Not provided', icon: 'admin_panel_settings' },
+                { label: 'Timezone', value: userData.timezone || 'Not specified', icon: 'schedule' }
+            ];
+
+            container.innerHTML = personalInfo.map(info => `
+                <div class="flex items-center justify-between p-3 bg-theme-bg-accent rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons text-theme-text-secondary text-sm">${info.icon}</span>
+                        <span class="text-sm font-medium text-theme-text-secondary">${info.label}</span>
+                    </div>
+                    <span class="text-sm text-theme-text-primary font-medium">${info.value}</span>
+                </div>
+            `).join('');
+        }
+
+        // Populate business information
+        function populateBusinessInfo() {
+            const container = document.getElementById('businessInfoContent');
+            const businessInfo = [
+                { label: 'Business Name', value: userData.name || 'Not provided', icon: 'business' },
+                { label: 'Description', value: userData.description || 'Not provided', icon: 'description' },
+                { label: 'Industry', value: userData.industry || 'Not specified', icon: 'category' },
+                { label: 'Currency', value: userData.currencyLabel || 'Not specified', icon: 'payments' },
+                { label: 'Date Format', value: userData.dateFormat || 'Not specified', icon: 'date_range' },
+                { label: 'Time Format', value: userData.timeFormat || 'Not specified', icon: 'access_time' }
+            ];
+
+            container.innerHTML = businessInfo.map(info => `
+                <div class="flex items-center justify-between p-3 bg-theme-bg-accent rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons text-theme-text-secondary text-sm">${info.icon}</span>
+                        <span class="text-sm font-medium text-theme-text-secondary">${info.label}</span>
+                    </div>
+                    <span class="text-sm text-theme-text-primary font-medium">${info.value}</span>
+                </div>
+            `).join('');
+        }
+
+        // Populate account settings
+        function populateAccountSettings() {
+            const container = document.getElementById('accountSettingsContent');
+            const settings = [
+                { label: 'First Day of Week', value: userData.firstDayOfWeek === 0 ? 'Sunday' : 'Monday', icon: 'calendar_view_week' },
+                { label: 'Accent Color', value: userData.accentColor || '#000000', icon: 'palette', isColor: true },
+                { label: 'HIPAA Compliance', value: userData.isHIPAA ? 'Enabled' : 'Disabled', icon: 'security', isStatus: true },
+                { label: 'SMS Verified', value: userData.isSmsVerified ? 'Verified' : 'Not Verified', icon: 'sms', isStatus: true },
+                { label: 'Address Verified', value: userData.isAddressVerified ? 'Verified' : 'Not Verified', icon: 'location_on', isStatus: true },
+                { label: 'Circle Member', value: userData.isCircleMember ? 'Yes' : 'No', icon: 'groups', isStatus: true }
+            ];
+
+            container.innerHTML = settings.map(setting => {
+                let valueDisplay = setting.value;
+                
+                if (setting.isColor) {
+                    valueDisplay = `
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 rounded border border-theme-border" style="background-color: ${setting.value}"></div>
+                            <span>${setting.value}</span>
+                        </div>
+                    `;
+                } else if (setting.isStatus) {
+                    const isPositive = setting.value.includes('Verified') || setting.value === 'Enabled' || setting.value === 'Yes';
+                    valueDisplay = `<span class="feature-badge ${isPositive ? 'feature-enabled' : 'feature-disabled'}">${setting.value}</span>`;
+                }
+
+                return `
+                    <div class="flex items-center justify-between p-3 bg-theme-bg-accent rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="material-icons text-theme-text-secondary text-sm">${setting.icon}</span>
+                            <span class="text-sm font-medium text-theme-text-secondary">${setting.label}</span>
+                        </div>
+                        <div class="text-sm text-theme-text-primary font-medium">${valueDisplay}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Populate plan features
+        function populatePlanFeatures() {
+            const container = document.getElementById('planFeaturesContent');
+            const capabilities = userData.planCapabilities || {};
+            
+            const features = [
+                { key: 'is_public', label: 'Public Scheduling', description: 'Allow public access to scheduling page', icon: 'public' },
+                { key: 'can_send_sms', label: 'Send SMS', description: 'Send SMS notifications to clients', icon: 'sms' },
+                { key: 'can_receive_sms', label: 'Receive SMS', description: 'Receive SMS from clients', icon: 'sms' },
+                { key: 'can_use_api', label: 'API Access', description: 'Access to scheduling API', icon: 'api' },
+                { key: 'can_use_packages', label: 'Package Services', description: 'Create service packages', icon: 'inventory_2' },
+                { key: 'can_use_logo', label: 'Custom Logo', description: 'Upload custom business logo', icon: 'image' },
+                { key: 'can_set_css', label: 'Custom CSS', description: 'Customize scheduling page appearance', icon: 'code' },
+                { key: 'can_change_timezone', label: 'Timezone Control', description: 'Change account timezone settings', icon: 'schedule' },
+                { key: 'can_hide_powered_by', label: 'Hide Branding', description: 'Remove "Powered by" branding', icon: 'visibility_off' },
+                { key: 'priority_support', label: 'Priority Support', description: 'Priority customer support', icon: 'support_agent' },
+                { key: 'can_sign_baa', label: 'BAA Signing', description: 'Sign Business Associate Agreement', icon: 'assignment' }
+            ];
+
+            const planInfo = `
+                <div class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/10 dark:to-indigo-900/10 rounded-xl border border-purple-200 dark:border-purple-800">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-semibold text-lg text-theme-text-primary">${userData.plan || '--'} Plan</h4>
+                            <p class="text-sm text-theme-text-secondary">
+                                ${userData.isTrial ? 'Trial expires: ' + (userData.expires ? new Date(userData.expires).toLocaleDateString() : 'N/A') : 'Active subscription'}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-theme-text-secondary">Calendar Limit</div>
+                            <div class="text-2xl font-bold text-theme-text-primary">${userData.calendarLimit || '--'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const featuresGrid = features.map(feature => {
+                const isEnabled = capabilities[feature.key] === true;
+                return `
+                    <div class="flex items-center justify-between p-3 bg-theme-bg-accent rounded-lg hover:bg-theme-bg-primary transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <span class="material-icons text-theme-text-secondary text-sm">${feature.icon}</span>
+                            <div>
+                                <div class="text-sm font-medium text-theme-text-primary">${feature.label}</div>
+                                <div class="text-xs text-theme-text-secondary">${feature.description}</div>
+                            </div>
+                        </div>
+                        <span class="feature-badge ${isEnabled ? 'feature-enabled' : 'feature-disabled'}">
+                            ${isEnabled ? 'Enabled' : 'Disabled'}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = planInfo + featuresGrid;
+        }
+
+        // Populate scheduling links
+        function populateSchedulingLinks() {
+            const container = document.getElementById('schedulingLinksContent');
+            const links = [
+                { 
+                    label: 'Acuity Scheduler', 
+                    url: userData.acuityScheduler || userData.schedulingPage || '--', 
+                    description: 'Main scheduling page for clients',
+                    icon: 'link',
+                    type: 'primary'
+                },
+                { 
+                    label: 'Generic Scheduler', 
+                    url: userData.genericScheduler || '--', 
+                    description: 'Generic scheduling interface',
+                    icon: 'calendar_month',
+                    type: 'secondary'
+                },
+                { 
+                    label: 'Squarespace Preview', 
+                    url: userData.secondoPreviewScheduler || '--', 
+                    description: 'Squarespace integration preview',
+                    icon: 'preview',
+                    type: 'secondary'
+                },
+                { 
+                    label: 'Account Preferences', 
+                    url: userData.accountPreferences || '--', 
+                    description: 'Manage account preferences',
+                    icon: 'settings',
+                    type: 'tertiary'
+                }
+            ];
+
+            const embedSection = userData.embedCode ? `
+                <div class="mb-6 p-4 bg-theme-bg-accent rounded-xl">
+                    <h4 class="font-semibold text-theme-text-primary mb-3 flex items-center">
+                        <span class="material-icons mr-2 text-sm">code</span>
+                        Embed Code
+                    </h4>
+                    <div class="relative">
+                        <textarea readonly class="w-full h-24 p-3 bg-theme-bg-primary border border-theme-border rounded-lg text-xs font-mono text-theme-text-secondary resize-none">${userData.embedCode}</textarea>
+                        <button onclick="copyToClipboard('${userData.embedCode.replace(/'/g, "\\'")}', 'Embed code')" class="absolute top-2 right-2 p-2 bg-theme-primary text-white rounded hover:bg-theme-accent transition-colors">
+                            <span class="material-icons text-sm">content_copy</span>
+                        </button>
+                    </div>
+                </div>
+            ` : '';
+
+            const linksGrid = links.map(link => {
+                const colorClass = link.type === 'primary' ? 'blue' : link.type === 'secondary' ? 'green' : 'gray';
+                const hasValidUrl = link.url && link.url !== '--' && link.url !== '#';
+                
+                return `
+                    <div class="flex items-center justify-between p-4 bg-theme-bg-accent rounded-lg hover:bg-theme-bg-primary transition-colors">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-lg bg-${colorClass}-100 dark:bg-${colorClass}-900/20 flex items-center justify-center">
+                                <span class="material-icons text-${colorClass}-600 text-lg">${link.icon}</span>
+                            </div>
+                            <div>
+                                <div class="font-medium text-theme-text-primary">${link.label}</div>
+                                <div class="text-sm text-theme-text-secondary">${link.description}</div>
+                                <div class="text-xs text-theme-text-secondary font-mono mt-1 truncate max-w-md">${link.url}</div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            ${hasValidUrl ? `
+                                <button onclick="copyToClipboard('${link.url}', 'URL')" class="p-2 rounded-lg text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent" title="Copy URL">
+                                    <span class="material-icons text-sm">content_copy</span>
+                                </button>
+                                <a href="${link.url}" target="_blank" class="p-2 rounded-lg text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent" title="Open Link">
+                                    <span class="material-icons text-sm">open_in_new</span>
+                                </a>
+                            ` : `
+                                <span class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-lg">No URL</span>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = embedSection + linksGrid;
+        }
+
+        // Populate security information
+        function populateSecurityInfo() {
+            const container = document.getElementById('securityContent');
+            const securityItems = [
+                { 
+                    label: 'HIPAA Compliance', 
+                    value: userData.isHIPAA ? 'Enabled' : 'Disabled', 
+                    description: 'Health Insurance Portability and Accountability Act compliance',
+                    icon: 'security',
+                    status: userData.isHIPAA
+                },
+                { 
+                    label: 'Phone Verification', 
+                    value: userData.isSmsVerified ? 'Verified' : 'Not Verified', 
+                    description: userData.verifiedPhoneNumber || 'No verified phone number',
+                    icon: 'phone_verified',
+                    status: userData.isSmsVerified
+                },
+                { 
+                    label: 'Address Verification', 
+                    value: userData.isAddressVerified ? 'Verified' : 'Not Verified', 
+                    description: 'Business address verification status',
+                    icon: 'location_on',
+                    status: userData.isAddressVerified
+                },
+                { 
+                    label: 'Account Type', 
+                    value: userData.accountType || 'Standard', 
+                    description: 'Administrative access level',
+                    icon: 'admin_panel_settings',
+                    status: userData.accountType === 'admin'
+                },
+                { 
+                    label: 'Legacy Account', 
+                    value: userData.planCapabilities?.is_legacy ? 'Yes' : 'No', 
+                    description: 'Legacy account features and limitations',
+                    icon: 'history',
+                    status: !userData.planCapabilities?.is_legacy
+                }
+            ];
+
+            container.innerHTML = securityItems.map(item => `
+                <div class="flex items-center justify-between p-4 bg-theme-bg-accent rounded-lg">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                            <span class="material-icons text-red-600 text-lg">${item.icon}</span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-theme-text-primary">${item.label}</div>
+                            <div class="text-sm text-theme-text-secondary">${item.description}</div>
+                        </div>
+                    </div>
+                    <span class="feature-badge ${item.status ? 'feature-enabled' : 'feature-disabled'}">
+                        ${item.value}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        // Update sidebar profile
+        function updateSidebarProfile() {
+            const initials = userData.initials || `${userData.firstName?.[0] || ''}${userData.lastName?.[0] || ''}`.toUpperCase() || '--';
+            const displayName = userData.displayName || `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || '--';
+            
+            const sidebarInitials = document.getElementById('sidebarUserInitials');
+            const sidebarName = document.getElementById('sidebarUserName');
+            
+            if (sidebarInitials) sidebarInitials.textContent = initials;
+            if (sidebarName) sidebarName.textContent = displayName;
+        }
+
+        // Refresh profile
+        function refreshProfile() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const refreshBtn = document.getElementById('refreshBtn');
+            const refreshIcon = refreshBtn.querySelector('.material-icons');
+            
+            // Show loading state
+            refreshIcon.style.animation = 'spin 1s linear infinite';
+            
+            // Simulate refresh
+            setTimeout(() => {
+                loadUserData();
+                populateProfile();
+                
+                // Hide loading state
+                refreshIcon.style.animation = '';
+                isLoading = false;
+                showToast('Profile refreshed successfully!', 'success');
+            }, 1000);
+        }
+
+        // Copy to clipboard utility
+        function copyToClipboard(text, type = 'Text') {
+            if (!text || text === '--' || text === '#') {
+                showToast('Nothing to copy!', 'warning');
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`${type} copied to clipboard!`, 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast(`${type} copied to clipboard!`, 'success');
+            });
+        }
+
+        // Toast Notification Function
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-500' : 
+                           type === 'error' ? 'bg-red-500' : 
+                           type === 'warning' ? 'bg-orange-500' : 'bg-blue-500';
+            
+            toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-sm">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info'}</span>
+                    <span class="font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Help modal
+        function showHelpModal() {
+            const helpModal = document.createElement('div');
+            helpModal.id = 'helpModal';
+            helpModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50';
+            
+            helpModal.innerHTML = `
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="bg-theme-bg-primary rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <div class="p-6 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-t-2xl">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                                        <span class="material-icons text-blue-600 text-xl">help</span>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-theme-text-primary">Profile Information</h2>
+                                        <p class="text-theme-text-secondary">View your account information and settings</p>
+                                    </div>
+                                </div>
+                                <button onclick="closeHelpModal()" class="p-2 rounded-full text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent">
+                                    <span class="material-icons">close</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                    <span class="material-icons mr-2 text-blue-600">dashboard</span>
+                                    Profile Overview
+                                </h3>
+                                <div class="bg-theme-bg-accent rounded-xl p-4">
+                                    <p class="text-theme-text-secondary mb-3">Your profile page displays comprehensive account information including:</p>
+                                    <ul class="space-y-2 text-sm text-theme-text-primary">
+                                        <li class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            <span>Personal and business information</span>
+                                        </li>
+                                        <li class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Account settings and preferences</span>
+                                        </li>
+                                        <li class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                            <span>Plan features and capabilities</span>
+                                        </li>
+                                        <li class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                                            <span>Scheduling links and integration options</span>
+                                        </li>
+                                        <li class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                            <span>Security and privacy settings</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                    <span class="material-icons mr-2 text-purple-600">link</span>
+                                    Scheduling Links
+                                </h3>
+                                <div class="bg-theme-bg-accent rounded-xl p-4">
+                                    <p class="text-theme-text-secondary mb-3">Use these links to share your scheduling page:</p>
+                                    <ul class="space-y-2 text-sm text-theme-text-primary">
+                                        <li><strong>Acuity Scheduler:</strong> Main scheduling page for clients</li>
+                                        <li><strong>Generic Scheduler:</strong> Alternative scheduling interface</li>
+                                        <li><strong>Embed Code:</strong> Copy and paste to integrate on your website</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                    <span class="material-icons mr-2 text-green-600">content_copy</span>
+                                    Copy Functionality
+                                </h3>
+                                <div class="bg-theme-bg-accent rounded-xl p-4">
+                                    <p class="text-theme-text-secondary mb-3">You can copy various information to your clipboard:</p>
+                                    <ul class="space-y-2 text-sm text-theme-text-primary">
+                                        <li><strong>Scheduling URLs:</strong> Click the copy icon next to any scheduling link</li>
+                                        <li><strong>Embed Code:</strong> Copy the HTML embed code for your website</li>
+                                        <li><strong>Account ID:</strong> Your unique account identifier</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                    <span class="material-icons mr-2 text-red-600">security</span>
+                                    Security Information
+                                </h3>
+                                <div class="bg-theme-bg-accent rounded-xl p-4">
+                                    <p class="text-theme-text-secondary mb-3">Your account security status includes:</p>
+                                    <ul class="space-y-2 text-sm text-theme-text-primary">
+                                        <li><strong>HIPAA Compliance:</strong> Health data protection standards</li>
+                                        <li><strong>Phone Verification:</strong> SMS verification status</li>
+                                        <li><strong>Address Verification:</strong> Business address confirmation</li>
+                                        <li><strong>Account Type:</strong> Administrative access level</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 border-t border-theme-border bg-theme-bg-accent rounded-b-2xl">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm text-theme-text-secondary">
+                                    <strong>Bio Revive Profile</strong> - Version 2.0
+                                </div>
+                                <button onclick="closeHelpModal()" class="btn-modern">
+                                    Got it, thanks!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(helpModal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHelpModal() {
+            const helpModal = document.getElementById('helpModal');
+            if (helpModal) {
+                document.body.removeChild(helpModal);
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            console.log('Mobile menu toggle');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                closeHelpModal();
+            }
+            
+            // Ctrl/Cmd + R to refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshProfile();
+            }
+        });
+
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            body, main, .overflow-y-auto, .overflow-auto {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            body::-webkit-scrollbar, main::-webkit-scrollbar, .overflow-y-auto::-webkit-scrollbar, .overflow-auto::-webkit-scrollbar {
+                display: none;
+            }
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

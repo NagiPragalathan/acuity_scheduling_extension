@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio revive by SkinEnvy - Appointment Types Dashboard</title>
+    <title>Past Appointments - Bio Revive by SkinEnvy</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
     <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -26,7 +24,6 @@
                         'theme-primary': 'var(--color-primary)',
                         'theme-secondary': 'var(--color-secondary)',
                         'theme-accent': 'var(--color-accent)',
-
                         primary: {
                             50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
                         },
@@ -46,7 +43,6 @@
                     boxShadow: {
                         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
                         'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                     }
                 }
             }
@@ -54,17 +50,18 @@
     </script>
     <style>
         :root {
-            /* Light Theme Variables */
             --bg-primary: #ffffff;
             --bg-secondary: #f9fafb;
             --bg-accent: #f3f4f6;
             --text-primary: #111827;
             --text-secondary: #4b5563;
             --border-color: #e5e7eb;
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
         }
 
         html.dark {
-            /* Dark Theme Variables */
             --bg-primary: #1f2937;
             --bg-secondary: #111827;
             --bg-accent: #374151;
@@ -72,22 +69,15 @@
             --text-secondary: #d1d5db;
             --border-color: #374151;
         }
-        
-        /* Default Color Theme (Blue) */
-        :root {
-            --color-primary: #3b82f6;
-            --color-secondary: #60a5fa;
-            --color-accent: #2563eb;
-        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         @keyframes pulse {
@@ -96,49 +86,23 @@
         }
         
         .animate-fade-in { animation: fadeIn 0.6s ease-out; }
-        .animate-slide-in { animation: slideIn 0.5s ease-out; }
         .animate-pulse-custom { animation: pulse 2s infinite; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+        .loading-placeholder {
+            background: linear-gradient(90deg, var(--bg-accent) 25%, var(--bg-primary) 50%, var(--bg-accent) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
         }
-        
-        html.dark .glass-effect {
-            background: rgba(31, 41, 55, 0.98);
-            border: 1px solid rgba(55, 65, 81, 0.8);
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
-        
-        .modern-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-        }
-        
-        .modern-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        html.dark .modern-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn-modern {
-            background: var(--color-primary);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: 600;
-            padding: 10px 20px;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-modern:hover {
-            background: var(--color-accent);
-        }
-        
+
         .card-hover-effect {
             transition: all 0.2s ease;
         }
@@ -151,15 +115,44 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
 
-        .loading-placeholder {
-            background: linear-gradient(90deg, var(--bg-accent) 25%, var(--bg-primary) 50%, var(--bg-accent) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+        .appointment-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
         }
 
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .appointment-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-completed {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        html.dark .status-completed {
+            background-color: #166534;
+            color: #dcfce7;
+        }
+
+        html.dark .status-cancelled {
+            background-color: #991b1b;
+            color: #fee2e2;
         }
 
         .hide-scrollbar {
@@ -169,47 +162,295 @@
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
-
-        .service-card {
-            border-left: 4px solid;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .grid-view .service-card {
-            display: block;
-        }
-
-        .list-view .service-card {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-        }
-
-        .list-view .service-info {
-            flex: 1;
-        }
-
-        .filter-button.active {
-            background: var(--color-primary);
-            color: white;
-        }
     </style>
-    <script>
-        // Global Data Structure
-        let appointmentTypesData = {
-            types: [],
-            filteredTypes: [],
-            currentView: 'grid',
-            currentFilter: 'all',
-            searchQuery: '',
-            isDataLoaded: false
-        };
+</head>
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 scrollbar-hide">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Modern Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">spa</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
+                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-6">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="test.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">dashboard</span>
+                            Analytics Dashboard
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
+                            <span class="material-icons mr-3 text-theme-primary text-xl">history</span>
+                            Past Appointments
+                        </a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">spa</span>
+                            Services
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">people</span>
+                            Clients
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">analytics</span>
+                            Reports
+                        </a>
+                    </nav>
 
-        // Theme Configuration (same as test.html)
+                    <div class="px-6 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">person</span>
+                            Profile
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">settings</span>
+                            Settings
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">help</span>
+                            Help & Support
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- User Profile Section -->
+                <div class="p-4 border-t border-theme-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium">
+                            PK
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-theme-text-primary truncate">Prem Anand K</p>
+                            <div class="flex items-center mt-1">
+                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
+                                <p class="text-xs text-theme-text-secondary">Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent" onclick="toggleMobileMenu()">
+                    <span class="material-icons">menu</span>
+                </button>
+                
+                <div class="flex-1 flex justify-center lg:justify-end max-w-lg ml-auto">
+                    <div class="w-full">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-icons text-theme-text-secondary">search</span>
+                            </div>
+                            <input type="text" id="searchInput" placeholder="Search by client name, service, phone..." class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-4 flex items-center space-x-2">
+                    <button onclick="refreshPastAppointments()" id="refreshBtn" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Appointments">
+                        <span class="material-icons">refresh</span>
+                    </button>
+                    <button onclick="exportPastAppointments()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Export Report">
+                        <span class="material-icons">download</span>
+                    </button>
+                    <button onclick="openAnonymousScheduling()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Schedule Appointment">
+                        <span class="material-icons">calendar_today</span>
+                    </button>
+                    <button onclick="showHelpModal()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Help & Information">
+                        <span class="material-icons">help_outline</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto p-6 bg-theme-bg-secondary scrollbar-hide">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-theme-text-primary">Past Appointments</h1>
+                            <p class="text-theme-text-secondary mt-2">View and manage appointments</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div id="appointmentStats" class="flex items-center space-x-4 text-sm">
+                                <div class="text-center">
+                                    <p class="font-bold text-theme-text-primary" id="totalAppointments">-</p>
+                                    <p class="text-theme-text-secondary">Total</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-bold text-green-600" id="completedAppointments">-</p>
+                                    <p class="text-theme-text-secondary">Completed</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-bold text-red-600" id="cancelledAppointments">-</p>
+                                    <p class="text-theme-text-secondary">Cancelled</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-theme-bg-primary rounded-lg border border-theme-border p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-theme-text-secondary mb-2">Date Range</label>
+                            <select id="dateRangeFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="quarter">This Quarter</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-theme-text-secondary mb-2">Service Type</label>
+                            <select id="serviceFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                <option value="all">All Services</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-theme-text-secondary mb-2">Status</label>
+                            <select id="statusFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                <option value="all">All Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-theme-text-secondary mb-2">Calendar</label>
+                            <select id="calendarFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                <option value="all">All Calendars</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="loading-placeholder h-32 rounded-lg"></div>
+                        <div class="loading-placeholder h-32 rounded-lg"></div>
+                        <div class="loading-placeholder h-32 rounded-lg"></div>
+                        <div class="loading-placeholder h-32 rounded-lg"></div>
+                        <div class="loading-placeholder h-32 rounded-lg"></div>
+                        <div class="loading-placeholder h-32 rounded-lg"></div>
+                    </div>
+                </div>
+
+                <!-- Appointments Grid -->
+                <div id="appointmentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Appointments will be dynamically loaded here -->
+                </div>
+
+                <!-- No Results State -->
+                <div id="noResultsState" class="hidden text-center py-12">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-theme-bg-accent flex items-center justify-center">
+                        <span class="material-icons text-4xl text-theme-text-secondary">search_off</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-theme-text-primary mb-2">No appointments found</h3>
+                    <p class="text-theme-text-secondary">Try adjusting your search criteria or filters.</p>
+                </div>
+
+                <!-- Appointment Details Modal -->
+                <div id="appointmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+                    <div class="flex items-center justify-center min-h-screen p-4">
+                        <div class="bg-theme-bg-primary rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                            <div class="p-6 border-b border-theme-border">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-xl font-bold text-theme-text-primary">Appointment Details</h2>
+                                    <button onclick="closeAppointmentModal()" class="p-2 rounded-lg text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent">
+                                        <span class="material-icons">close</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="modalContent" class="p-6">
+                                <!-- Modal content will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNav" class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="test.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">dashboard</span>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-primary">
+                <span class="material-icons text-lg">history</span>
+                <span class="text-xs mt-1 font-medium">Past</span>
+            </a>
+            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">spa</span>
+                <span class="text-xs mt-1">Services</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">person</span>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+
+    <!-- Anonymous Scheduling Modal -->
+    <div id="anonymousSchedulingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-theme-bg-primary rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
+                <div class="p-6 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-theme-text-primary">Schedule Appointment</h2>
+                        <button onclick="closeAnonymousScheduling()" class="p-2 rounded-full text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="relative" style="height: 700px;">
+                    <div id="schedulingLoader" class="absolute inset-0 bg-theme-bg-primary flex items-center justify-center z-10">
+                        <div class="text-center">
+                            <div class="w-16 h-16 border-4 border-theme-primary border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+                            <p class="text-theme-text-primary font-medium">Loading scheduling page...</p>
+                        </div>
+                    </div>
+                    <iframe id="schedulingFrame" src="" width="100%" height="100%" frameborder="0" class="absolute inset-0" style="display: none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables and configuration
+        let pastAppointments = [];
+        let filteredAppointments = [];
+        let originalSearchResults = []; // For search functionality
+        let isLoading = false;
+
+        // Theme Configuration
         const themeConfig = {
             colors: {
                 blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
@@ -223,6 +464,7 @@
             }
         };
 
+        // Theme Functions
         function applyTheme(theme) {
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -328,1124 +570,657 @@
             }
         }
 
-        // Initialize Dashboard
+        // Initialize the page
         document.addEventListener("DOMContentLoaded", function() {
+            console.log('Page loaded, initializing...');
             initializeTheme();
             addThemeSwitcher();
-            initializeAppointmentTypesDashboard();
+            
+            // Initialize without ZOHO dependency for testing
+            initializePage();
+            
+            // Try ZOHO initialization but don't depend on it
+            try {
+                ZOHO.embeddedApp.init()
+                    .then(function() {
+                        console.log("ZOHO SDK initialized successfully");
+                    })
+                    .catch(function(error) {
+                        console.log("ZOHO SDK not available, continuing without it");
+                    });
+            } catch (error) {
+                console.log("ZOHO SDK not loaded, continuing without it");
+            }
         });
 
-        // Load Appointment Types Data
-        function initializeAppointmentTypesDashboard() {
-            try {
-                showLoadingState();
-                loadAppointmentTypesData();
-                renderDashboard();
-                setTimeout(() => {
-                    hideLoadingState();
-                }, 500);
-            } catch (error) {
-                console.error("Error initializing appointment types dashboard:", error);
-                showErrorState();
-            }
+        // Initialize page functionality
+        function initializePage() {
+            console.log('Initializing page functionality...');
+            loadDataFromLocalStorage();
+            setupEventListeners();
+            populateFilters();
+            applyFilters(); // This will render appointments
+            updateStats();
         }
 
-        function loadAppointmentTypesData() {
+        // Load data from localStorage
+        function loadDataFromLocalStorage() {
             try {
-                const storedData = localStorage.getItem('appointmentTypes');
+                console.log('Loading data from localStorage...');
+                
+                // Get data from localStorage
+                const storedData = localStorage.getItem('pastAppointments');
+                console.log('Raw stored data:', storedData ? 'Found data' : 'No data found');
+                
                 if (storedData) {
-                    appointmentTypesData.types = JSON.parse(storedData);
-                    appointmentTypesData.filteredTypes = [...appointmentTypesData.types];
-                    appointmentTypesData.isDataLoaded = true;
-                    console.log("Loaded appointment types:", appointmentTypesData.types);
+                    const parsedData = JSON.parse(storedData);
+                    console.log('Parsed data type:', Array.isArray(parsedData) ? 'Array' : typeof parsedData);
+                    console.log('Parsed data length/size:', Array.isArray(parsedData) ? parsedData.length : Object.keys(parsedData).length);
+                    
+                    if (Array.isArray(parsedData)) {
+                        pastAppointments = parsedData;
+                        console.log(`Loaded ${pastAppointments.length} appointments from localStorage`);
+                    } else {
+                        console.log('Data is not an array, trying to extract...');
+                        pastAppointments = [];
+                    }
                 } else {
-                    console.warn("No appointment types data found in localStorage");
-                    appointmentTypesData.types = [];
-                    appointmentTypesData.filteredTypes = [];
-                    appointmentTypesData.isDataLoaded = true;
+                    console.log('No data in localStorage, using empty array');
+                    pastAppointments = [];
                 }
+                
+                filteredAppointments = [...pastAppointments];
+                originalSearchResults = [...pastAppointments];
+                
+                console.log('Final pastAppointments count:', pastAppointments.length);
+                if (pastAppointments.length > 0) {
+                    console.log('First appointment sample:', pastAppointments[0]);
+                }
+                
             } catch (error) {
-                console.error("Error loading appointment types data:", error);
-                appointmentTypesData.types = [];
-                appointmentTypesData.filteredTypes = [];
-                appointmentTypesData.isDataLoaded = true;
+                console.error('Error loading data from localStorage:', error);
+                pastAppointments = [];
+                filteredAppointments = [];
+                originalSearchResults = [];
             }
         }
 
-        // Render Dashboard
-        function renderDashboard() {
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-                mainContent.innerHTML = `
-                    <div class="max-w-7xl mx-auto space-y-8 animate-fade-in">
-                        <!-- Modern Header Section -->
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between glass-effect rounded-2xl p-6 border-l-4 border-theme-primary">
-                            <div class="animate-slide-in">
-                                <h1 class="text-4xl font-bold bg-gradient-to-r from-theme-text-primary to-theme-text-secondary bg-clip-text text-transparent mb-3">
-                                    Appointment Types
-                                </h1>
-                                <p class="text-theme-text-secondary text-lg">Manage your services and appointment types</p>
+        // Setup event listeners
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearch);
+                console.log('Search listener added');
+            }
+            
+            // Filter functionality
+            const dateFilter = document.getElementById('dateRangeFilter');
+            const serviceFilter = document.getElementById('serviceFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const calendarFilter = document.getElementById('calendarFilter');
+            
+            if (dateFilter) dateFilter.addEventListener('change', applyFilters);
+            if (serviceFilter) serviceFilter.addEventListener('change', applyFilters);
+            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+            if (calendarFilter) calendarFilter.addEventListener('change', applyFilters);
+            
+            console.log('Filter listeners added');
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            console.log('Populating filters...');
+            
+            if (pastAppointments.length === 0) {
+                console.log('No appointments to populate filters with');
+                return;
+            }
+
+            // Populate service filter
+            const serviceFilter = document.getElementById('serviceFilter');
+            if (serviceFilter) {
+                const services = [...new Set(pastAppointments.map(apt => apt.type))].sort();
+                serviceFilter.innerHTML = '<option value="all">All Services</option>';
+                services.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service;
+                    option.textContent = service;
+                    serviceFilter.appendChild(option);
+                });
+                console.log(`Added ${services.length} service options`);
+            }
+
+            // Populate calendar filter
+            const calendarFilter = document.getElementById('calendarFilter');
+            if (calendarFilter) {
+                const calendars = [...new Set(pastAppointments.map(apt => apt.calendar))].sort();
+                calendarFilter.innerHTML = '<option value="all">All Calendars</option>';
+                calendars.forEach(calendar => {
+                    const option = document.createElement('option');
+                    option.value = calendar;
+                    option.textContent = calendar;
+                    calendarFilter.appendChild(option);
+                });
+                console.log(`Added ${calendars.length} calendar options`);
+            }
+        }
+
+        // Handle search functionality
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            console.log('Searching for:', searchTerm);
+            
+            if (searchTerm === '') {
+                originalSearchResults = [...pastAppointments];
+            } else {
+                originalSearchResults = pastAppointments.filter(appointment => {
+                    const fullName = (appointment.firstName + ' ' + appointment.lastName).toLowerCase();
+                    const type = appointment.type.toLowerCase();
+                    const phone = appointment.phone ? appointment.phone.toLowerCase() : '';
+                    const email = appointment.email ? appointment.email.toLowerCase() : '';
+                    const calendar = appointment.calendar.toLowerCase();
+                    
+                    return fullName.includes(searchTerm) ||
+                           type.includes(searchTerm) ||
+                           phone.includes(searchTerm) ||
+                           email.includes(searchTerm) ||
+                           calendar.includes(searchTerm);
+                });
+            }
+            
+            console.log(`Search results: ${originalSearchResults.length} appointments`);
+            applyFilters();
+        }
+
+        // Apply filters
+        function applyFilters() {
+            console.log('Applying filters...');
+            
+            const dateRange = document.getElementById('dateRangeFilter')?.value || 'all';
+            const serviceType = document.getElementById('serviceFilter')?.value || 'all';
+            const status = document.getElementById('statusFilter')?.value || 'all';
+            const calendar = document.getElementById('calendarFilter')?.value || 'all';
+
+            let filtered = [...originalSearchResults];
+            console.log(`Starting with ${filtered.length} appointments after search`);
+
+            // Date range filter - Note: treating all as valid regardless of date since these are "past" appointments
+            if (dateRange !== 'all') {
+                const now = new Date();
+                let startDate;
+
+                switch (dateRange) {
+                    case 'today':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        break;
+                    case 'week':
+                        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case 'month':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        break;
+                    case 'quarter':
+                        const quarter = Math.floor(now.getMonth() / 3);
+                        startDate = new Date(now.getFullYear(), quarter * 3, 1);
+                        break;
+                    case 'year':
+                        startDate = new Date(now.getFullYear(), 0, 1);
+                        break;
+                }
+
+                if (startDate) {
+                    const originalLength = filtered.length;
+                    filtered = filtered.filter(apt => {
+                        const aptDate = new Date(apt.datetime);
+                        return aptDate >= startDate;
+                    });
+                    console.log(`Date filter: ${originalLength} -> ${filtered.length}`);
+                }
+            }
+
+            // Service type filter
+            if (serviceType !== 'all') {
+                const originalLength = filtered.length;
+                filtered = filtered.filter(apt => apt.type === serviceType);
+                console.log(`Service filter: ${originalLength} -> ${filtered.length}`);
+            }
+
+            // Status filter
+            if (status !== 'all') {
+                const originalLength = filtered.length;
+                if (status === 'completed') {
+                    filtered = filtered.filter(apt => !apt.canceled);
+                } else if (status === 'cancelled') {
+                    filtered = filtered.filter(apt => apt.canceled);
+                }
+                console.log(`Status filter: ${originalLength} -> ${filtered.length}`);
+            }
+
+            // Calendar filter
+            if (calendar !== 'all') {
+                const originalLength = filtered.length;
+                filtered = filtered.filter(apt => apt.calendar === calendar);
+                console.log(`Calendar filter: ${originalLength} -> ${filtered.length}`);
+            }
+
+            filteredAppointments = filtered;
+            console.log(`Final filtered count: ${filteredAppointments.length}`);
+            
+            renderAppointments();
+            updateStats();
+        }
+
+        // Render appointments
+        function renderAppointments() {
+            console.log(`Rendering ${filteredAppointments.length} appointments...`);
+            
+            const container = document.getElementById('appointmentsContainer');
+            const noResultsState = document.getElementById('noResultsState');
+
+            if (!container) {
+                console.error('Appointments container not found!');
+                return;
+            }
+
+            if (filteredAppointments.length === 0) {
+                container.innerHTML = '';
+                if (noResultsState) noResultsState.classList.remove('hidden');
+                console.log('No appointments to display');
+                return;
+            }
+
+            if (noResultsState) noResultsState.classList.add('hidden');
+
+            // Sort appointments by date (newest first)
+            const sortedAppointments = filteredAppointments.sort((a, b) => 
+                new Date(b.datetime) - new Date(a.datetime)
+            );
+
+            container.innerHTML = sortedAppointments.map(appointment => 
+                createAppointmentCard(appointment)
+            ).join('');
+            
+            console.log('Appointments rendered successfully');
+        }
+
+        // Create appointment card HTML
+        function createAppointmentCard(appointment) {
+            const appointmentDate = new Date(appointment.datetime);
+            const price = parseFloat(appointment.priceSold || appointment.price || 0);
+            const isPaid = appointment.paid === 'yes';
+            const isCancelled = appointment.canceled;
+            
+            return `
+                <div class="appointment-card card-hover-effect rounded-lg p-6 cursor-pointer animate-fade-in" 
+                     onclick="showAppointmentDetails('${appointment.id}')">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-full bg-theme-primary/20 flex items-center justify-center">
+                                <span class="material-icons text-theme-primary">person</span>
                             </div>
-                            <div class="mt-6 lg:mt-0 flex items-center space-x-4">
-                                <button onclick="refreshData()" class="btn-modern inline-flex items-center">
-                                    <span class="material-icons text-sm mr-2">refresh</span>
-                                    Refresh Data
-                                </button>
-                                <button onclick="exportServices()" class="btn-modern inline-flex items-center bg-gradient-to-r from-purple-500 to-purple-600">
-                                    <span class="material-icons text-sm mr-2">download</span>
-                                    Export
-                                </button>
+                            <div>
+                                <h3 class="font-semibold text-theme-text-primary">
+                                    ${appointment.firstName} ${appointment.lastName}
+                                </h3>
+                                <p class="text-sm text-theme-text-secondary">
+                                    ${appointment.phone || 'No phone'} ${appointment.email ? '• ' + appointment.email : ''}
+                                </p>
                             </div>
                         </div>
+                        <span class="status-badge ${isCancelled ? 'status-cancelled' : 'status-completed'}">
+                            ${isCancelled ? 'Cancelled' : 'Completed'}
+                        </span>
+                    </div>
 
-                        <!-- Charts Section - Moved to top -->
-                        <div class="space-y-6">
-                            <!-- First Row of Charts -->
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <!-- Bookings Distribution Chart -->
-                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
-                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Service Bookings Distribution</h3>
-                                    <div class="h-72">
-                                        <canvas id="bookingsChart"></canvas>
-                                    </div>
-                                </div>
-
-                                <!-- Revenue Distribution Chart -->
-                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
-                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Revenue Distribution</h3>
-                                    <div class="h-72">
-                                        <canvas id="revenueChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Second Row of Charts -->
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <!-- Duration Distribution Chart -->
-                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
-                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Duration Analysis</h3>
-                                    <div class="h-64">
-                                        <canvas id="durationChart"></canvas>
-                                    </div>
-                                </div>
-
-                                <!-- Service Status Chart -->
-                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
-                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Status Overview</h3>
-                                    <div class="h-64">
-                                        <canvas id="statusChart"></canvas>
-                                    </div>
-                                </div>
-
-                                <!-- Timeline Chart -->
-                                <div class="bg-theme-bg-primary p-6 rounded-2xl shadow-lg">
-                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4">Booking Timeline</h3>
-                                    <div class="h-64">
-                                        <canvas id="timelineChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-theme-text-secondary text-sm">spa</span>
+                            <span class="text-sm font-medium text-theme-text-primary">${appointment.type}</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-theme-text-secondary text-sm">schedule</span>
+                            <span class="text-sm text-theme-text-secondary">
+                                ${appointmentDate.toLocaleDateString()} at ${appointment.time}
+                            </span>
                         </div>
 
-                        <!-- Statistics Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="statsCards">
-                            ${!appointmentTypesData.isDataLoaded ? Array(4).fill(0).map(() => `
-                                <div class="loading-placeholder h-32 rounded-2xl"></div>
-                            `).join('') : ''}
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-theme-text-secondary text-sm">location_on</span>
+                            <span class="text-sm text-theme-text-secondary">${appointment.calendar}</span>
                         </div>
 
-                        <!-- Filters and Controls -->
-                        <div class="glass-effect rounded-2xl p-6">
-                            <div class="flex flex-col space-y-4">
-                                <!-- Search and Status Filters -->
-                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                                    <!-- Search -->
-                                    <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 flex-1">
-                                        <div class="relative flex-1 max-w-md">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <span class="material-icons text-theme-text-secondary text-sm">search</span>
-                                            </div>
-                                            <input 
-                                                type="text" 
-                                                id="serviceSearch"
-                                                placeholder="Search services..." 
-                                                class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary"
-                                                oninput="handleSearch(this.value)"
-                                            >
-                                        </div>
-                                        
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="filterServices('all')" class="filter-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white active" data-filter="all">
-                                                All
-                                            </button>
-                                            <button onclick="filterServices('active')" class="filter-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white" data-filter="active">
-                                                Active
-                                            </button>
-                                            <button onclick="filterServices('inactive')" class="filter-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white" data-filter="inactive">
-                                                Inactive
-                                            </button>
-                                            <button onclick="filterServices('popular')" class="filter-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white" data-filter="popular">
-                                                Popular
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Controls -->
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-theme-text-secondary">View:</span>
-                                        <button onclick="setView('grid')" class="p-2 rounded-lg ${appointmentTypesData.currentView === 'grid' ? 'bg-theme-primary text-white' : 'bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white'} transition-all duration-200">
-                                            <span class="material-icons text-sm">grid_view</span>
-                                        </button>
-                                        <button onclick="setView('list')" class="p-2 rounded-lg ${appointmentTypesData.currentView === 'list' ? 'bg-theme-primary text-white' : 'bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white'} transition-all duration-200">
-                                            <span class="material-icons text-sm">view_list</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Color Filters on New Line -->
-                                <div class="border-t border-theme-border pt-4">
-                                    <div class="flex flex-col space-y-2">
-                                        <span class="text-sm font-medium text-theme-text-secondary">Filter by Color:</span>
-                                        <div class="flex flex-wrap gap-2">
-                                            ${[...new Set(appointmentTypesData.types.map(s => s.color))].map(color => `
-                                                <button onclick="filterByColor('${color}')" 
-                                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-theme-bg-accent ${appointmentTypesData.currentColorFilter === color ? 'bg-theme-bg-accent ring-2 ring-theme-primary' : ''}"
-                                                        title="Filter by ${color}">
-                                                    <div class="w-4 h-4 rounded-full" style="background-color: ${color}"></div>
-                                                    <span class="text-sm text-theme-text-secondary">${getColorName(color)}</span>
-                                                </button>
-                                            `).join('')}
-                                            <button onclick="filterByColor(null)" 
-                                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-theme-bg-accent ${!appointmentTypesData.currentColorFilter ? 'bg-theme-bg-accent ring-2 ring-theme-primary' : ''}"
-                                                    title="Show all colors">
-                                                <span class="material-icons text-sm text-theme-text-secondary">clear</span>
-                                                <span class="text-sm text-theme-text-secondary">Clear</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-theme-border">
+                            <div class="flex items-center space-x-2">
+                                <span class="material-icons text-theme-text-secondary text-sm">access_time</span>
+                                <span class="text-sm text-theme-text-secondary">${appointment.duration} min</span>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-lg ${price > 0 ? 'text-green-600' : 'text-theme-text-secondary'}">
+                                    $${price.toFixed(2)}
+                                </p>
+                                ${price > 0 ? `
+                                    <p class="text-xs ${isPaid ? 'text-green-600' : 'text-red-600'}">
+                                        ${isPaid ? 'Paid' : 'Unpaid'}
+                                    </p>
+                                ` : ''}
                             </div>
                         </div>
+                    </div>
+                </div>
+            `;
+        }
 
-                        <!-- Services Grid/List -->
-                        <div id="servicesContainer" class="space-y-4">
-                            ${!appointmentTypesData.isDataLoaded ? `
-                                <div class="flex items-center justify-center h-64">
-                                    <div class="text-center">
-                                        <div class="w-16 h-16 border-4 border-theme-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                                        <p class="text-theme-text-secondary">Loading services...</p>
-                                    </div>
+        // Show appointment details modal
+        function showAppointmentDetails(appointmentId) {
+            const appointment = pastAppointments.find(apt => apt.id.toString() === appointmentId);
+            if (!appointment) return;
+
+            const modal = document.getElementById('appointmentModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            const appointmentDate = new Date(appointment.datetime);
+            const createdDate = new Date(appointment.datetimeCreated);
+            const price = parseFloat(appointment.priceSold || appointment.price || 0);
+            const amountPaid = parseFloat(appointment.amountPaid || 0);
+            
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Client Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                            <span class="material-icons mr-2">person</span>
+                            Client Information
+                        </h3>
+                        <div class="bg-theme-bg-accent rounded-lg p-4 space-y-2">
+                            <p><span class="font-medium">Name:</span> ${appointment.firstName} ${appointment.lastName}</p>
+                            <p><span class="font-medium">Phone:</span> ${appointment.phone || 'Not provided'}</p>
+                            <p><span class="font-medium">Email:</span> ${appointment.email || 'Not provided'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Details -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                            <span class="material-icons mr-2">event</span>
+                            Appointment Details
+                        </h3>
+                        <div class="bg-theme-bg-accent rounded-lg p-4 space-y-2">
+                            <p><span class="font-medium">Service:</span> ${appointment.type}</p>
+                            <p><span class="font-medium">Date & Time:</span> ${appointmentDate.toLocaleDateString()} at ${appointment.time} - ${appointment.endTime}</p>
+                            <p><span class="font-medium">Duration:</span> ${appointment.duration} minutes</p>
+                            <p><span class="font-medium">Calendar:</span> ${appointment.calendar}</p>
+                            <p><span class="font-medium">Status:</span> 
+                                <span class="status-badge ${appointment.canceled ? 'status-cancelled' : 'status-completed'}">
+                                    ${appointment.canceled ? 'Cancelled' : 'Completed'}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    ${price > 0 ? `
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2">payments</span>
+                                Financial Information
+                            </h3>
+                            <div class="bg-theme-bg-accent rounded-lg p-4 space-y-2">
+                                <p><span class="font-medium">Price:</span> $${price.toFixed(2)}</p>
+                                <p><span class="font-medium">Amount Paid:</span> $${amountPaid.toFixed(2)}</p>
+                                <p><span class="font-medium">Payment Status:</span> 
+                                    <span class="${appointment.paid === 'yes' ? 'text-green-600' : 'text-red-600'} font-medium">
+                                        ${appointment.paid === 'yes' ? 'Paid' : 'Unpaid'}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Additional Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                            <span class="material-icons mr-2">info</span>
+                            Additional Information
+                        </h3>
+                        <div class="bg-theme-bg-accent rounded-lg p-4 space-y-2">
+                            <p><span class="font-medium">Appointment ID:</span> ${appointment.id}</p>
+                            <p><span class="font-medium">Created:</span> ${createdDate.toLocaleDateString()} at ${createdDate.toLocaleTimeString()}</p>
+                            ${appointment.notes ? `<p><span class="font-medium">Notes:</span> ${appointment.notes}</p>` : ''}
+                            ${appointment.formsText ? `
+                                <div>
+                                    <p class="font-medium mb-2">Form Data:</p>
+                                    <pre class="text-sm bg-theme-bg-primary p-3 rounded border">${appointment.formsText}</pre>
                                 </div>
                             ` : ''}
                         </div>
                     </div>
-                `;
-            }
 
-            if (appointmentTypesData.isDataLoaded) {
-                renderStatsCards();
-                renderServices();
-                createCharts();
-            }
-        }
-
-        // Render Statistics Cards with real data
-        function renderStatsCards() {
-            const container = document.getElementById('statsCards');
-            if (!container) return;
-
-            const activeServices = appointmentTypesData.types.filter(service => service.active).length;
-            const totalBookings = appointmentTypesData.types.reduce((sum, service) => sum + (service.bookingCount || 0), 0);
-            const totalRevenue = appointmentTypesData.types.reduce((sum, service) => sum + (service.revenue || 0), 0);
-            const averageDuration = appointmentTypesData.types.reduce((sum, service) => sum + service.duration, 0) / appointmentTypesData.types.length || 0;
-            const servicesWithBookings = appointmentTypesData.types.filter(service => (service.bookingCount || 0) > 0).length;
-
-            const stats = [
-                {
-                    title: 'Total Services',
-                    value: appointmentTypesData.types.length,
-                    icon: 'medical_services',
-                    gradient: 'from-blue-500 to-cyan-600',
-                    subtitle: `${activeServices} active`,
-                    change: Math.round((activeServices / appointmentTypesData.types.length * 100)) + '%'
-                },
-                {
-                    title: 'Total Bookings',
-                    value: totalBookings,
-                    icon: 'event_available',
-                    gradient: 'from-emerald-500 to-teal-600',
-                    subtitle: `${servicesWithBookings} services booked`,
-                    change: 'Total'
-                },
-                {
-                    title: 'Avg Duration',
-                    value: Math.round(averageDuration) + 'min',
-                    icon: 'schedule',
-                    gradient: 'from-purple-500 to-pink-600',
-                    subtitle: 'per service',
-                    change: 'Standard'
-                },
-                {
-                    title: 'Total Revenue',
-                    value: totalRevenue > 0 ? '$' + totalRevenue.toFixed(2) : '$0.00',
-                    icon: 'payments',
-                    gradient: 'from-orange-500 to-red-600',
-                    subtitle: 'from bookings',
-                    change: 'Generated'
-                }
-            ];
-
-            container.innerHTML = stats.map((stat, index) => `
-                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br ${stat.gradient} text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in" style="animation-delay: ${index * 0.1}s">
-                    <div class="absolute inset-0 bg-black bg-opacity-10"></div>
-                    <div class="relative p-8">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="p-3 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm">
-                                <span class="material-icons text-2xl text-white">${stat.icon}</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs font-medium text-white text-opacity-80 px-3 py-1 bg-white bg-opacity-20 rounded-full">
-                                    ${stat.change}
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="text-white text-opacity-90 text-sm font-medium mb-2">${stat.title}</p>
-                            <p class="text-3xl font-bold text-white mb-2">${stat.value}</p>
-                            <p class="text-white text-opacity-70 text-sm">${stat.subtitle}</p>
+                    <!-- Confirmation Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                            <span class="material-icons mr-2">link</span>
+                            Links
+                        </h3>
+                        <div class="bg-theme-bg-accent rounded-lg p-4 space-y-3">
+                            <a href="${appointment.confirmationPage}" target="_blank" 
+                               class="inline-flex items-center px-4 py-2 bg-theme-primary text-white rounded-lg hover:bg-theme-accent text-sm">
+                                <span class="material-icons mr-2 text-sm">open_in_new</span>
+                                View Confirmation Page
+                            </a>
+                            ${appointment.confirmationPagePaymentLink ? `
+                                <a href="${appointment.confirmationPagePaymentLink}" target="_blank" 
+                                   class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm ml-3">
+                                    <span class="material-icons mr-2 text-sm">payment</span>
+                                    Payment Link
+                                </a>
+                            ` : ''}
                         </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-30"></div>
                 </div>
-            `).join('');
+            `;
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
-        // Render Services
-        function renderServices() {
-            const container = document.getElementById('servicesContainer');
-            if (!container) return;
+        // Close appointment modal
+        function closeAppointmentModal() {
+            document.getElementById('appointmentModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
 
-            if (appointmentTypesData.filteredTypes.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-16">
-                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl flex items-center justify-center">
-                            <span class="material-icons text-blue-500 text-4xl">medical_services</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-theme-text-primary mb-3">No services found</h3>
-                        <p class="text-theme-text-secondary text-lg mb-6">Try adjusting your search or filter criteria.</p>
-                        <button onclick="clearFilters()" class="btn-modern inline-flex items-center">
-                            <span class="material-icons text-sm mr-2">clear</span>
-                            Clear Filters
-                        </button>
-                    </div>
-                `;
+        // Update statistics
+        function updateStats() {
+            const total = filteredAppointments.length;
+            const completed = filteredAppointments.filter(apt => !apt.canceled).length;
+            const cancelled = filteredAppointments.filter(apt => apt.canceled).length;
+
+            document.getElementById('totalAppointments').textContent = total;
+            document.getElementById('completedAppointments').textContent = completed;
+            document.getElementById('cancelledAppointments').textContent = cancelled;
+        }
+
+        // Refresh appointments
+        function refreshPastAppointments() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const refreshBtn = document.getElementById('refreshBtn');
+            const refreshIcon = refreshBtn.querySelector('.material-icons');
+            
+            // Show loading state
+            refreshIcon.style.animation = 'spin 1s linear infinite';
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('appointmentsContainer').style.display = 'none';
+            
+            // Simulate refresh (in real implementation, this would fetch fresh data)
+            setTimeout(() => {
+                loadDataFromLocalStorage();
+                populateFilters();
+                applyFilters();
+                
+                // Hide loading state
+                refreshIcon.style.animation = '';
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('appointmentsContainer').style.display = 'grid';
+                
+                isLoading = false;
+            }, 1500);
+        }
+
+        // Export past appointments
+        function exportPastAppointments() {
+            if (filteredAppointments.length === 0) {
+                alert('No appointments to export');
                 return;
             }
 
-            if (appointmentTypesData.currentView === 'list') {
-                container.innerHTML = `
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-theme-border">
-                            <thead>
-                                <tr class="bg-theme-bg-accent">
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Service</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Duration</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Price</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Bookings</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Revenue</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-theme-bg-primary divide-y divide-theme-border">
-                                ${appointmentTypesData.filteredTypes.map((service, index) => `
-                                    <tr class="hover:bg-theme-bg-accent transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color: ${service.color}20">
-                                                    <div class="w-3 h-3 rounded-full" style="background-color: ${service.color}"></div>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-theme-text-primary">${service.name}</div>
-                                                    <div class="text-sm text-theme-text-secondary">${service.category || 'General'}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary">${service.duration} min</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary">${service.price > 0 ? '$' + parseFloat(service.price).toFixed(2) : 'Free'}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary">${service.bookingCount || 0}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-theme-text-primary">${service.revenue ? '$' + service.revenue.toFixed(2) : '$0.00'}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                service.active 
-                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' 
-                                                    : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
-                                            }">
-                                                ${service.active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button onclick="viewServiceDetails('${service.id}')" class="btn-modern text-sm px-3 py-1">
-                                                View Details
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            } else {
-                // Grid view
-                const gridClass = appointmentTypesData.currentView === 'grid' 
-                    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
-                    : 'space-y-4';
-
-                container.innerHTML = `
-                    <div class="${appointmentTypesData.currentView}">
-                        <div class="${gridClass}">
-                            ${appointmentTypesData.filteredTypes.map((service, index) => renderServiceCard(service, index)).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Enhanced Service Card with real data
-        function renderServiceCard(service, index) {
-            const isGridView = appointmentTypesData.currentView === 'grid';
-            const price = parseFloat(service.price || 0);
-            const hasPrice = price > 0;
-            const bookingCount = service.bookingCount || 0;
-            const revenue = service.revenue || 0;
-            const lastBooked = service.lastBooked ? new Date(service.lastBooked).toLocaleDateString() : 'Never';
-
-            if (isGridView) {
-                return `
-                    <div class="service-card modern-card rounded-2xl overflow-hidden card-hover-effect animate-fade-in" 
-                         style="border-left-color: ${service.color}; animation-delay: ${index * 0.1}s">
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" 
-                                         style="background-color: ${service.color}20">
-                                        <span class="material-icons text-xl" style="color: ${service.color}">medical_services</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-theme-text-primary">${service.name}</h3>
-                                        ${service.category ? `<p class="text-sm text-theme-text-secondary">${service.category}</p>` : ''}
-                                    </div>
-                                </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                                    service.active 
-                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' 
-                                        : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
-                                }">
-                                    ${service.active ? 'Active' : 'Inactive'}
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm text-theme-text-secondary flex items-center">
-                                        <span class="material-icons text-sm mr-1">schedule</span>
-                                        Duration
-                                    </span>
-                                    <span class="text-sm font-semibold text-theme-text-primary">${service.duration} minutes</span>
-                                </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm text-theme-text-secondary flex items-center">
-                                        <span class="material-icons text-sm mr-1">payments</span>
-                                        Price
-                                    </span>
-                                    <span class="text-lg font-bold ${hasPrice ? 'text-emerald-600' : 'text-theme-text-secondary'}">${hasPrice ? '$' + price.toFixed(2) : 'Free'}</span>
-                                </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm text-theme-text-secondary flex items-center">
-                                        <span class="material-icons text-sm mr-1">event_available</span>
-                                        Bookings
-                                    </span>
-                                    <span class="text-sm font-semibold text-theme-primary">${bookingCount}</span>
-                                </div>
-
-                                ${revenue > 0 ? `
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-theme-text-secondary flex items-center">
-                                            <span class="material-icons text-sm mr-1">trending_up</span>
-                                            Revenue
-                                        </span>
-                                        <span class="text-sm font-semibold text-emerald-600">$${revenue.toFixed(2)}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
-                            
-                            <div class="mt-6 pt-4 border-t border-theme-border">
-                                <div class="flex items-center justify-end">
-                                    <button onclick="event.stopPropagation(); viewServiceDetails('${service.id}')" class="btn-modern text-sm px-4 py-2">
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Fixed Search Function
-        function handleSearch(query) {
-            appointmentTypesData.searchQuery = query.toLowerCase();
-            applyFilters();
-        }
-
-        function filterServices(filter) {
-            appointmentTypesData.currentFilter = filter;
-            
-            // Update filter button states
-            document.querySelectorAll('.filter-button').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.filter === filter) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            applyFilters();
-        }
-
-        function applyFilters() {
-            let filtered = [...appointmentTypesData.types];
-            
-            // Apply status filter
-            if (appointmentTypesData.currentFilter === 'active') {
-                filtered = filtered.filter(service => service.active);
-            } else if (appointmentTypesData.currentFilter === 'inactive') {
-                filtered = filtered.filter(service => !service.active);
-            } else if (appointmentTypesData.currentFilter === 'popular') {
-                filtered = filtered.filter(service => (service.bookingCount || 0) > 5);
-            }
-            
-            // Apply color filter
-            if (appointmentTypesData.currentColorFilter) {
-                filtered = filtered.filter(service => service.color === appointmentTypesData.currentColorFilter);
-            }
-            
-            // Apply search filter
-            if (appointmentTypesData.searchQuery) {
-                filtered = filtered.filter(service => 
-                    service.name.toLowerCase().includes(appointmentTypesData.searchQuery) ||
-                    (service.category && service.category.toLowerCase().includes(appointmentTypesData.searchQuery))
-                );
-            }
-            
-            appointmentTypesData.filteredTypes = filtered;
-            renderServices();
-        }
-
-        function clearFilters() {
-            appointmentTypesData.currentFilter = 'all';
-            appointmentTypesData.searchQuery = '';
-            document.getElementById('serviceSearch').value = '';
-            document.querySelectorAll('.filter-button').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.filter === 'all') {
-                    btn.classList.add('active');
-                }
-            });
-            applyFilters();
-        }
-
-        function setView(view) {
-            appointmentTypesData.currentView = view;
-            renderServices();
-            
-            // Update view button states  
-            document.querySelectorAll('[onclick^="setView"]').forEach(btn => {
-                const isActive = btn.getAttribute('onclick').includes(`'${view}'`);
-                btn.className = `p-2 rounded-lg ${isActive ? 'bg-theme-primary text-white' : 'bg-theme-bg-accent text-theme-text-secondary hover:bg-theme-primary hover:text-white'} transition-all duration-200`;
-            });
-        }
-
-        // Action Functions
-        function viewServiceDetails(serviceId) {
-            const service = appointmentTypesData.types.find(s => s.id == serviceId);
-            if (!service) return;
-            
-            const modal = createServiceDetailModal(service);
-            document.body.appendChild(modal);
-        }
-
-        function createServiceDetailModal(service) {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fade-in';
-            modal.onclick = (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            };
-
-            const price = parseFloat(service.price || 0);
-            const hasPrice = price > 0;
-            const bookingCount = service.bookingCount || 0;
-            const revenue = service.revenue || 0;
-            const lastBooked = service.lastBooked ? new Date(service.lastBooked).toLocaleDateString() : 'Never';
-
-            modal.innerHTML = `
-                <div class="bg-theme-bg-primary rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden animate-slide-in">
-                    <div class="p-6 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-theme-text-primary">Service Details</h2>
-                            <button onclick="this.closest('.fixed').remove()" class="btn-modern text-sm px-4 py-2">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                    <div class="overflow-y-auto max-h-[calc(90vh-100px)] hide-scrollbar">
-                        <div class="p-6">
-                            <div class="space-y-6">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg" 
-                                             style="background: linear-gradient(135deg, ${service.color}20, ${service.color}40)">
-                                            <span class="material-icons text-2xl" style="color: ${service.color}">medical_services</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-2xl font-bold text-theme-text-primary">${service.name}</h3>
-                                            <p class="text-theme-text-secondary mt-1">${service.category || 'General Service'}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
-                                            service.active 
-                                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' 
-                                                : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
-                                        }">
-                                            ${service.active ? 'Active' : 'Inactive'}
-                                        </span>
-                                        ${bookingCount > 10 ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300">Popular</span>' : ''}
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                    <div class="text-center p-4 bg-theme-bg-accent rounded-lg">
-                                        <p class="text-3xl font-bold text-theme-primary">${hasPrice ? '$' + price.toFixed(2) : 'Free'}</p>
-                                        <p class="text-sm text-theme-text-secondary">Price</p>
-                                    </div>
-                                    <div class="text-center p-4 bg-theme-bg-accent rounded-lg">
-                                        <p class="text-3xl font-bold text-theme-primary">${service.duration}</p>
-                                        <p class="text-sm text-theme-text-secondary">Minutes</p>
-                                    </div>
-                                    <div class="text-center p-4 bg-theme-bg-accent rounded-lg">
-                                        <p class="text-3xl font-bold text-emerald-600">${bookingCount}</p>
-                                        <p class="text-sm text-theme-text-secondary">Bookings</p>
-                                    </div>
-                                    <div class="text-center p-4 bg-theme-bg-accent rounded-lg">
-                                        <p class="text-3xl font-bold text-emerald-600">$${revenue.toFixed(2)}</p>
-                                        <p class="text-sm text-theme-text-secondary">Revenue</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="text-sm font-medium text-theme-text-secondary">Service ID</label>
-                                        <p class="text-lg font-semibold text-theme-text-primary">${service.id}</p>
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-medium text-theme-text-secondary">Color Theme</label>
-                                        <div class="flex items-center space-x-2 mt-1">
-                                            <div class="w-6 h-6 rounded-full" style="background-color: ${service.color}"></div>
-                                            <p class="text-lg font-semibold text-theme-text-primary">${service.color}</p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-medium text-theme-text-secondary">Last Booked</label>
-                                        <p class="text-lg font-semibold text-theme-text-primary">${lastBooked}</p>
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-medium text-theme-text-secondary">Status</label>
-                                        <p class="text-lg font-semibold ${service.active ? 'text-emerald-600' : 'text-red-600'}">${service.active ? 'Active' : 'Inactive'}</p>
-                                    </div>
-                                </div>
-                                
-                                ${bookingCount > 0 ? `
-                                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg">
-                                        <h4 class="text-lg font-semibold text-theme-text-primary mb-3 flex items-center">
-                                            <span class="material-icons text-green-500 mr-2">trending_up</span>
-                                            Performance Metrics
-                                        </h4>
-                                        <div class="grid grid-cols-3 gap-4 text-center">
-                                            <div>
-                                                <p class="text-2xl font-bold text-green-600">${bookingCount}</p>
-                                                <p class="text-sm text-theme-text-secondary">Total Bookings</p>
-                                            </div>
-                                            <div>
-                                                <p class="text-2xl font-bold text-green-600">$${(revenue / Math.max(bookingCount, 1)).toFixed(2)}</p>
-                                                <p class="text-sm text-theme-text-secondary">Avg Revenue</p>
-                                            </div>
-                                            <div>
-                                                <p class="text-2xl font-bold text-green-600">${Math.round((bookingCount / appointmentTypesData.types.reduce((sum, s) => sum + (s.bookingCount || 0), 0)) * 100) || 0}%</p>
-                                                <p class="text-sm text-theme-text-secondary">Share of Total</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                                
-                                <div class="flex items-center justify-between pt-4 border-t border-theme-border">
-                                    <div></div>
-                                    <button onclick="this.closest('.fixed').remove()" class="btn-modern text-sm px-4 py-2">
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            return modal;
-        }
-
-        function exportServices() {
-            const dataStr = JSON.stringify(appointmentTypesData.types, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            
+            const csvContent = generateCSVContent(filteredAppointments);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-            link.href = url;
-            link.download = `appointment-types-${new Date().toISOString().split('T')[0]}.json`;
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `past_appointments_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+        }
+
+        // Generate CSV content
+        function generateCSVContent(appointments) {
+            const headers = [
+                'ID', 'Client Name', 'Phone', 'Email', 'Service', 'Date', 'Time', 
+                'Duration', 'Calendar', 'Status', 'Price', 'Paid', 'Amount Paid', 'Created Date'
+            ];
+
+            const csvRows = [
+                headers.join(','),
+                ...appointments.map(apt => [
+                    apt.id,
+                    `"${apt.firstName} ${apt.lastName}"`,
+                    apt.phone || '',
+                    apt.email || '',
+                    `"${apt.type}"`,
+                    apt.date,
+                    apt.time,
+                    apt.duration,
+                    `"${apt.calendar}"`,
+                    apt.canceled ? 'Cancelled' : 'Completed',
+                    apt.priceSold || apt.price || 0,
+                    apt.paid,
+                    apt.amountPaid || 0,
+                    apt.dateCreated
+                ].join(','))
+            ];
+
+            return csvRows.join('\n');
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            // Add mobile menu functionality if needed
+            console.log('Mobile menu toggle');
+        }
+
+        // Open anonymous scheduling
+        function openAnonymousScheduling() {
+            const modal = document.getElementById('anonymousSchedulingModal');
+            const iframe = document.getElementById('schedulingFrame');
+            const loader = document.getElementById('schedulingLoader');
             
-            showToast('Services exported successfully!', 'success');
+            // Show modal
+            modal.classList.remove('hidden');
+            
+            // Show loader
+            loader.style.display = 'flex';
+            iframe.style.display = 'none';
+            
+            // In a real implementation, you would load the actual scheduling URL
+            setTimeout(() => {
+                iframe.src = 'https://app.acuityscheduling.com/schedule.php?owner=35757288';
+                iframe.onload = () => {
+                    loader.style.display = 'none';
+                    iframe.style.display = 'block';
+                };
+            }, 1000);
+            
+            document.body.style.overflow = 'hidden';
         }
 
-        // Fixed Refresh Function
-        function refreshData() {
-            location.reload();
+        // Close anonymous scheduling
+        function closeAnonymousScheduling() {
+            const modal = document.getElementById('anonymousSchedulingModal');
+            const iframe = document.getElementById('schedulingFrame');
+            
+            modal.classList.add('hidden');
+            iframe.src = '';
+            document.body.style.overflow = 'auto';
         }
 
-        // Loading and Error States
-        function showLoadingState() {
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-                mainContent.innerHTML = `
-                    <div class="flex items-center justify-center min-h-[60vh]">
-                        <div class="text-center">
-                            <div class="relative mb-8">
-                                <div class="w-16 h-16 border-4 border-theme-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            </div>
-                            <h3 class="text-xl font-semibold text-theme-text-primary mb-2">Loading Services</h3>
-                            <p class="text-theme-text-secondary">Please wait while we fetch your appointment types...</p>
-                        </div>
-                    </div>
-                `;
+        // Show help modal
+        function showHelpModal() {
+            alert('Help & Information\n\nThis is the Past Appointments page where you can:\n\n• View all completed and cancelled appointments\n• Search appointments by client name, service, or contact details\n• Filter appointments by date range, service type, status, or calendar\n• Export appointment data to CSV\n• View detailed appointment information\n\nFor more help, please contact support.');
+        }
+
+        // Global search functionality (for the header search)
+        function initializeGlobalSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        handleSearch(e);
+                    }
+                });
             }
         }
 
-        function hideLoadingState() {
-            document.querySelectorAll('.loading-placeholder').forEach(el => {
-                el.classList.add('hidden');
-            });
-        }
-
-        function showErrorState() {
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-                mainContent.innerHTML = `
-                    <div class="text-center py-16">
-                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/20 dark:to-rose-900/20 rounded-3xl flex items-center justify-center">
-                            <span class="material-icons text-red-500 text-4xl">error_outline</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-theme-text-primary mb-3">Unable to load services</h3>
-                        <p class="text-theme-text-secondary text-lg mb-6">There was an error loading your appointment types.</p>
-                        <button onclick="location.reload()" class="btn-modern inline-flex items-center">
-                            <span class="material-icons text-sm mr-2">refresh</span>
-                            Try Again
-                        </button>
-                    </div>
-                `;
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const appointmentModal = document.getElementById('appointmentModal');
+            const schedulingModal = document.getElementById('anonymousSchedulingModal');
+            
+            if (e.target === appointmentModal) {
+                closeAppointmentModal();
             }
-        }
+            if (e.target === schedulingModal) {
+                closeAnonymousScheduling();
+            }
+        });
 
-        // Toast Notification Function
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                closeAppointmentModal();
+                closeAnonymousScheduling();
+            }
             
-            toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
-            toast.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <span class="material-icons text-sm">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>
-                    <span class="font-medium">${message}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full');
-            }, 100);
-            
-            setTimeout(() => {
-                toast.classList.add('translate-x-full');
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
-        }
+            // Ctrl/Cmd + R to refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshPastAppointments();
+            }
+        });
 
-        // Add this function to create and update the charts
-        function createCharts() {
-            const chartTextColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
-            const chartBorderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
-
-            // Common chart options
-            Chart.defaults.color = chartTextColor;
-            Chart.defaults.borderColor = chartBorderColor;
-
-            // 1. Bookings Distribution Chart
-            const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
-            const bookingsData = appointmentTypesData.types
-                .sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0))
-                .slice(0, 5);
-
-            new Chart(bookingsCtx, {
-                type: 'bar',
-                data: {
-                    labels: bookingsData.map(service => service.name),
-                    datasets: [{
-                        label: 'Number of Bookings',
-                        data: bookingsData.map(service => service.bookingCount || 0),
-                        backgroundColor: bookingsData.map(service => service.color),
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Bookings'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // 2. Revenue Distribution Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-            const revenueData = appointmentTypesData.types
-                .filter(service => service.revenue > 0)
-                .sort((a, b) => b.revenue - a.revenue)
-                .slice(0, 5);
-
-            new Chart(revenueCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: revenueData.map(service => service.name),
-                    datasets: [{
-                        data: revenueData.map(service => service.revenue),
-                        backgroundColor: revenueData.map(service => service.color)
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-
-            // 3. Duration Distribution Chart
-            const durationCtx = document.getElementById('durationChart').getContext('2d');
-            const durationRanges = {
-                'Short (0-30min)': services => services.filter(s => s.duration <= 30).length,
-                'Medium (31-60min)': services => services.filter(s => s.duration > 30 && s.duration <= 60).length,
-                'Long (61-120min)': services => services.filter(s => s.duration > 60 && s.duration <= 120).length,
-                'Extended (120min+)': services => services.filter(s => s.duration > 120).length
-            };
-
-            new Chart(durationCtx, {
-                type: 'polarArea',
-                data: {
-                    labels: Object.keys(durationRanges),
-                    datasets: [{
-                        data: Object.values(durationRanges).map(fn => fn(appointmentTypesData.types)),
-                        backgroundColor: [
-                            'rgba(74, 222, 128, 0.6)',
-                            'rgba(59, 130, 246, 0.6)',
-                            'rgba(168, 85, 247, 0.6)',
-                            'rgba(249, 115, 22, 0.6)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-
-            // 4. Service Status Chart
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            const activeServices = appointmentTypesData.types.filter(s => s.active).length;
-            const inactiveServices = appointmentTypesData.types.length - activeServices;
-
-            new Chart(statusCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Active', 'Inactive'],
-                    datasets: [{
-                        data: [activeServices, inactiveServices],
-                        backgroundColor: ['rgba(34, 197, 94, 0.6)', 'rgba(239, 68, 68, 0.6)']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-
-            // 5. Timeline Chart
-            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-            const timelineData = appointmentTypesData.types
-                .filter(service => service.lastBooked)
-                .map(service => ({
-                    x: new Date(service.lastBooked),
-                    y: service.bookingCount || 0,
-                    name: service.name,
-                    color: service.color
-                }))
-                .sort((a, b) => a.x - b.x);
-
-            new Chart(timelineCtx, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Bookings Over Time',
-                        data: timelineData,
-                        borderColor: 'rgba(59, 130, 246, 0.8)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => {
-                                    const point = timelineData[context.dataIndex];
-                                    return `${point.name}: ${point.y} bookings`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Bookings'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Add color filtering functionality
-        function filterByColor(color) {
-            appointmentTypesData.currentColorFilter = color;
-            applyFilters();
-        }
-
-        // Add this helper function to get color names
-        function getColorName(color) {
-            const colorMap = {
-                '#ED7087': 'Pink',
-                '#B7A6EB': 'Purple',
-                // Add more color mappings as needed based on your data
-            };
-            return colorMap[color] || color;
-        }
+        // Add CSS for hiding scrollbars globally
+        const style = document.createElement('style');
+        style.textContent = `
+            body, main, .overflow-y-auto, .overflow-auto {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            body::-webkit-scrollbar, main::-webkit-scrollbar, .overflow-y-auto::-webkit-scrollbar, .overflow-auto::-webkit-scrollbar {
+                display: none;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
-</head>
-<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 hide-scrollbar">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Modern Sidebar -->
-        <div class="hidden lg:flex lg:flex-shrink-0">
-            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
-                <div class="flex items-center h-16 px-6 border-b border-theme-border">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
-                            <span class="material-icons text-white text-xl">medical_services</span>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
-                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
-                    <div class="px-6">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
-                    </div>
-                    <nav class="mt-2 flex-1 px-4 space-y-1">
-                        <a href="test.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">dashboard</span>
-                            Analytics Dashboard
-                        </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">event</span>
-                            Appointments
-                        </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
-                            <span class="material-icons mr-3 text-theme-primary text-xl">medical_services</span>
-                            Services
-                        </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">people</span>
-                            Clients
-                        </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">analytics</span>
-                            Reports
-                        </a>
-                    </nav>
-
-                    <div class="px-6 mt-8">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
-                    </div>
-                    <nav class="mt-2 flex-1 px-4 space-y-1">
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">person</span>
-                            Profile
-                        </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">settings</span>
-                            Settings
-                        </a>
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
-                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">help</span>
-                            Help & Support
-                        </a>
-                    </nav>
-                </div>
-                
-                <!-- User Profile Section -->
-                <div class="p-4 border-t border-theme-border">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium">
-                            PK
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-theme-text-primary truncate">Prem Anand K</p>
-                            <div class="flex items-center mt-1">
-                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
-                                <p class="text-xs text-theme-text-secondary">Online</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex flex-col flex-1 overflow-hidden">
-            <!-- Top Navigation -->
-            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
-                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent">
-                    <span class="material-icons">menu</span>
-                </button>
-                
-                <div class="flex-1 flex justify-center lg:justify-end max-w-lg ml-auto">
-                    <div class="w-full">
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons text-theme-text-secondary">search</span>
-                            </div>
-                            <input type="text" placeholder="Search services..." class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary" oninput="handleSearch(this.value)">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="ml-4 flex items-center space-x-2">
-                    <button onclick="refreshData()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Data">
-                        <span class="material-icons">refresh</span>
-                    </button>
-                    <button onclick="exportServices()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Export Services">
-                        <span class="material-icons">download</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Page Content -->
-            <main class="flex-1 overflow-auto p-6 bg-theme-bg-secondary">
-                <!-- Content will be dynamically inserted here -->
-            </main>
-        </div>
-    </div>
-
-    <!-- Mobile Navigation -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
-        <div class="flex justify-around items-center">
-            <a href="test.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
-                <span class="material-icons text-lg">dashboard</span>
-                <span class="text-xs mt-1">Analytics</span>
-            </a>
-            <a href="#" class="flex flex-col items-center p-2 text-theme-text-secondary">
-                <span class="material-icons text-lg">event</span>
-                <span class="text-xs mt-1">Appointments</span>
-            </a>
-            <a href="#" class="flex flex-col items-center p-2 text-theme-primary">
-                <span class="material-icons text-lg">medical_services</span>
-                <span class="text-xs mt-1 font-medium">Services</span>
-            </a>
-            <a href="#" class="flex flex-col items-center p-2 text-theme-text-secondary">
-                <span class="material-icons text-lg">person</span>
-                <span class="text-xs mt-1">Profile</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Theme Switcher -->
-    <div id="theme-switcher-container"></div>
 </body>
 </html>

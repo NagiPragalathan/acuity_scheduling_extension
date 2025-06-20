@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Appointments - Bio Revive by SkinEnvy</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- jQuery and ZOHO SDK -->
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'theme-bg-primary': 'var(--bg-primary)',
+                        'theme-bg-secondary': 'var(--bg-secondary)',
+                        'theme-bg-accent': 'var(--bg-accent)',
+                        'theme-text-primary': 'var(--text-primary)',
+                        'theme-text-secondary': 'var(--text-secondary)',
+                        'theme-border': 'var(--border-color)',
+                        'theme-primary': 'var(--color-primary)',
+                        'theme-secondary': 'var(--color-secondary)',
+                        'theme-accent': 'var(--color-accent)',
+
+                        primary: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        },
+                        success: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-accent: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        html.dark .glass-effect {
+            background: rgba(31, 41, 55, 0.98);
+            border: 1px solid rgba(55, 65, 81, 0.8);
+        }
+        
+        .modern-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .modern-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        html.dark .modern-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-modern {
+            background: var(--color-primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-modern:hover {
+            background: var(--color-accent);
+            transform: translateY(-1px);
+        }
+        
+        .card-hover-effect {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover-effect:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        html.dark .card-hover-effect:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        .loading-placeholder {
+            background: linear-gradient(90deg, var(--bg-accent) 25%, var(--bg-primary) 50%, var(--bg-accent) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .status-badge {
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .metric-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gradient-border {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2px;
+            border-radius: 16px;
+        }
+        
+        .gradient-border-content {
+            background: var(--bg-primary);
+            border-radius: 14px;
+        }
+    </style>
+</head>
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 hide-scrollbar">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Modern Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">spa</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
+                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-6">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="test.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">dashboard</span>
+                            Analytics Dashboard
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
+                            <span class="material-icons mr-3 text-theme-primary text-xl">history</span>
+                            Past Appointments
+                        </a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">spa</span>
+                            Services
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">people</span>
+                            Clients
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">analytics</span>
+                            Reports
+                        </a>
+                    </nav>
+
+                    <div class="px-6 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">person</span>
+                            Profile
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">settings</span>
+                            Settings
+                        </a>
+                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">help</span>
+                            Help & Support
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- User Profile Section -->
+                <div class="p-4 border-t border-theme-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium">
+                            PK
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-theme-text-primary truncate">Prem Anand K</p>
+                            <div class="flex items-center mt-1">
+                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
+                                <p class="text-xs text-theme-text-secondary">Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation (Calendar icon removed) -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent" onclick="toggleMobileMenu()">
+                    <span class="material-icons">menu</span>
+                </button>
+                
+                <div class="flex-1 flex justify-center lg:justify-end max-w-lg ml-auto">
+                    <div class="w-full">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-icons text-theme-text-secondary">search</span>
+                            </div>
+                            <input type="text" id="searchInput" placeholder="Search by client name, service, phone..." class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-4 flex items-center space-x-2">
+                    <button onclick="refreshPastAppointments()" id="refreshBtn" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Appointments">
+                        <span class="material-icons">refresh</span>
+                    </button>
+                    <button onclick="exportPastAppointments()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Export Report">
+                        <span class="material-icons">download</span>
+                    </button>
+                    <button onclick="showHelpModal()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Help & Information">
+                        <span class="material-icons">help_outline</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto scrollbar-hide">
+                <div class="max-w-7xl mx-auto p-6 space-y-8 animate-fade-in">
+                    <!-- Modern Header Section -->
+                    <div class="glass-effect rounded-2xl p-6 border-l-4 border-theme-primary">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div class="animate-slide-in">
+                                <h1 class="text-4xl font-bold bg-gradient-to-r from-theme-text-primary to-theme-text-secondary bg-clip-text text-transparent mb-3">
+                                    Past Appointments Analytics
+                                </h1>
+                                <p class="text-theme-text-secondary text-lg">Comprehensive insights into your completed appointments</p>
+                            </div>
+                            <div class="mt-6 lg:mt-0">
+                                <button onclick="refreshPastAppointments()" class="btn-modern inline-flex items-center">
+                                    <span class="material-icons text-sm mr-2">refresh</span>
+                                    Refresh Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Analytics Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="analyticsCards">
+                        <!-- Analytics cards will be populated here -->
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Revenue Chart -->
+                        <div class="modern-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Revenue Trends</h3>
+                                    <p class="text-sm text-theme-text-secondary">Monthly revenue from appointments</p>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Service Performance Chart -->
+                        <div class="modern-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Top Services</h3>
+                                    <p class="text-sm text-theme-text-secondary">Most popular services by bookings</p>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="serviceChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Appointment Status Distribution -->
+                        <div class="modern-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Status Distribution</h3>
+                                    <p class="text-sm text-theme-text-secondary">Completed vs cancelled appointments</p>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Peak Hours Chart -->
+                        <div class="modern-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Peak Booking Hours</h3>
+                                    <p class="text-sm text-theme-text-secondary">Busiest times of the day</p>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="hoursChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Filters -->
+                    <div class="modern-card rounded-xl p-6">
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                            <span class="material-icons mr-2">filter_list</span>
+                            Advanced Filters
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-2">Date Range</label>
+                                <select id="dateRangeFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                    <option value="all">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="quarter">This Quarter</option>
+                                    <option value="year">This Year</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-2">Service Type</label>
+                                <select id="serviceFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                    <option value="all">All Services</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-2">Status</label>
+                                <select id="statusFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                    <option value="all">All Status</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-theme-text-secondary mb-2">Calendar</label>
+                                <select id="calendarFilter" class="w-full px-3 py-2 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                    <option value="all">All Calendars</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Clients Section -->
+                    <div class="modern-card rounded-xl p-6">
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                            <span class="material-icons mr-2">people</span>
+                            Top Clients
+                        </h3>
+                        <div id="topClientsList" class="space-y-4">
+                            <!-- Top clients will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loadingState" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="loading-placeholder h-64 rounded-xl"></div>
+                            <div class="loading-placeholder h-64 rounded-xl"></div>
+                            <div class="loading-placeholder h-64 rounded-xl"></div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Appointments Grid -->
+                    <div class="modern-card rounded-xl p-6">
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-6 flex items-center">
+                            <span class="material-icons mr-2">history</span>
+                            Recent Appointments
+                        </h3>
+                        <div id="appointmentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Appointments will be dynamically loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- No Results State -->
+                    <div id="noResultsState" class="hidden text-center py-12">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl flex items-center justify-center shadow-lg">
+                            <span class="material-icons text-4xl text-blue-500">search_off</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-theme-text-primary mb-3">No appointments found</h3>
+                        <p class="text-theme-text-secondary text-lg">Try adjusting your search criteria or filters.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNav" class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="test.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">dashboard</span>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-primary">
+                <span class="material-icons text-lg">history</span>
+                <span class="text-xs mt-1 font-medium">Past</span>
+            </a>
+            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">spa</span>
+                <span class="text-xs mt-1">Services</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">person</span>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Appointment Details Modal -->
+    <div id="appointmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-theme-bg-primary rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-theme-text-primary">Appointment Details</h2>
+                        <button onclick="closeAppointmentModal()" class="p-2 rounded-full text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="modalContent" class="p-6">
+                    <!-- Modal content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+
+    <script>
+        // Global variables and configuration
+        let pastAppointments = [];
+        let filteredAppointments = [];
+        let originalSearchResults = [];
+        let isLoading = false;
+        let analyticsData = {};
+        const charts = {};
+
+        // Theme Configuration
+        const themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+                red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+                teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+                pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+                indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+            }
+        };
+
+        // Theme Functions
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('dashboard_theme', theme);
+            updateChartsTheme();
+        }
+
+        function applyThemeColor(colorName) {
+            const color = themeConfig.colors[colorName];
+            if (!color) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', color.primary);
+            root.style.setProperty('--color-secondary', color.secondary);
+            root.style.setProperty('--color-accent', color.accent);
+            localStorage.setItem('dashboard_theme_color', colorName);
+            addThemeSwitcher();
+            updateChartsTheme();
+        }
+
+        function toggleTheme() {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            addThemeSwitcher();
+        }
+        
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+            const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+            applyTheme(savedTheme);
+            applyThemeColor(savedColor);
+        }
+
+        function updateChartsTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb';
+            const textColor = isDark ? '#d1d5db' : '#6b7280';
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
+            Object.values(charts).forEach(chart => {
+                if (!chart || !chart.options) return;
+                
+                if (chart.options.scales) {
+                    if (chart.options.scales.x) {
+                        chart.options.scales.x.grid.color = gridColor;
+                        chart.options.scales.x.ticks.color = textColor;
+                    }
+                    if (chart.options.scales.y) {
+                        chart.options.scales.y.grid.color = gridColor;
+                        chart.options.scales.y.ticks.color = textColor;
+                    }
+                }
+
+                // Update dataset colors
+                if (chart.data.datasets) {
+                    chart.data.datasets.forEach(dataset => {
+                        if (chart.config.type === 'line') {
+                            dataset.borderColor = primaryColor;
+                            dataset.backgroundColor = `${primaryColor}33`;
+                        } else if (chart.config.type === 'bar') {
+                            dataset.backgroundColor = `${primaryColor}80`;
+                            dataset.borderColor = primaryColor;
+                        }
+                    });
+                }
+
+                chart.update();
+            });
+        }
+
+        function addThemeSwitcher() {
+            const container = document.getElementById('theme-switcher-container');
+            if (!container) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+            container.innerHTML = `
+                <div class="fixed bottom-5 right-5 z-50">
+                    <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-56 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-theme-text-primary">Theme Mode</span>
+                                <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-primary ${isDark ? 'bg-theme-primary' : 'bg-gray-300'}">
+                                    <span class="sr-only">Toggle theme</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${isDark ? 'right-1 opacity-100' : 'right-1 opacity-0'}" style="color: #fbbf24;">dark_mode</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${!isDark ? 'left-1 opacity-100' : 'left-1 opacity-0'}" style="color: #f59e0b;">light_mode</span>
+                                    <span class="inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full shadow ${isDark ? 'translate-x-6' : 'translate-x-1'}"></span>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-sm font-medium text-theme-text-primary">Color Theme</span>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${Object.keys(themeConfig.colors).map(name => `
+                                        <button onclick="applyThemeColor('${name}')" 
+                                                class="relative w-8 h-8 rounded-full transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary focus:ring-offset-theme-bg-primary ${currentColor === name ? 'ring-2 ring-offset-2 ring-white ring-offset-theme-bg-primary scale-110' : ''}"
+                                                style="background-color: ${themeConfig.colors[name].primary}"
+                                                title="${name.charAt(0).toUpperCase() + name.slice(1)}">
+                                            ${currentColor === name ? '<span class="absolute inset-0 flex items-center justify-center"><span class="material-icons text-white text-sm">check</span></span>' : ''}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-secondary">
+                        <span class="material-icons">palette</span>
+                    </button>
+                </div>
+            `;
+
+            const menuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            
+            if (menuButton && themeMenu) {
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (themeMenu.classList.contains('hidden')) {
+                        themeMenu.classList.remove('hidden');
+                        setTimeout(() => {
+                            themeMenu.classList.remove('opacity-0', '-translate-y-2');
+                        }, 10);
+                    } else {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log('Initializing Past Appointments Analytics...');
+            initializeTheme();
+            addThemeSwitcher();
+            initializePage();
+            
+            // Try ZOHO initialization
+            try {
+                ZOHO.embeddedApp.init()
+                    .then(function() {
+                        console.log("ZOHO SDK initialized successfully");
+                    })
+                    .catch(function(error) {
+                        console.warn("ZOHO SDK initialization failed:", error);
+                    });
+            } catch (error) {
+                console.warn("ZOHO SDK not available:", error);
+            }
+        });
+
+        // Initialize page functionality
+        function initializePage() {
+            loadDataFromLocalStorage();
+            setupEventListeners();
+            calculateAnalytics();
+            renderAnalyticsCards();
+            renderTopClients();
+            populateFilters();
+            applyFilters();
+            initializeCharts();
+        }
+
+        // Load data from localStorage (NO HARDCODED DATA)
+        function loadDataFromLocalStorage() {
+            console.log('Loading data from localStorage...');
+            
+            try {
+                const storedData = localStorage.getItem('pastAppointments');
+                
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    
+                    if (Array.isArray(parsedData)) {
+                        pastAppointments = parsedData;
+                        console.log('Successfully loaded appointments:', pastAppointments.length);
+                    } else {
+                        console.warn('Data is not an array, initializing empty array');
+                        pastAppointments = [];
+                    }
+                } else {
+                    console.warn('No data in localStorage, initializing empty array');
+                    pastAppointments = [];
+                }
+                
+                filteredAppointments = [...pastAppointments];
+                originalSearchResults = [...pastAppointments];
+                
+            } catch (error) {
+                console.error('Error loading data from localStorage:', error);
+                pastAppointments = [];
+                filteredAppointments = [];
+                originalSearchResults = [];
+            }
+        }
+
+        // Calculate comprehensive analytics
+        function calculateAnalytics() {
+            if (pastAppointments.length === 0) {
+                analyticsData = {
+                    totalRevenue: 0,
+                    totalAppointments: 0,
+                    completedAppointments: 0,
+                    cancelledAppointments: 0,
+                    averageRevenue: 0,
+                    topServices: [],
+                    topClients: [],
+                    monthlyRevenue: {},
+                    hourlyDistribution: Array(24).fill(0),
+                    statusDistribution: { completed: 0, cancelled: 0 }
+                };
+                return;
+            }
+
+            const completed = pastAppointments.filter(apt => !apt.canceled);
+            const cancelled = pastAppointments.filter(apt => apt.canceled);
+            
+            // Calculate revenue
+            const totalRevenue = completed.reduce((sum, apt) => {
+                return sum + parseFloat(apt.priceSold || apt.price || 0);
+            }, 0);
+
+            // Service analytics
+            const serviceStats = {};
+            pastAppointments.forEach(apt => {
+                if (!serviceStats[apt.type]) {
+                    serviceStats[apt.type] = { count: 0, revenue: 0 };
+                }
+                serviceStats[apt.type].count++;
+                if (!apt.canceled) {
+                    serviceStats[apt.type].revenue += parseFloat(apt.priceSold || apt.price || 0);
+                }
+            });
+
+            const topServices = Object.entries(serviceStats)
+                .map(([name, stats]) => ({ name, ...stats }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+
+            // Client analytics
+            const clientStats = {};
+            pastAppointments.forEach(apt => {
+                const clientName = `${apt.firstName} ${apt.lastName}`;
+                if (!clientStats[clientName]) {
+                    clientStats[clientName] = { 
+                        name: clientName, 
+                        appointments: 0, 
+                        revenue: 0,
+                        phone: apt.phone,
+                        email: apt.email
+                    };
+                }
+                clientStats[clientName].appointments++;
+                if (!apt.canceled) {
+                    clientStats[clientName].revenue += parseFloat(apt.priceSold || apt.price || 0);
+                }
+            });
+
+            const topClients = Object.values(clientStats)
+                .sort((a, b) => b.revenue - a.revenue)
+                .slice(0, 5);
+
+            // Monthly revenue
+            const monthlyRevenue = {};
+            completed.forEach(apt => {
+                const date = new Date(apt.datetime);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                if (!monthlyRevenue[monthKey]) {
+                    monthlyRevenue[monthKey] = 0;
+                }
+                monthlyRevenue[monthKey] += parseFloat(apt.priceSold || apt.price || 0);
+            });
+
+            // Hourly distribution
+            const hourlyDistribution = Array(24).fill(0);
+            pastAppointments.forEach(apt => {
+                const hour = new Date(apt.datetime).getHours();
+                hourlyDistribution[hour]++;
+            });
+
+            analyticsData = {
+                totalRevenue,
+                totalAppointments: pastAppointments.length,
+                completedAppointments: completed.length,
+                cancelledAppointments: cancelled.length,
+                averageRevenue: completed.length > 0 ? totalRevenue / completed.length : 0,
+                topServices,
+                topClients,
+                monthlyRevenue,
+                hourlyDistribution,
+                statusDistribution: { 
+                completed: completed.length, 
+                cancelled: cancelled.length 
+            }
+        };
+    }
+
+    // Render analytics cards
+    function renderAnalyticsCards() {
+        const container = document.getElementById('analyticsCards');
+        if (!container) return;
+
+        const cards = [
+            {
+                title: 'Total Revenue',
+                value: `$${analyticsData.totalRevenue.toFixed(2)}`,
+                icon: 'payments',
+                color: 'emerald',
+                change: '+12.5%',
+                changeType: 'positive'
+            },
+            {
+                title: 'Total Appointments',
+                value: analyticsData.totalAppointments.toString(),
+                icon: 'event',
+                color: 'blue',
+                change: '+8.2%',
+                changeType: 'positive'
+            },
+            {
+                title: 'Completed Rate',
+                value: `${analyticsData.totalAppointments > 0 ? ((analyticsData.completedAppointments / analyticsData.totalAppointments) * 100).toFixed(1) : 0}%`,
+                icon: 'check_circle',
+                color: 'green',
+                change: '+3.1%',
+                changeType: 'positive'
+            },
+            {
+                title: 'Average Revenue',
+                value: `$${analyticsData.averageRevenue.toFixed(2)}`,
+                icon: 'trending_up',
+                color: 'purple',
+                change: '+5.7%',
+                changeType: 'positive'
+            }
+        ];
+
+        container.innerHTML = cards.map((card, index) => `
+            <div class="metric-card rounded-xl p-6 animate-fade-in" style="animation-delay: ${index * 0.1}s">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-${card.color}-100 dark:bg-${card.color}-900/20 flex items-center justify-center">
+                            <span class="material-icons text-${card.color}-600 text-xl">${card.icon}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-theme-text-secondary">${card.title}</p>
+                            <p class="text-2xl font-bold text-theme-text-primary">${card.value}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${card.changeType === 'positive' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'}">
+                            <span class="material-icons text-xs mr-1">${card.changeType === 'positive' ? 'trending_up' : 'trending_down'}</span>
+                            ${card.change}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Render top clients
+    function renderTopClients() {
+        const container = document.getElementById('topClientsList');
+        if (!container || analyticsData.topClients.length === 0) {
+            if (container) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl flex items-center justify-center">
+                            <span class="material-icons text-blue-500 text-2xl">people</span>
+                        </div>
+                        <p class="text-theme-text-secondary">No client data available</p>
+                    </div>
+                `;
+            }
+            return;
+        }
+
+        container.innerHTML = analyticsData.topClients.map((client, index) => {
+            const initials = client.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            return `
+                <div class="flex items-center justify-between p-4 bg-theme-bg-accent rounded-xl hover:bg-theme-bg-primary transition-all duration-200 cursor-pointer animate-slide-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-theme-primary/20 to-theme-primary/40 flex items-center justify-center text-theme-primary font-bold shadow-lg">
+                            ${initials}
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-theme-text-primary">${client.name}</h4>
+                            <p class="text-sm text-theme-text-secondary">${client.appointments} appointments</p>
+                            ${client.phone ? `<p class="text-xs text-theme-text-secondary">${client.phone}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-lg text-emerald-600">$${client.revenue.toFixed(2)}</p>
+                        <p class="text-sm text-theme-text-secondary">$${(client.revenue / client.appointments).toFixed(2)} avg</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Initialize charts
+    function initializeCharts() {
+        initializeRevenueChart();
+        initializeServiceChart();
+        initializeStatusChart();
+        initializeHoursChart();
+    }
+
+    // Revenue chart
+    function initializeRevenueChart() {
+        const ctx = document.getElementById('revenueChart');
+        if (!ctx) return;
+
+        const months = Object.keys(analyticsData.monthlyRevenue).sort();
+        const revenues = months.map(month => analyticsData.monthlyRevenue[month]);
+
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
+        charts.revenue = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months.map(month => {
+                    const [year, monthNum] = month.split('-');
+                    return new Date(year, monthNum - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                }),
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenues,
+                    borderColor: primaryColor,
+                    backgroundColor: `${primaryColor}33`,
+                    pointBackgroundColor: primaryColor,
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: primaryColor,
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                return `Revenue: $${context.parsed.y.toFixed(2)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6b7280'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            callback: function(value) {
+                                return '$' + value.toFixed(0);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Service performance chart
+    function initializeServiceChart() {
+        const ctx = document.getElementById('serviceChart');
+        if (!ctx) return;
+
+        const services = analyticsData.topServices.map(s => s.name);
+        const counts = analyticsData.topServices.map(s => s.count);
+
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+        charts.service = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: services,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            color: '#6b7280'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                return `${context.label}: ${context.parsed} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Status distribution chart
+    function initializeStatusChart() {
+        const ctx = document.getElementById('statusChart');
+        if (!ctx) return;
+
+        charts.status = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Completed', 'Cancelled'],
+                datasets: [{
+                    data: [analyticsData.statusDistribution.completed, analyticsData.statusDistribution.cancelled],
+                    backgroundColor: ['#10b981', '#ef4444'],
+                    borderWidth: 0,
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            color: '#6b7280'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                return `${context.label}: ${context.parsed} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Peak hours chart
+    function initializeHoursChart() {
+        const ctx = document.getElementById('hoursChart');
+        if (!ctx) return;
+
+        const hours = Array.from({length: 24}, (_, i) => i);
+        const hourLabels = hours.map(h => {
+            const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+            const ampm = h < 12 ? 'AM' : 'PM';
+            return `${hour12} ${ampm}`;
+        });
+
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
+        charts.hours = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: hourLabels,
+                datasets: [{
+                    label: 'Appointments',
+                    data: analyticsData.hourlyDistribution,
+                    backgroundColor: `${primaryColor}80`,
+                    borderColor: primaryColor,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        callbacks: {
+                            label: function(context) {
+                                return `Appointments: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            maxRotation: 45
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+        document.getElementById('searchInput').addEventListener('input', handleSearch);
+        document.getElementById('dateRangeFilter').addEventListener('change', applyFilters);
+        document.getElementById('serviceFilter').addEventListener('change', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('calendarFilter').addEventListener('change', applyFilters);
+    }
+
+    // Populate filter dropdowns
+    function populateFilters() {
+        if (pastAppointments.length === 0) return;
+
+        // Populate service filter
+        const serviceFilter = document.getElementById('serviceFilter');
+        const services = [...new Set(pastAppointments.map(apt => apt.type))].sort();
+        serviceFilter.innerHTML = '<option value="all">All Services</option>';
+        services.forEach(service => {
+            const option = document.createElement('option');
+            option.value = service;
+            option.textContent = service;
+            serviceFilter.appendChild(option);
+        });
+
+        // Populate calendar filter
+        const calendarFilter = document.getElementById('calendarFilter');
+        const calendars = [...new Set(pastAppointments.map(apt => apt.calendar))].sort();
+        calendarFilter.innerHTML = '<option value="all">All Calendars</option>';
+        calendars.forEach(calendar => {
+            const option = document.createElement('option');
+            option.value = calendar;
+            option.textContent = calendar;
+            calendarFilter.appendChild(option);
+        });
+    }
+
+    // Handle search functionality
+    function handleSearch(event) {
+        const searchTerm = event.target.value.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+            filteredAppointments = [...pastAppointments];
+        } else {
+            filteredAppointments = pastAppointments.filter(appointment => {
+                return (
+                    (appointment.firstName + ' ' + appointment.lastName).toLowerCase().includes(searchTerm) ||
+                    appointment.type.toLowerCase().includes(searchTerm) ||
+                    (appointment.phone && appointment.phone.toLowerCase().includes(searchTerm)) ||
+                    (appointment.email && appointment.email.toLowerCase().includes(searchTerm)) ||
+                    appointment.calendar.toLowerCase().includes(searchTerm)
+                );
+            });
+        }
+        
+        applyFilters();
+    }
+
+    // Apply filters
+    function applyFilters() {
+        const dateRange = document.getElementById('dateRangeFilter').value;
+        const serviceType = document.getElementById('serviceFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const calendar = document.getElementById('calendarFilter').value;
+
+        let filtered = [...filteredAppointments];
+
+        // Date range filter
+        if (dateRange !== 'all') {
+            const now = new Date();
+            let startDate;
+
+            switch (dateRange) {
+                case 'today':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    break;
+                case 'week':
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'month':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                    break;
+                case 'quarter':
+                    const quarter = Math.floor(now.getMonth() / 3);
+                    startDate = new Date(now.getFullYear(), quarter * 3, 1);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getFullYear(), 0, 1);
+                    break;
+            }
+
+            if (startDate) {
+                filtered = filtered.filter(apt => new Date(apt.datetime) >= startDate);
+            }
+        }
+
+        // Service type filter
+        if (serviceType !== 'all') {
+            filtered = filtered.filter(apt => apt.type === serviceType);
+        }
+
+        // Status filter
+        if (status !== 'all') {
+            if (status === 'completed') {
+                filtered = filtered.filter(apt => !apt.canceled);
+            } else if (status === 'cancelled') {
+                filtered = filtered.filter(apt => apt.canceled);
+            }
+        }
+
+        // Calendar filter
+        if (calendar !== 'all') {
+            filtered = filtered.filter(apt => apt.calendar === calendar);
+        }
+
+        filteredAppointments = filtered;
+        renderAppointments();
+    }
+
+    // Render appointments with improved card design
+    function renderAppointments() {
+        const container = document.getElementById('appointmentsContainer');
+        const noResultsState = document.getElementById('noResultsState');
+
+        if (!container) {
+            console.error('Appointments container not found!');
+            return;
+        }
+
+        if (filteredAppointments.length === 0) {
+            container.innerHTML = '';
+            if (noResultsState) noResultsState.classList.remove('hidden');
+            return;
+        }
+
+        if (noResultsState) noResultsState.classList.add('hidden');
+
+        // Sort appointments by date (newest first)
+        const sortedAppointments = filteredAppointments.sort((a, b) => 
+            new Date(b.datetime) - new Date(a.datetime)
+        ); // Show all appointments
+        
+        container.innerHTML = sortedAppointments.map((appointment, index) => {
+            return createAppointmentCard(appointment, index);
+        }).join('');
+    }
+
+    // Create enhanced appointment card
+    function createAppointmentCard(appointment, index) {
+        try {
+            const appointmentDate = new Date(appointment.datetime);
+            const price = parseFloat(appointment.priceSold || appointment.price || 0);
+            const isPaid = appointment.paid === 'yes';
+            const isCancelled = appointment.canceled;
+            
+            return `
+                <div class="modern-card card-hover-effect rounded-xl p-6 cursor-pointer animate-fade-in border-l-4 ${isCancelled ? 'border-red-400' : 'border-emerald-400'}" 
+                     onclick="showAppointmentDetails('${appointment.id}')"
+                     data-appointment-id="${appointment.id}"
+                     style="animation-delay: ${index * 0.1}s">
+                    
+                    <!-- Header Section -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-theme-primary/20 to-theme-primary/40 flex items-center justify-center shadow-lg">
+                                <span class="material-icons text-theme-primary text-lg">person</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-theme-text-primary">
+                                    ${appointment.firstName} ${appointment.lastName}
+                                </h3>
+                                <p class="text-sm text-theme-text-secondary">
+                                    ID: ${appointment.id}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="status-badge ${isCancelled ? 'status-cancelled' : 'status-completed'}">
+                            ${isCancelled ? 'Cancelled' : 'Completed'}
+                        </span>
+                    </div>
+
+                    <!-- Service Info -->
+                    <div class="bg-theme-bg-accent rounded-lg p-3 mb-4">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="material-icons text-theme-text-secondary text-sm">spa</span>
+                            <span class="font-medium text-theme-text-primary text-sm">${appointment.type}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-theme-text-secondary">
+                            <span>${appointment.duration} minutes</span>
+                            <span>${appointment.calendar}</span>
+                        </div>
+                    </div>
+
+                    <!-- Contact & DateTime -->
+                    <div class="space-y-2 mb-4">
+                        ${appointment.phone ? `
+                            <div class="flex items-center space-x-2">
+                                <span class="material-icons text-theme-text-secondary text-sm">phone</span>
+                                <span class="text-sm text-theme-text-primary">${appointment.phone}</span>
+                            </div>
+                        ` : ''}
+                        
+                        ${appointment.email ? `
+                            <div class="flex items-center space-x-2">
+                                <span class="material-icons text-theme-text-secondary text-sm">email</span>
+                                <span class="text-sm text-theme-text-primary">${appointment.email}</span>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-theme-text-secondary text-sm">schedule</span>
+                            <span class="text-sm text-theme-text-primary">
+                                ${appointmentDate.toLocaleDateString()} at ${appointment.time}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Footer with Price -->
+                    <div class="flex items-center justify-between pt-3 border-t border-theme-border">
+                        <div class="text-left">
+                            <p class="text-xs text-theme-text-secondary">Revenue</p>
+                            <p class="font-bold text-xl ${price > 0 ? 'text-emerald-600' : 'text-theme-text-secondary'}">
+                                $${price.toFixed(2)}
+                            </p>
+                        </div>
+                        ${price > 0 ? `
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${isPaid ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300'}">
+                                    ${isPaid ? 'Paid' : 'Pending'}
+                                </span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+        } catch (error) {
+            console.error('Error creating appointment card:', error);
+            return `
+                <div class="modern-card p-4 bg-red-100 text-red-700 rounded-xl">
+                    Error rendering appointment ${appointment?.id || 'unknown'}
+                </div>
+            `;
+        }
+    }
+
+    // Show appointment details modal
+    function showAppointmentDetails(appointmentId) {
+        const appointment = pastAppointments.find(apt => apt.id.toString() === appointmentId);
+        if (!appointment) return;
+
+        const modal = document.getElementById('appointmentModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        const appointmentDate = new Date(appointment.datetime);
+        const createdDate = new Date(appointment.datetimeCreated);
+        const price = parseFloat(appointment.priceSold || appointment.price || 0);
+        const amountPaid = parseFloat(appointment.amountPaid || 0);
+        
+        modalContent.innerHTML = `
+            <div class="space-y-6">
+                <!-- Client Information -->
+                <div>
+                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                        <span class="material-icons mr-2">person</span>
+                        Client Information
+                    </h3>
+                    <div class="bg-theme-bg-accent rounded-xl p-4 space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Name</span>
+                                <p class="text-theme-text-primary font-medium">${appointment.firstName} ${appointment.lastName}</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Phone</span>
+                                <p class="text-theme-text-primary">${appointment.phone || 'Not provided'}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Email</span>
+                            <p class="text-theme-text-primary">${appointment.email || 'Not provided'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Details -->
+                <div>
+                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                        <span class="material-icons mr-2">event</span>
+                        Appointment Details
+                    </h3>
+                    <div class="bg-theme-bg-accent rounded-xl p-4 space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Service</span>
+                                <p class="text-theme-text-primary font-medium">${appointment.type}</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Duration</span>
+                                <p class="text-theme-text-primary">${appointment.duration} minutes</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Date & Time</span>
+                                <p class="text-theme-text-primary">${appointmentDate.toLocaleDateString()}</p>
+                                <p class="text-theme-text-secondary text-sm">${appointment.time} - ${appointment.endTime}</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Calendar</span>
+                                <p class="text-theme-text-primary">${appointment.calendar}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Status</span>
+                            <div class="mt-1">
+                                <span class="status-badge ${appointment.canceled ? 'status-cancelled' : 'status-completed'}">
+                                    ${appointment.canceled ? 'Cancelled' : 'Completed'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Information -->
+                ${price > 0 ? `
+                    <div>
+                        <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                            <span class="material-icons mr-2">payments</span>
+                            Financial Information
+                        </h3>
+                        <div class="bg-theme-bg-accent rounded-xl p-4">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Price</span>
+                                    <p class="text-2xl font-bold text-theme-text-primary">$${price.toFixed(2)}</p>
+                                </div>
+                                <div class="text-center">
+                                    <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Paid</span>
+                                    <p class="text-2xl font-bold text-emerald-600">$${amountPaid.toFixed(2)}</p>
+                                </div>
+                                <div class="text-center">
+                                    <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Status</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${appointment.paid === 'yes' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300'}">
+                                        ${appointment.paid === 'yes' ? 'Paid' : 'Pending'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Additional Information -->
+                <div>
+                    <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                        <span class="material-icons mr-2">info</span>
+                        Additional Information
+                    </h3>
+                    <div class="bg-theme-bg-accent rounded-xl p-4 space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Appointment ID</span>
+                                <p class="text-theme-text-primary font-mono text-sm">${appointment.id}</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-theme-text-secondary uppercase tracking-wider">Created</span>
+                                <p class="text-theme-text-primary text-sm">${createdDate.toLocaleDateString()}</p>
+                                <p class="text-theme-text-secondary text-xs">${createdDate.toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-3 pt-4">
+                    <button onclick="closeAppointmentModal()" class="flex-1 btn-modern bg-theme-bg-accent text-theme-text-primary hover:bg-theme-bg-primary">
+                        Close
+                    </button>
+                    ${appointment.confirmationPage ? `
+                        <a href="${appointment.confirmationPage}" target="_blank" 
+                           class="flex-1 btn-modern inline-flex items-center justify-center">
+                            <span class="material-icons mr-2 text-sm">open_in_new</span>
+                            View Confirmation
+                        </a>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close appointment modal
+    function closeAppointmentModal() {
+        document.getElementById('appointmentModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Refresh appointments
+    function refreshPastAppointments() {
+        if (isLoading) return;
+        
+        isLoading = true;
+        const refreshBtn = document.getElementById('refreshBtn');
+        const refreshIcon = refreshBtn.querySelector('.material-icons');
+        
+        // Show loading state
+        refreshIcon.style.animation = 'spin 1s linear infinite';
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('appointmentsContainer').style.display = 'none';
+        
+        // Simulate refresh
+        setTimeout(() => {
+            loadDataFromLocalStorage();
+            calculateAnalytics();
+            renderAnalyticsCards();
+            renderTopClients();
+            populateFilters();
+            applyFilters();
+            
+            // Reinitialize charts
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            initializeCharts();
+            
+            // Hide loading state
+            refreshIcon.style.animation = '';
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('appointmentsContainer').style.display = 'grid';
+            
+            isLoading = false;
+            showToast('Data refreshed successfully!', 'success');
+        }, 1500);
+    }
+
+    // Export past appointments
+    function exportPastAppointments() {
+        if (filteredAppointments.length === 0) {
+            showToast('No appointments to export', 'warning');
+            return;
+        }
+
+        const csvContent = generateCSVContent(filteredAppointments);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `past_appointments_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast('Export completed successfully!', 'success');
+    }
+
+    // Generate CSV content
+    function generateCSVContent(appointments) {
+        const headers = [
+            'ID', 'Client Name', 'Phone', 'Email', 'Service', 'Date', 'Time', 
+            'Duration', 'Calendar', 'Status', 'Price', 'Paid', 'Amount Paid', 'Created Date'
+        ];
+
+        const csvRows = [
+            headers.join(','),
+            ...appointments.map(apt => [
+                apt.id,
+                `"${apt.firstName} ${apt.lastName}"`,
+                apt.phone || '',
+                apt.email || '',
+                `"${apt.type}"`,
+                apt.date,
+                apt.time,
+                apt.duration,
+                `"${apt.calendar}"`,
+                apt.canceled ? 'Cancelled' : 'Completed',
+                apt.priceSold || apt.price || 0,
+                apt.paid,
+                apt.amountPaid || 0,
+                apt.dateCreated
+            ].join(','))
+        ];
+
+        return csvRows.join('\n');
+    }
+
+    // Toast Notification Function
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-emerald-500' : 
+                       type === 'error' ? 'bg-red-500' : 
+                       type === 'warning' ? 'bg-orange-500' : 'bg-blue-500';
+        
+        toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+        toast.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <span class="material-icons text-sm">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info'}</span>
+                <span class="font-medium">${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+        console.log('Mobile menu toggle');
+    }
+
+    // Show help modal
+    function showHelpModal() {
+        // Create detailed help modal
+        const helpModal = document.createElement('div');
+        helpModal.id = 'helpModal';
+        helpModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50';
+        
+        helpModal.innerHTML = `
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-theme-bg-primary rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-theme-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                                    <span class="material-icons text-blue-600 text-xl">help</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-theme-text-primary">Help & Information</h2>
+                                    <p class="text-theme-text-secondary">Past Appointments Analytics Dashboard</p>
+                                </div>
+                            </div>
+                            <button onclick="closeHelpModal()" class="p-2 rounded-full text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-bg-accent">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <!-- Overview Section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2 text-blue-600">dashboard</span>
+                                Dashboard Overview
+                            </h3>
+                            <div class="bg-theme-bg-accent rounded-xl p-4">
+                                <p class="text-theme-text-secondary mb-3">This comprehensive analytics dashboard provides insights into your past appointments with the following key features:</p>
+                                <ul class="space-y-2 text-sm text-theme-text-primary">
+                                    <li class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                        <span>Real-time analytics of completed and cancelled appointments</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                        <span>Revenue tracking and financial performance metrics</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                        <span>Client analytics and top customer insights</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                                        <span>Service performance and booking trends</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Analytics Cards Section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2 text-emerald-600">analytics</span>
+                                Analytics Cards
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">📊 Total Revenue</h4>
+                                    <p class="text-sm text-theme-text-secondary">Shows the cumulative revenue from all completed appointments</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">📅 Total Appointments</h4>
+                                    <p class="text-sm text-theme-text-secondary">Total number of appointments (completed + cancelled)</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">✅ Completion Rate</h4>
+                                    <p class="text-sm text-theme-text-secondary">Percentage of successfully completed appointments</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">💰 Average Revenue</h4>
+                                    <p class="text-sm text-theme-text-secondary">Average revenue per completed appointment</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2 text-purple-600">show_chart</span>
+                                Interactive Charts
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">📈 Revenue Trends</h4>
+                                    <p class="text-sm text-theme-text-secondary">Monthly revenue progression showing business growth patterns</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">🏆 Top Services</h4>
+                                    <p class="text-sm text-theme-text-secondary">Most popular services by booking count with visual breakdown</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">📊 Status Distribution</h4>
+                                    <p class="text-sm text-theme-text-secondary">Pie chart showing completed vs cancelled appointment ratios</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2">⏰ Peak Hours</h4>
+                                    <p class="text-sm text-theme-text-secondary">Bar chart displaying busiest booking times throughout the day</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Features Section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2 text-green-600">features</span>
+                                Key Features
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2 flex items-center">
+                                        <span class="material-icons mr-2 text-sm">search</span>
+                                        Advanced Search
+                                    </h4>
+                                    <p class="text-sm text-theme-text-secondary">Search by client name, service type, phone number, or email</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2 flex items-center">
+                                        <span class="material-icons mr-2 text-sm">filter_list</span>
+                                        Smart Filters
+                                    </h4>
+                                    <p class="text-sm text-theme-text-secondary">Filter by date range, service type, status, or calendar</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2 flex items-center">
+                                        <span class="material-icons mr-2 text-sm">download</span>
+                                        Data Export
+                                    </h4>
+                                    <p class="text-sm text-theme-text-secondary">Export filtered data to CSV for external analysis</p>
+                                </div>
+                                <div class="bg-theme-bg-accent rounded-lg p-4">
+                                    <h4 class="font-medium text-theme-text-primary mb-2 flex items-center">
+                                        <span class="material-icons mr-2 text-sm">people</span>
+                                        Client Analytics
+                                    </h4>
+                                    <p class="text-sm text-theme-text-secondary">Top clients by revenue with detailed spending insights</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Keyboard Shortcuts -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2 text-indigo-600">keyboard</span>
+                                Keyboard Shortcuts
+                            </h3>
+                            <div class="bg-theme-bg-accent rounded-xl p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-theme-text-secondary">Refresh Data:</span>
+                                        <kbd class="px-2 py-1 bg-theme-bg-primary rounded text-xs font-mono border border-theme-border">Ctrl + R</kbd>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-theme-text-secondary">Close Modal:</span>
+                                        <kbd class="px-2 py-1 bg-theme-bg-primary rounded text-xs font-mono border border-theme-border">Esc</kbd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Support Section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-theme-text-primary mb-4 flex items-center">
+                                <span class="material-icons mr-2 text-red-600">support</span>
+                                Need More Help?
+                            </h3>
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                                <p class="text-theme-text-secondary mb-3">If you need additional assistance or have questions about the analytics dashboard:</p>
+                                <div class="flex flex-wrap gap-3">
+                                    <button class="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/30 transition-colors">
+                                        <span class="material-icons mr-2 text-sm">email</span>
+                                        Contact Support
+                                    </button>
+                                    <button class="inline-flex items-center px-4 py-2 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/30 transition-colors">
+                                        <span class="material-icons mr-2 text-sm">book</span>
+                                        View Documentation
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 border-t border-theme-border bg-theme-bg-accent rounded-b-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-theme-text-secondary">
+                                <strong>Bio Revive Analytics</strong> - Version 2.0
+                            </div>
+                            <button onclick="closeHelpModal()" class="btn-modern">
+                                Got it, thanks!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(helpModal);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHelpModal() {
+        const helpModal = document.getElementById('helpModal');
+        if (helpModal) {
+            document.body.removeChild(helpModal);
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+        const appointmentModal = document.getElementById('appointmentModal');
+        
+        if (e.target === appointmentModal) {
+            closeAppointmentModal();
+        }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Escape key to close modals
+        if (e.key === 'Escape') {
+            closeAppointmentModal();
+            closeHelpModal(); // Add this line
+        }
+        
+        // Ctrl/Cmd + R to refresh
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+            e.preventDefault();
+            refreshPastAppointments();
+        }
+    });
+
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        body, main, .overflow-y-auto, .overflow-auto {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        body::-webkit-scrollbar, main::-webkit-scrollbar, .overflow-y-auto::-webkit-scrollbar, .overflow-auto::-webkit-scrollbar {
+            display: none;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
