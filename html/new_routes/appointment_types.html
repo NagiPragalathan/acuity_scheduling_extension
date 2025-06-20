@@ -1,1 +1,853 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio revive by SkinEnvy - Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'theme-bg-primary': 'var(--bg-primary)',
+                        'theme-bg-secondary': 'var(--bg-secondary)',
+                        'theme-bg-accent': 'var(--bg-accent)',
+                        'theme-text-primary': 'var(--text-primary)',
+                        'theme-text-secondary': 'var(--text-secondary)',
+                        'theme-border': 'var(--border-color)',
+                        'theme-primary': 'var(--color-primary)',
+                        'theme-secondary': 'var(--color-secondary)',
+                        'theme-accent': 'var(--color-accent)',
+
+                        primary: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        },
+                        success: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-accent: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+        }
+        
+        /* Default Color Theme (Blue) */
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        html.dark .glass-effect {
+            background: rgba(31, 41, 55, 0.98);
+            border: 1px solid rgba(55, 65, 81, 0.8);
+        }
+        
+        .modern-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .modern-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        html.dark .modern-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-placeholder {
+            background: linear-gradient(90deg, var(--bg-accent) 25%, var(--bg-primary) 50%, var(--bg-accent) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .service-category-color {
+            width: 4px;
+            border-radius: 2px;
+        }
+    </style>
+    <script>
+        // Theme Configuration
+        const themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+                red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+                teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+                pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+                indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+            }
+        };
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('dashboard_theme', theme);
+        }
+
+        function applyThemeColor(colorName) {
+            const color = themeConfig.colors[colorName];
+            if (!color) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', color.primary);
+            root.style.setProperty('--color-secondary', color.secondary);
+            root.style.setProperty('--color-accent', color.accent);
+            localStorage.setItem('dashboard_theme_color', colorName);
+            addThemeSwitcher();
+        }
+
+        function toggleTheme() {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            addThemeSwitcher();
+        }
+        
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+            const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+            applyTheme(savedTheme);
+            applyThemeColor(savedColor);
+        }
+
+        function addThemeSwitcher() {
+            const container = document.getElementById('theme-switcher-container');
+            if (!container) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+            container.innerHTML = `
+                <div class="fixed bottom-5 right-5 z-50">
+                    <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-56 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-theme-text-primary">Theme Mode</span>
+                                <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-primary ${isDark ? 'bg-theme-primary' : 'bg-gray-300'}">
+                                    <span class="sr-only">Toggle theme</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${isDark ? 'right-1 opacity-100' : 'right-1 opacity-0'}" style="color: #fbbf24;">dark_mode</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${!isDark ? 'left-1 opacity-100' : 'left-1 opacity-0'}" style="color: #f59e0b;">light_mode</span>
+                                    <span class="inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full shadow ${isDark ? 'translate-x-6' : 'translate-x-1'}"></span>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-sm font-medium text-theme-text-primary">Color Theme</span>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${Object.keys(themeConfig.colors).map(name => `
+                                        <button onclick="applyThemeColor('${name}')" 
+                                                class="relative w-8 h-8 rounded-full transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary focus:ring-offset-theme-bg-primary ${currentColor === name ? 'ring-2 ring-offset-2 ring-white ring-offset-theme-bg-primary scale-110' : ''}"
+                                                style="background-color: ${themeConfig.colors[name].primary}"
+                                                title="${name.charAt(0).toUpperCase() + name.slice(1)}">
+                                            ${currentColor === name ? '<span class="absolute inset-0 flex items-center justify-center"><span class="material-icons text-white text-sm">check</span></span>' : ''}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-secondary">
+                        <span class="material-icons">palette</span>
+                    </button>
+                </div>
+            `;
+
+            const menuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            
+            if (menuButton && themeMenu) {
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (themeMenu.classList.contains('hidden')) {
+                        themeMenu.classList.remove('hidden');
+                        setTimeout(() => {
+                            themeMenu.classList.remove('opacity-0', '-translate-y-2');
+                        }, 10);
+                    } else {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        }
+
+        // Global data object
+        let appointmentTypesData = [];
+        let filteredData = [];
+
+        // Load appointment types from localStorage - FIXED VERSION
+        function loadAppointmentTypes() {
+            console.log('🔄 Loading appointment types from localStorage...');
+            
+            try {
+                const storedData = localStorage.getItem('appointmentTypes');
+                console.log('📦 Raw stored data:', storedData ? 'Data found' : 'No data found');
+                
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    console.log('✅ Parsed data successfully. Length:', parsedData.length);
+                    
+                    if (Array.isArray(parsedData) && parsedData.length > 0) {
+                        appointmentTypesData = parsedData;
+                        filteredData = [...appointmentTypesData];
+                        console.log('🎯 Data loaded successfully. Rendering...');
+                        renderAppointmentTypes();
+                    } else {
+                        console.log('❌ Data is empty or not an array');
+                        showEmptyState();
+                    }
+                } else {
+                    console.log('❌ No appointmentTypes data found in localStorage');
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('💥 Error loading appointment types:', error);
+                showErrorState();
+            }
+        }
+
+        // Initialize page - COMPLETELY REWRITTEN
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log('🚀 DOM Content Loaded - Starting initialization...');
+            
+            // Initialize theme first
+            initializeTheme();
+            addThemeSwitcher();
+            
+            // Load data IMMEDIATELY - don't wait for anything
+            console.log('📱 Loading data immediately...');
+            loadAppointmentTypes();
+            
+            // Initialize ZOHO SDK in background (don't block data loading)
+            setTimeout(() => {
+                ZOHO.embeddedApp.init()
+                    .then(function() {
+                        console.log("✅ ZOHO SDK initialized successfully");
+                    })
+                    .catch(function(error) {
+                        console.log("⚠️ ZOHO SDK initialization failed:", error);
+                        // Don't care about ZOHO SDK failure for displaying data
+                    });
+            }, 100);
+        });
+
+        // Refresh function with loader
+        function refreshData() {
+            console.log('🔄 Refresh button clicked');
+            
+            const refreshBtn = document.getElementById('refresh-btn');
+            const refreshIcon = refreshBtn.querySelector('.material-icons');
+            
+            // Show loading state
+            refreshIcon.classList.add('animate-spin');
+            refreshBtn.disabled = true;
+            showLoadingState();
+            
+            // Reload data from localStorage
+            setTimeout(() => {
+                loadAppointmentTypes();
+                refreshIcon.classList.remove('animate-spin');
+                refreshBtn.disabled = false;
+            }, 500);
+        }
+
+        // Show loading state
+        function showLoadingState() {
+            const container = document.getElementById('services-container');
+            container.innerHTML = `
+                <div class="loading-placeholder rounded-xl h-64"></div>
+                <div class="loading-placeholder rounded-xl h-64"></div>
+                <div class="loading-placeholder rounded-xl h-64"></div>
+                <div class="loading-placeholder rounded-xl h-64"></div>
+                <div class="loading-placeholder rounded-xl h-64"></div>
+                <div class="loading-placeholder rounded-xl h-64"></div>
+            `;
+        }
+
+        // Render appointment types - ENHANCED
+        function renderAppointmentTypes() {
+            console.log('🎨 Starting to render appointment types...');
+            const container = document.getElementById('services-container');
+            
+            if (!filteredData || filteredData.length === 0) {
+                console.log('❌ No filtered data to render');
+                showEmptyState();
+                return;
+            }
+
+            console.log(`✅ Rendering ${filteredData.length} services...`);
+
+            const servicesHTML = filteredData.map((service, index) => {
+                const colorClass = service.color || '#B7A6EB';
+                const isActive = service.active !== false; // Default to true if not specified
+                
+                return `
+                    <div class="modern-card rounded-xl p-6 animate-fade-in ${!isActive ? 'opacity-60' : ''}" style="animation-delay: ${index * 0.1}s">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start space-x-3 flex-1">
+                                <div class="service-category-color h-12 w-1 rounded-full" style="background-color: ${colorClass};"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-theme-text-primary mb-1">${service.name || 'Unnamed Service'}</h3>
+                                    <p class="text-sm text-theme-text-secondary">${service.category || 'General'}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${!isActive ? '<span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Inactive</span>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-theme-bg-accent rounded-lg p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="material-icons text-theme-primary text-sm">schedule</span>
+                                    <span class="text-sm font-medium text-theme-text-secondary">Duration</span>
+                                </div>
+                                <p class="text-lg font-semibold text-theme-text-primary">${formatDuration(service.duration)}</p>
+                            </div>
+                            <div class="bg-theme-bg-accent rounded-lg p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="material-icons text-theme-primary text-sm">attach_money</span>
+                                    <span class="text-sm font-medium text-theme-text-secondary">Price</span>
+                                </div>
+                                <p class="text-lg font-semibold text-theme-text-primary">${formatPrice(service.price)}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-theme-text-secondary">Bookings:</span>
+                                <span class="font-medium text-theme-text-primary ml-1">${service.bookingCount || 0}</span>
+                            </div>
+                            <div>
+                                <span class="text-theme-text-secondary">Revenue:</span>
+                                <span class="font-medium text-theme-text-primary ml-1">${formatPrice(service.revenue || 0)}</span>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="text-theme-text-secondary">Last Booked:</span>
+                                <span class="font-medium text-theme-text-primary ml-1">${formatLastBooked(service.lastBooked)}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-4 border-t border-theme-border">
+                            <button class="text-theme-primary hover:text-theme-accent font-medium text-sm flex items-center space-x-1 transition-colors">
+                                <span class="material-icons text-sm">edit</span>
+                                <span>Edit</span>
+                            </button>
+                            <button class="text-theme-primary hover:text-theme-accent font-medium text-sm flex items-center space-x-1 transition-colors">
+                                <span class="material-icons text-sm">visibility</span>
+                                <span>Details</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = servicesHTML;
+            updateStats();
+            console.log('✅ Appointment types rendered successfully!');
+        }
+
+        // Update statistics
+        function updateStats() {
+            console.log('📊 Updating statistics...');
+            
+            const totalServices = appointmentTypesData.length;
+            const activeServices = appointmentTypesData.filter(s => s.active !== false).length;
+            const totalBookings = appointmentTypesData.reduce((sum, s) => sum + (s.bookingCount || 0), 0);
+            const totalRevenue = appointmentTypesData.reduce((sum, s) => sum + (s.revenue || 0), 0);
+
+            document.getElementById('total-services').textContent = totalServices;
+            document.getElementById('active-services').textContent = activeServices;
+            document.getElementById('total-bookings').textContent = totalBookings;
+            document.getElementById('total-revenue').textContent = formatPrice(totalRevenue);
+            
+            console.log(`📊 Stats updated - Total: ${totalServices}, Active: ${activeServices}, Bookings: ${totalBookings}, Revenue: ${totalRevenue}`);
+        }
+
+        // Format duration function
+        function formatDuration(minutes) {
+            if (!minutes) return 'N/A';
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            
+            if (hours === 0) return `${mins}min`;
+            if (mins === 0) return `${hours}h`;
+            return `${hours}h ${mins}m`;
+        }
+
+        // Format price function
+        function formatPrice(price) {
+            if (!price || price === 0) return 'Free';
+            return `$${price}`;
+        }
+
+        // Format last booked date
+        function formatLastBooked(dateString) {
+            if (!dateString) return 'Never';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+            } catch (e) {
+                return 'Invalid date';
+            }
+        }
+
+        // Enhanced search with debouncing
+        let searchTimeout;
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = document.getElementById('search-input').value.toLowerCase();
+                console.log('🔍 Searching for:', searchTerm);
+                
+                if (!searchTerm) {
+                    filteredData = [...appointmentTypesData];
+                } else {
+                    filteredData = appointmentTypesData.filter(service => 
+                        service.name.toLowerCase().includes(searchTerm) ||
+                        service.category.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                console.log('🎯 Filtered results:', filteredData.length);
+                renderAppointmentTypes();
+            }, 300);
+        }
+
+        // Filter by status
+        function filterByStatus(status) {
+            console.log('🔧 Filtering by status:', status);
+            
+            if (status === 'all') {
+                filteredData = [...appointmentTypesData];
+            } else if (status === 'active') {
+                filteredData = appointmentTypesData.filter(s => s.active !== false);
+            } else if (status === 'inactive') {
+                filteredData = appointmentTypesData.filter(s => s.active === false);
+            }
+            
+            renderAppointmentTypes();
+        }
+
+        // Show empty state
+        function showEmptyState() {
+            console.log('📭 Showing empty state');
+            const container = document.getElementById('services-container');
+            container.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <span class="material-icons text-6xl text-theme-text-secondary mb-4">spa</span>
+                    <h3 class="text-xl font-semibold text-theme-text-primary mb-2">No Services Found</h3>
+                    <p class="text-theme-text-secondary mb-4">No appointment types are currently available in localStorage.</p>
+                    <button onclick="debugAndRefresh()" class="px-4 py-2 bg-theme-primary text-white rounded-lg hover:bg-theme-accent transition-colors">
+                        <span class="material-icons mr-2">refresh</span>
+                        Debug & Refresh
+                    </button>
+                </div>
+            `;
+            
+            // Reset stats to zero
+            document.getElementById('total-services').textContent = '0';
+            document.getElementById('active-services').textContent = '0';
+            document.getElementById('total-bookings').textContent = '0';
+            document.getElementById('total-revenue').textContent = '$0';
+        }
+
+        // Show error state
+        function showErrorState() {
+            console.log('💥 Showing error state');
+            const container = document.getElementById('services-container');
+            container.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <span class="material-icons text-6xl text-red-400 mb-4">error_outline</span>
+                    <h3 class="text-xl font-semibold text-theme-text-primary mb-2">Error Loading Services</h3>
+                    <p class="text-theme-text-secondary mb-4">There was an error loading the appointment types.</p>
+                    <button onclick="debugAndRefresh()" class="px-4 py-2 bg-theme-primary text-white rounded-lg hover:bg-theme-accent transition-colors">
+                        <span class="material-icons mr-2">refresh</span>
+                        Debug & Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Debug and refresh function
+        function debugAndRefresh() {
+            console.log('🔍 === DEBUG INFORMATION ===');
+            console.log('localStorage keys:', Object.keys(localStorage));
+            console.log('appointmentTypes exists:', localStorage.getItem('appointmentTypes') !== null);
+            console.log('appointmentTypes raw:', localStorage.getItem('appointmentTypes'));
+            
+            try {
+                const data = JSON.parse(localStorage.getItem('appointmentTypes'));
+                console.log('Parsed data type:', typeof data);
+                console.log('Is array:', Array.isArray(data));
+                console.log('Length:', data?.length);
+                console.log('First 3 items:', data?.slice(0, 3));
+            } catch (e) {
+                console.log('Parse error:', e);
+            }
+            console.log('🔍 === END DEBUG ===');
+            
+            refreshData();
+        }
+
+        // Test function to manually add sample data (for debugging)
+        function addSampleData() {
+            const sampleData = [
+                {
+                    "id": 78240721,
+                    "name": "Consultation",
+                    "category": "General",
+                    "duration": 50,
+                    "price": 45,
+                    "color": "#ED7087",
+                    "active": true,
+                    "bookingCount": 1,
+                    "revenue": 45,
+                    "lastBooked": "2025-06-19T09:00:00+0530"
+                },
+                {
+                    "id": 78302331,
+                    "name": "FULL BODY LHR",
+                    "category": "General",
+                    "duration": 180,
+                    "price": 0,
+                    "color": "#B7A6EB",
+                    "active": true,
+                    "bookingCount": 9,
+                    "revenue": 0,
+                    "lastBooked": "2025-08-12T13:00:00+0530"
+                }
+            ];
+            
+            localStorage.setItem('appointmentTypes', JSON.stringify(sampleData));
+            console.log('✅ Sample data added to localStorage');
+            loadAppointmentTypes();
+        }
+
+        // Auto-load on script execution (fallback)
+        setTimeout(() => {
+            if (appointmentTypesData.length === 0) {
+                console.log('🔄 Fallback: Attempting to load data after timeout...');
+                loadAppointmentTypes();
+            }
+        }, 1000);
+    </script>
+</head>
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 hide-scrollbar">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Modern Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">spa</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Bio Revive</h2>
+                            <p class="text-xs text-theme-text-secondary">by SkinEnvy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-6">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="overall_dashboard.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">dashboard</span>
+                            Analytics Dashboard
+                        </a>
+                        <a href="upcomming_appointmets.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">event</span>
+                            Upcoming Appointments
+                        </a>
+                        <a href="past_appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">history</span>
+                            Past Appointments
+                        </a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
+                            <span class="material-icons mr-3 text-theme-primary text-xl">spa</span>
+                            Services
+                        </a>
+                    </nav>
+
+                    <div class="px-6 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="profile.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">person</span>
+                            Profile
+                        </a>
+                        <a href="help_support.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">help</span>
+                            Help & Support
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- User Profile Section -->
+                <div class="p-4 border-t border-theme-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium">
+                            PK
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-theme-text-primary truncate">Prem Anand K</p>
+                            <div class="flex items-center mt-1">
+                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
+                                <p class="text-xs text-theme-text-secondary">Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent">
+                    <span class="material-icons">menu</span>
+                </button>
+                
+                <div class="flex-1 flex justify-center lg:justify-end max-w-lg ml-auto">
+                    <div class="w-full">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-icons text-theme-text-secondary">search</span>
+                            </div>
+                            <input type="text" id="search-input" placeholder="Search services..." onkeyup="handleSearch()" class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-4 flex items-center space-x-2">
+                    <button id="refresh-btn" onclick="refreshData()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Services">
+                        <span class="material-icons">refresh</span>
+                    </button>
+                    <button onclick="exportServices()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Export Services">
+                        <span class="material-icons">download</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto p-6 bg-theme-bg-secondary">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-theme-text-primary">Services</h1>
+                            <p class="mt-2 text-theme-text-secondary">Manage your appointment types and service offerings</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 flex space-x-3">
+                            <select onchange="filterByStatus(this.value)" class="px-3 py-2 border border-theme-border rounded-lg bg-theme-bg-primary text-theme-text-primary focus:outline-none focus:ring-2 focus:ring-theme-primary">
+                                <option value="all">All Services</option>
+                                <option value="active">Active Only</option>
+                                <option value="inactive">Inactive Only</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="modern-card rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-theme-text-secondary">Total Services</p>
+                                <p class="text-2xl font-bold text-theme-text-primary" id="total-services">0</p>
+                            </div>
+                            <div class="p-3 bg-blue-100 rounded-xl">
+                                <span class="material-icons text-blue-600">spa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modern-card rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-theme-text-secondary">Active Services</p>
+                                <p class="text-2xl font-bold text-theme-text-primary" id="active-services">0</p>
+                            </div>
+                            <div class="p-3 bg-green-100 rounded-xl">
+                                <span class="material-icons text-green-600">check_circle</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modern-card rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-theme-text-secondary">Total Bookings</p>
+                                <p class="text-2xl font-bold text-theme-text-primary" id="total-bookings">0</p>
+                            </div>
+                            <div class="p-3 bg-purple-100 rounded-xl">
+                                <span class="material-icons text-purple-600">event</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modern-card rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-theme-text-secondary">Total Revenue</p>
+                                <p class="text-2xl font-bold text-theme-text-primary" id="total-revenue">$0</p>
+                            </div>
+                            <div class="p-3 bg-yellow-100 rounded-xl">
+                                <span class="material-icons text-yellow-600">attach_money</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Grid -->
+                <div id="services-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Services will be populated here -->
+                    <div class="loading-placeholder rounded-xl h-64"></div>
+                    <div class="loading-placeholder rounded-xl h-64"></div>
+                    <div class="loading-placeholder rounded-xl h-64"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="overall_dashboard.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">dashboard</span>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="upcomming_appointmets.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">event</span>
+                <span class="text-xs mt-1">Upcoming</span>
+            </a>
+            <a href="past_appointments.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">history</span>
+                <span class="text-xs mt-1">Past</span>
+            </a>
+            <a href="appointment_types.html" class="flex flex-col items-center p-2 text-theme-primary">
+                <span class="material-icons text-lg">spa</span>
+                <span class="text-xs mt-1 font-medium">Services</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+
+    <script>
+        // Export functionality placeholder
+        function exportServices() {
+            console.log('Export services functionality - to be implemented');
+            // You can implement CSV/PDF export here
+        }
+    </script>
+</body>
+</html>
