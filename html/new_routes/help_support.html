@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support - Acuity Scheduling by Xtracut</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery and ZOHO SDK -->
+    <script type="text/javascript" src="../../js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../js/lib/ZohoEmbededAppSDK.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'theme-bg-primary': 'var(--bg-primary)',
+                        'theme-bg-secondary': 'var(--bg-secondary)',
+                        'theme-bg-accent': 'var(--bg-accent)',
+                        'theme-text-primary': 'var(--text-primary)',
+                        'theme-text-secondary': 'var(--text-secondary)',
+                        'theme-border': 'var(--border-color)',
+                        'theme-primary': 'var(--color-primary)',
+                        'theme-secondary': 'var(--color-secondary)',
+                        'theme-accent': 'var(--color-accent)',
+
+                        primary: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        },
+                        success: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        'elegant': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --color-primary: #3b82f6;
+            --color-secondary: #60a5fa;
+            --color-accent: #2563eb;
+        }
+
+        html.dark {
+            /* Dark Theme Variables */
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-accent: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+        }
+
+        /* Theme Configuration */
+        .themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+                red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+                teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+                pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+                indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+            }
+        };
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        html.dark .glass-effect {
+            background: rgba(31, 41, 55, 0.98);
+            border: 1px solid rgba(55, 65, 81, 0.8);
+        }
+        
+        .modern-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .modern-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        html.dark .modern-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-modern {
+            background: var(--color-primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-modern:hover {
+            background: var(--color-accent);
+            transform: translateY(-1px);
+        }
+        
+        .card-hover-effect {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover-effect:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        html.dark .card-hover-effect:hover {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-primary);
+        }
+
+        html.dark .feature-card:hover {
+            box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .faq-item {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .faq-answer.expanded {
+            max-height: 200px;
+        }
+
+        .contact-card {
+            background: linear-gradient(135deg, var(--color-primary)10, var(--color-secondary)20);
+            border: 1px solid var(--color-primary);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(59, 130, 246, 0.25);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .step-connector {
+            width: 2px;
+            height: 40px;
+            background: var(--border-color);
+            margin: 8px auto;
+        }
+
+        .keyboard-shortcut {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+
+    <script>
+        // Theme Configuration
+        const themeConfig = {
+            colors: {
+                blue: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#2563eb' },
+                purple: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#7c3aed' },
+                green: { primary: '#10b981', secondary: '#34d399', accent: '#059669' },
+                orange: { primary: '#f97316', secondary: '#fb923c', accent: '#ea580c' },
+                red: { primary: '#ef4444', secondary: '#f87171', accent: '#dc2626' },
+                teal: { primary: '#14b8a6', secondary: '#5eead4', accent: '#0d9488' },
+                pink: { primary: '#ec4899', secondary: '#f472b6', accent: '#db2777' },
+                indigo: { primary: '#6366f1', secondary: '#818cf8', accent: '#4f46e5' }
+            }
+        };
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('dashboard_theme', theme);
+        }
+
+        function applyThemeColor(colorName) {
+            const color = themeConfig.colors[colorName];
+            if (!color) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', color.primary);
+            root.style.setProperty('--color-secondary', color.secondary);
+            root.style.setProperty('--color-accent', color.accent);
+            localStorage.setItem('dashboard_theme_color', colorName);
+            addThemeSwitcher(); // Re-render to update active color
+        }
+
+        function toggleTheme() {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            addThemeSwitcher(); // Re-render to update toggle state
+        }
+        
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'light';
+            const savedColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+            applyTheme(savedTheme);
+            applyThemeColor(savedColor);
+        }
+
+        function addThemeSwitcher() {
+            const container = document.getElementById('theme-switcher-container');
+            if (!container) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const currentColor = localStorage.getItem('dashboard_theme_color') || 'blue';
+
+            container.innerHTML = `
+                <div class="fixed bottom-5 right-5 z-50">
+                    <div id="theme-menu" class="absolute bottom-full right-0 mb-2 w-56 bg-theme-bg-primary rounded-lg shadow-2xl border border-theme-border p-4 z-50 hidden transition-all duration-300 opacity-0 -translate-y-2">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-theme-text-primary">Theme Mode</span>
+                                <button onclick="toggleTheme()" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-primary ${isDark ? 'bg-theme-primary' : 'bg-gray-300'}">
+                                    <span class="sr-only">Toggle theme</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${isDark ? 'right-1 opacity-100' : 'right-1 opacity-0'}" style="color: #fbbf24;">dark_mode</span>
+                                    <span class="material-icons text-xs absolute transition-opacity duration-200 ${!isDark ? 'left-1 opacity-100' : 'left-1 opacity-0'}" style="color: #f59e0b;">light_mode</span>
+                                    <span class="inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full shadow ${isDark ? 'translate-x-6' : 'translate-x-1'}"></span>
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-sm font-medium text-theme-text-primary">Color Theme</span>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${Object.keys(themeConfig.colors).map(name => `
+                                        <button onclick="applyThemeColor('${name}')" 
+                                                class="relative w-8 h-8 rounded-full transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary focus:ring-offset-theme-bg-primary ${currentColor === name ? 'ring-2 ring-offset-2 ring-white ring-offset-theme-bg-primary scale-110' : ''}"
+                                                style="background-color: ${themeConfig.colors[name].primary}"
+                                                title="${name.charAt(0).toUpperCase() + name.slice(1)}">
+                                            ${currentColor === name ? '<span class="absolute inset-0 flex items-center justify-center"><span class="material-icons text-white text-sm">check</span></span>' : ''}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button id="theme-menu-button" class="bg-theme-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:bg-theme-accent transition-all duration-300 flex items-center justify-center transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 focus:ring-offset-theme-bg-secondary">
+                        <span class="material-icons">palette</span>
+                    </button>
+                </div>
+            `;
+
+            const menuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            
+            if (menuButton && themeMenu) {
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (themeMenu.classList.contains('hidden')) {
+                        themeMenu.classList.remove('hidden');
+                        setTimeout(() => {
+                            themeMenu.classList.remove('opacity-0', '-translate-y-2');
+                        }, 10);
+                    } else {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && !menuButton.contains(e.target)) {
+                        themeMenu.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            themeMenu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        }
+
+        // FAQ functionality
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            answer.classList.toggle('expanded');
+            
+            if (answer.classList.contains('expanded')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Contact form functionality
+        function submitContactForm(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                showToast('Message sent successfully! We\'ll get back to you soon.', 'success');
+                form.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            
+            toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-sm">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>
+                    <span class="font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Search functionality
+        function handleHelpSearch(event) {
+            const query = event.target.value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            // Search FAQ items
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                
+                if (question.includes(query) || answer.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = query === '' ? 'block' : 'none';
+                }
+            });
+            
+            // Search feature cards
+            featureCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const content = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(query) || content.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = query === '' ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            initializeTheme();
+            addThemeSwitcher();
+            
+            // Add search event listener
+            const searchInput = document.querySelector('input[placeholder*="Search"]');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleHelpSearch);
+            }
+        });
+    </script>
+</head>
+
+<body class="bg-theme-bg-secondary text-theme-text-primary font-sans antialiased min-h-screen transition-colors duration-300 hide-scrollbar">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Modern Sidebar -->
+        <div class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72 bg-theme-bg-primary border-r border-theme-border">
+                <div class="flex items-center h-16 px-6 border-b border-theme-border">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary flex items-center justify-center">
+                            <span class="material-icons text-white text-xl">spa</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-theme-text-primary">Acuity Scheduling</h2>
+                            <p class="text-xs text-theme-text-secondary">by Xtracut</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto scrollbar-hide">
+                    <div class="px-6">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Analytics</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="overall_dashboard.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">dashboard</span>
+                            Analytics Dashboard
+                        </a>
+                        <a href="upcomming_appointmets.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">event</span>
+                            Upcoming Appointments
+                        </a>
+                        <a href="past_appointments.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">history</span>
+                            Past Appointments
+                        </a>
+                        <a href="appointment_types.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">spa</span>
+                            Services
+                        </a>
+                    </nav>
+
+                    <div class="px-6 mt-8">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-text-secondary mb-4">Settings</h3>
+                    </div>
+                    <nav class="mt-2 flex-1 px-4 space-y-1">
+                        <a href="profile.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg text-theme-text-primary hover:bg-theme-bg-accent">
+                            <span class="material-icons mr-3 text-theme-text-secondary text-xl">person</span>
+                            Profile
+                        </a>
+                        <a href="help_support.html" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-theme-bg-accent text-theme-primary border-l-4 border-theme-primary">
+                            <span class="material-icons mr-3 text-theme-primary text-xl">help</span>
+                            Help & Support
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- User Profile Section -->
+                <div class="p-4 border-t border-theme-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-theme-primary/20 flex items-center justify-center text-theme-primary font-medium">
+                            PK
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-theme-text-primary truncate">Prem Anand K</p>
+                            <div class="flex items-center mt-1">
+                                <div class="h-2 w-2 rounded-full bg-success-500 mr-2"></div>
+                                <p class="text-xs text-theme-text-secondary">Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center h-16 bg-theme-bg-primary border-b border-theme-border px-4 lg:px-8">
+                <button class="p-2 rounded-lg text-theme-text-secondary lg:hidden hover:bg-theme-bg-accent">
+                    <span class="material-icons">menu</span>
+                </button>
+                
+                <div class="flex-1 flex justify-center lg:justify-end max-w-lg ml-auto">
+                    <div class="w-full">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-icons text-theme-text-secondary">search</span>
+                            </div>
+                            <input type="text" placeholder="Search help topics, FAQ..." class="block w-full pl-10 pr-4 py-2 rounded-lg border border-theme-border bg-theme-bg-accent focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm text-theme-text-primary placeholder-theme-text-secondary">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-4 flex items-center space-x-2">
+                    <button onclick="window.history.back()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Go Back">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <button onclick="window.print()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Print Page">
+                        <span class="material-icons">print</span>
+                    </button>
+                    <button onclick="location.reload()" class="p-2 rounded-lg text-theme-text-secondary hover:bg-theme-bg-accent" title="Refresh Page">
+                        <span class="material-icons">refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto p-6 bg-theme-bg-secondary">
+                <div class="max-w-7xl mx-auto space-y-8 animate-fade-in">
+                    
+                    <!-- Header Section -->
+                    <div class="glass-effect rounded-2xl p-8 border-l-4 border-theme-primary">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div class="animate-slide-in">
+                                <h1 class="text-4xl font-bold bg-gradient-to-r from-theme-text-primary to-theme-text-secondary bg-clip-text text-transparent mb-3">
+                                    Help & Support Center
+                                </h1>
+                                <p class="text-theme-text-secondary text-lg">Get help with your Acuity Scheduling experience</p>
+                            </div>
+                            <div class="mt-6 lg:mt-0 flex items-center space-x-4">
+                                <div class="bg-theme-primary/10 rounded-xl p-4">
+                                    <span class="material-icons text-theme-primary text-3xl">support_agent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Help Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="feature-card card-hover-effect">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center mr-4">
+                                    <span class="material-icons text-blue-600">rocket_launch</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary">Getting Started</h3>
+                            </div>
+                            <p class="text-theme-text-secondary mb-4">Learn the basics of using your Acuity Scheduling dashboard</p>
+                            <button onclick="scrollToSection('getting-started')" class="text-theme-primary hover:text-theme-accent font-medium text-sm flex items-center">
+                                Learn More <span class="material-icons ml-1 text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+
+                        <div class="feature-card card-hover-effect">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center mr-4">
+                                    <span class="material-icons text-emerald-600">event_note</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary">Appointments</h3>
+                            </div>
+                            <p class="text-theme-text-secondary mb-4">Manage your appointments, scheduling, and client bookings</p>
+                            <button onclick="scrollToSection('appointments')" class="text-theme-primary hover:text-theme-accent font-medium text-sm flex items-center">
+                                Learn More <span class="material-icons ml-1 text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+
+                        <div class="feature-card card-hover-effect">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center mr-4">
+                                    <span class="material-icons text-purple-600">analytics</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary">Analytics</h3>
+                            </div>
+                            <p class="text-theme-text-secondary mb-4">Understand your business metrics and performance data</p>
+                            <button onclick="scrollToSection('analytics')" class="text-theme-primary hover:text-theme-accent font-medium text-sm flex items-center">
+                                Learn More <span class="material-icons ml-1 text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+
+                        <div class="feature-card card-hover-effect">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center mr-4">
+                                    <span class="material-icons text-orange-600">settings</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-theme-text-primary">Settings</h3>
+                            </div>
+                            <p class="text-theme-text-secondary mb-4">Customize your account, services, and preferences</p>
+                            <button onclick="scrollToSection('settings')" class="text-theme-primary hover:text-theme-accent font-medium text-sm flex items-center">
+                                Learn More <span class="material-icons ml-1 text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Getting Started Section -->
+                    <div id="getting-started" class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">rocket_launch</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">Getting Started</h2>
+                                <p class="text-theme-text-secondary">Follow these steps to set up your account</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="flex items-start space-x-4">
+                                    <div class="step-number">1</div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-theme-text-primary mb-2">Set Up Your Profile</h4>
+                                        <p class="text-theme-text-secondary text-sm">Navigate to Profile settings and complete your business information including name, contact details, and scheduling preferences.</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+
+                                <div class="flex items-start space-x-4">
+                                    <div class="step-number">2</div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-theme-text-primary mb-2">Configure Services</h4>
+                                        <p class="text-theme-text-secondary text-sm">Create your appointment types by setting up services, pricing, duration, and availability in the Services section.</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+
+                                <div class="flex items-start space-x-4">
+                                    <div class="step-number">3</div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-theme-text-primary mb-2">Start Scheduling</h4>
+                                        <p class="text-theme-text-secondary text-sm">Begin accepting appointments through your scheduling page or manually create appointments for clients.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
+                                <h4 class="font-semibold text-theme-text-primary mb-4 flex items-center">
+                                    <span class="material-icons text-blue-600 mr-2">lightbulb</span>
+                                    Pro Tips
+                                </h4>
+                                <ul class="space-y-3 text-sm text-theme-text-secondary">
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-blue-500 text-sm mr-2 mt-0.5">check_circle</span>
+                                        <span>Use the theme switcher to customize your dashboard appearance</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-blue-500 text-sm mr-2 mt-0.5">check_circle</span>
+                                        <span>Enable notifications to stay updated on new appointments</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-blue-500 text-sm mr-2 mt-0.5">check_circle</span>
+                                        <span>Use the search functionality to quickly find appointments or clients</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-blue-500 text-sm mr-2 mt-0.5">check_circle</span>
+                                        <span>Regularly check your analytics to understand business trends</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Frequently Asked Questions -->
+                    <div class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">quiz</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">Frequently Asked Questions</h2>
+                                <p class="text-theme-text-secondary">Find answers to common questions</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="faq-item">
+                                <button onclick="toggleFAQ(this)" class="w-full p-6 text-left focus:outline-none">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-semibold text-theme-text-primary faq-question">How do I create a new service?</h4>
+                                        <span class="material-icons text-theme-text-secondary transition-transform duration-300 faq-icon">expand_more</span>
+                                    </div>
+                                </button>
+                                <div class="faq-answer px-6 pb-6">
+                                    <p class="text-theme-text-secondary">To create a new service, navigate to the Services section from the sidebar. Click on "Add New Service" button, fill in the service details including name, duration, price, and description. You can also set availability and assign colors for better organization.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button onclick="toggleFAQ(this)" class="w-full p-6 text-left focus:outline-none">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-semibold text-theme-text-primary faq-question">How can I view my analytics and reports?</h4>
+                                        <span class="material-icons text-theme-text-secondary transition-transform duration-300 faq-icon">expand_more</span>
+                                    </div>
+                                </button>
+                                <div class="faq-answer px-6 pb-6">
+                                    <p class="text-theme-text-secondary">Your analytics dashboard is the main page when you log in. It shows key metrics including revenue, appointment counts, service performance, and client analytics. You can export detailed reports using the export button in the top navigation.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button onclick="toggleFAQ(this)" class="w-full p-6 text-left focus:outline-none">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-semibold text-theme-text-primary faq-question">Can I customize the appearance of my dashboard?</h4>
+                                        <span class="material-icons text-theme-text-secondary transition-transform duration-300 faq-icon">expand_more</span>
+                                    </div>
+                                </button>
+                                <div class="faq-answer px-6 pb-6">
+                                    <p class="text-theme-text-secondary">Yes! Use the theme switcher button (palette icon) in the bottom right corner. You can switch between light and dark modes, and choose from 8 different color themes including blue, purple, green, orange, red, teal, pink, and indigo.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button onclick="toggleFAQ(this)" class="w-full p-6 text-left focus:outline-none">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-semibold text-theme-text-primary faq-question">How do I manage my appointment notifications?</h4>
+                                        <span class="material-icons text-theme-text-secondary transition-transform duration-300 faq-icon">expand_more</span>
+                                    </div>
+                                </button>
+                                <div class="faq-answer px-6 pb-6">
+                                    <p class="text-theme-text-secondary">Notification settings can be found in your Profile section. You can configure email notifications for new appointments, cancellations, reminders, and other important events. You can also set your notification preferences for different types of activities.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button onclick="toggleFAQ(this)" class="w-full p-6 text-left focus:outline-none">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-semibold text-theme-text-primary faq-question">What should I do if I encounter technical issues?</h4>
+                                        <span class="material-icons text-theme-text-secondary transition-transform duration-300 faq-icon">expand_more</span>
+                                    </div>
+                                </button>
+                                <div class="faq-answer px-6 pb-6">
+                                    <p class="text-theme-text-secondary">First, try refreshing the page using the refresh button in the top navigation. If issues persist, check your internet connection. For ongoing problems, use the contact form below to report the issue with detailed information about what you were trying to do when the problem occurred.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button onclick="toggleFAQ(this)" class="w-full p-6 text-left focus:outline-none">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-semibold text-theme-text-primary faq-question">How do I export my appointment data?</h4>
+                                        <span class="material-icons text-theme-text-secondary transition-transform duration-300 faq-icon">expand_more</span>
+                                    </div>
+                                </button>
+                                <div class="faq-answer px-6 pb-6">
+                                    <p class="text-theme-text-secondary">You can export your data from multiple places: Use the export button on the Analytics Dashboard for comprehensive reports, or visit individual sections (Past Appointments, Services) and use their respective export functions. Data is exported in JSON format with detailed information.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature Guides -->
+                    <div id="appointments" class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">event_note</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">Appointment Management</h2>
+                                <p class="text-theme-text-secondary">Learn how to manage your appointments effectively</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="feature-card">
+                                <div class="flex items-center mb-4">
+                                    <span class="material-icons text-blue-600 mr-3">add_circle</span>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Creating Appointments</h3>
+                                </div>
+                                <ul class="space-y-2 text-sm text-theme-text-secondary">
+                                    <li>• Click "Schedule" button in top navigation</li>
+                                    <li>• Fill in client information</li>
+                                    <li>• Select service and time slot</li>
+                                    <li>• Add notes if needed</li>
+                                    <li>• Confirm the appointment</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="flex items-center mb-4">
+                                    <span class="material-icons text-emerald-600 mr-3">edit</span>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Editing Appointments</h3>
+                                </div>
+                                <ul class="space-y-2 text-sm text-theme-text-secondary">
+                                    <li>• Find appointment in upcoming/past lists</li>
+                                    <li>• Click on the appointment card</li>
+                                    <li>• Use edit button in detail view</li>
+                                    <li>• Modify date, time, or service</li>
+                                    <li>• Save changes</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="flex items-center mb-4">
+                                    <span class="material-icons text-red-600 mr-3">cancel</span>
+                                    <h3 class="text-lg font-semibold text-theme-text-primary">Cancellations</h3>
+                                </div>
+                                <ul class="space-y-2 text-sm text-theme-text-secondary">
+                                    <li>• Open appointment details</li>
+                                    <li>• Click cancel button</li>
+                                    <li>• Select cancellation reason</li>
+                                    <li>• Add optional note</li>
+                                    <li>• Confirm cancellation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Guide -->
+                    <div id="analytics" class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">analytics</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">Understanding Analytics</h2>
+                                <p class="text-theme-text-secondary">Make data-driven decisions with your dashboard insights</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="font-semibold text-theme-text-primary mb-3 flex items-center">
+                                        <span class="material-icons text-emerald-600 mr-2">trending_up</span>
+                                        Key Metrics
+                                    </h4>
+                                    <ul class="space-y-2 text-sm text-theme-text-secondary">
+                                        <li><strong>Total Revenue:</strong> Your complete earnings with monthly breakdown</li>
+                                        <li><strong>Total Appointments:</strong> All scheduled appointments including today's count</li>
+                                        <li><strong>Active Services:</strong> Number of available vs total services</li>
+                                        <li><strong>Success Rate:</strong> Percentage of completed vs cancelled appointments</li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h4 class="font-semibold text-theme-text-primary mb-3 flex items-center">
+                                        <span class="material-icons text-blue-600 mr-2">bar_chart</span>
+                                        Charts & Graphs
+                                    </h4>
+                                    <ul class="space-y-2 text-sm text-theme-text-secondary">
+                                        <li><strong>Revenue Chart:</strong> Track financial trends over time</li>
+                                        <li><strong>Service Performance:</strong> See which services are most popular</li>
+                                        <li><strong>Peak Hours:</strong> Understand your busiest appointment times</li>
+                                        <li><strong>Status Distribution:</strong> View appointment completion rates</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-6">
+                                <h4 class="font-semibold text-theme-text-primary mb-4">Analytics Tips</h4>
+                                <ul class="space-y-3 text-sm text-theme-text-secondary">
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-indigo-500 text-sm mr-2 mt-0.5">insights</span>
+                                        <span>Use revenue trends to identify your best performing months</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-indigo-500 text-sm mr-2 mt-0.5">schedule</span>
+                                        <span>Check peak hours to optimize your availability</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-indigo-500 text-sm mr-2 mt-0.5">stars</span>
+                                        <span>Identify VIP clients for special treatment and retention</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="material-icons text-indigo-500 text-sm mr-2 mt-0.5">download</span>
+                                        <span>Export reports for tax purposes or business planning</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard Shortcuts -->
+                    <div class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">keyboard</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">Keyboard Shortcuts</h2>
+                                <p class="text-theme-text-secondary">Speed up your workflow with these shortcuts</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-theme-text-primary">Navigation</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Dashboard</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">Ctrl</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">D</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Search</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">Ctrl</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">K</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Help</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">?</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-theme-text-primary">Actions</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">New Appointment</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">Ctrl</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">N</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Refresh</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">F5</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Export</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">Ctrl</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">E</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-theme-text-primary">Theme</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Toggle Dark Mode</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">Ctrl</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">Shift</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">T</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-theme-text-secondary text-sm">Theme Menu</span>
+                                        <div class="flex space-x-1">
+                                            <span class="keyboard-shortcut">Alt</span>
+                                            <span class="text-theme-text-secondary">+</span>
+                                            <span class="keyboard-shortcut">T</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">support_agent</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">Contact Support</h2>
+                                <p class="text-theme-text-secondary">Get in touch with our support team</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Contact Form -->
+                            <div>
+                                <h3 class="text-xl font-semibold text-theme-text-primary mb-6">Send us a Message</h3>
+                                <form onsubmit="submitContactForm(event)" class="space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-theme-text-secondary mb-2">Name *</label>
+                                            <input type="text" name="name" required class="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-theme-text-secondary mb-2">Email *</label>
+                                            <input type="email" name="email" required class="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-theme-text-secondary mb-2">Subject *</label>
+                                        <select name="subject" required class="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary">
+                                            <option value="">Select a topic...</option>
+                                            <option value="technical">Technical Issue</option>
+                                            <option value="billing">Billing Question</option>
+                                            <option value="feature">Feature Request</option>
+                                            <option value="general">General Question</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-theme-text-secondary mb-2">Message *</label>
+                                        <textarea name="message" rows="5" required class="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-transparent text-sm bg-theme-bg-secondary text-theme-text-primary" placeholder="Please describe your issue or question in detail..."></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn-modern w-full flex items-center justify-center">
+                                        <span class="material-icons mr-2 text-sm">send</span>
+                                        Send Message
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="space-y-6">
+                                <h3 class="text-xl font-semibold text-theme-text-primary mb-6">Other Ways to Reach Us</h3>
+                                
+                                <div class="contact-card p-6">
+                                    <div class="flex items-center mb-4">
+                                        <span class="material-icons text-theme-primary mr-3">email</span>
+                                        <h4 class="font-semibold text-theme-text-primary">Email Support</h4>
+                                    </div>
+                                    <p class="text-theme-text-secondary mb-2">For general inquiries and support</p>
+                                    <a href="mailto:support@xtracut.com" class="text-theme-primary hover:text-theme-accent font-medium">support@xtracut.com</a>
+                                    <p class="text-sm text-theme-text-secondary mt-2">Response time: 24 hours</p>
+                                </div>
+
+                                <div class="contact-card p-6">
+                                    <div class="flex items-center mb-4">
+                                        <span class="material-icons text-theme-primary mr-3">chat</span>
+                                        <h4 class="font-semibold text-theme-text-primary">Live Chat</h4>
+                                    </div>
+                                    <p class="text-theme-text-secondary mb-4">Chat with our support team in real-time</p>
+                                    <button class="btn-modern text-sm px-4 py-2">
+                                        Start Chat
+                                    </button>
+                                    <p class="text-sm text-theme-text-secondary mt-2">Available: Mon-Fri 9AM-6PM EST</p>
+                                </div>
+
+                                <div class="contact-card p-6">
+                                    <div class="flex items-center mb-4">
+                                        <span class="material-icons text-theme-primary mr-3">description</span>
+                                        <h4 class="font-semibold text-theme-text-primary">Documentation</h4>
+                                    </div>
+                                    <p class="text-theme-text-secondary mb-4">Browse our comprehensive guides and tutorials</p>
+                                    <a href="#" class="text-theme-primary hover:text-theme-accent font-medium flex items-center">
+                                        View Documentation
+                                        <span class="material-icons ml-1 text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
+
+                                <div class="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-yellow-200 dark:border-yellow-800">
+                                    <div class="flex items-center mb-3">
+                                        <span class="material-icons text-yellow-600 mr-2">info</span>
+                                        <h4 class="font-semibold text-theme-text-primary">Before Contacting Support</h4>
+                                    </div>
+                                    <ul class="text-sm text-theme-text-secondary space-y-1">
+                                        <li>• Check this help section for common solutions</li>
+                                        <li>• Try refreshing your browser</li>
+                                        <li>• Include your account email and specific error messages</li>
+                                        <li>• Mention what you were doing when the issue occurred</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="modern-card rounded-2xl p-8">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mr-6">
+                                <span class="material-icons text-white text-2xl">health_and_safety</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-theme-text-primary">System Status</h2>
+                                <p class="text-theme-text-secondary">Current system performance and availability</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center p-6 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                                <div class="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-icons text-white">check_circle</span>
+                                </div>
+                                <h4 class="font-semibold text-theme-text-primary mb-2">API Services</h4>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                                    Operational
+                                </span>
+                            </div>
+
+                            <div class="text-center p-6 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                                <div class="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-icons text-white">cloud_done</span>
+                                </div>
+                                <h4 class="font-semibold text-theme-text-primary mb-2">Database</h4>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                                    Operational
+                                </span>
+                            </div>
+
+                            <div class="text-center p-6 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                                <div class="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-icons text-white">notifications_active</span>
+                                </div>
+                                <h4 class="font-semibold text-theme-text-primary mb-2">Notifications</h4>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                                    Operational
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 text-center">
+                            <p class="text-theme-text-secondary text-sm">Last updated: <span class="font-medium" id="status-update-time"></span></p>
+                            <a href="#" class="text-theme-primary hover:text-theme-accent text-sm font-medium">View detailed status page →</a>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-theme-bg-primary border-t border-theme-border px-4 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <a href="overall_dashboard.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">dashboard</span>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="upcomming_appointmets.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">event</span>
+                <span class="text-xs mt-1">Upcoming</span>
+            </a>
+            <a href="past_appointments.html" class="flex flex-col items-center p-2 text-theme-text-secondary">
+                <span class="material-icons text-lg">history</span>
+                <span class="text-xs mt-1">Past</span>
+            </a>
+            <a href="help_support.html" class="flex flex-col items-center p-2 text-theme-primary">
+                <span class="material-icons text-lg">help</span>
+                <span class="text-xs mt-1 font-medium">Help</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div id="theme-switcher-container"></div>
+
+    <script>
+        // Additional JavaScript functions
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Update status time
+        function updateStatusTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString();
+            const statusElement = document.getElementById('status-update-time');
+            if (statusElement) {
+                statusElement.textContent = timeString;
+            }
+        }
+
+        // Initialize status time
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatusTime();
+            
+            // Update time every minute
+            setInterval(updateStatusTime, 60000);
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+K for search
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.querySelector('input[placeholder*="Search"]');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+            
+            // Ctrl+D for dashboard
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                window.location.href = 'overall_dashboard.html';
+            }
+            
+            // ? for help (this page)
+            if (e.key === '?') {
+                e.preventDefault();
+                window.location.href = 'help_support.html';
+            }
+            
+            // Ctrl+Shift+T for theme toggle
+            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                e.preventDefault();
+                toggleTheme();
+            }
+            
+            // Alt+T for theme menu
+            if (e.altKey && e.key === 't') {
+                e.preventDefault();
+                const themeButton = document.getElementById('theme-menu-button');
+                if (themeButton) {
+                    themeButton.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
